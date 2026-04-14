@@ -1,0 +1,103 @@
+.state { padding: 60px; text-align: center; color: var(--text3); }
+.empty { padding: 60px; text-align: center; color: var(--text3); font-size: 1.2rem; }
+
+.layout {
+  display: flex;
+  min-height: calc(100vh - 130px);
+}
+
+.content {
+  flex: 1;
+  padding: 18px 22px;
+  overflow-y: auto;
+}
+
+.topBar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.clearBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  border-radius: 7px;
+  padding: 8px 14px;
+  font-size: .78rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.clearBtn:hover { border-color: var(--v-acc2); color: var(--text); }
+
+.meta { font-size: .72rem; color: var(--text3); margin-bottom: 12px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.card.vinyl:hover  { border-color: var(--v-acc2); }
+.card.rum:hover    { border-color: var(--ru-acc2); }
+.card.whisky:hover { border-color: var(--wh-acc2); }
+
+.cardArt {
+  aspect-ratio: 1;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.cardArt img { width: 100%; height: 100%; object-fit: cover; }
+.bottle { font-size: 2.5rem; }
+
+.dot {
+  position: absolute;
+  top: 7px; right: 7px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+}
+.dotGreen { background: #22c55e; }
+.dotRed   { background: #ef4444; }
+
+.vinylDisc {
+  width: 83%; height: 83%; border-radius: 50%;
+  background: conic-gradient(#1a1a1a 0,#222 10deg,#1a1a1a 20deg,#222 30deg,#1a1a1a 40deg,#222 50deg,#1a1a1a 60deg,#222 70deg,#1a1a1a 80deg,#222 90deg,#1a1a1a 100deg,#222 110deg,#1a1a1a 120deg,#222 130deg,#1a1a1a 140deg,#222 150deg,#1a1a1a 160deg,#222 170deg,#1a1a1a 180deg,#222 190deg,#1a1a1a 200deg,#222 210deg,#1a1a1a 220deg,#222 230deg,#1a1a1a 240deg,#222 250deg,#1a1a1a 260deg,#222 270deg,#1a1a1a 280deg,#222 290deg,#1a1a1a 300deg,#222 310deg,#1a1a1a 320deg,#222 330deg,#1a1a1a 340deg,#222 350deg);
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #333;
+}
+.vLabel {
+  width: 34%; height: 34%; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .42rem; text-align: center; font-weight: 600;
+  color: #fff; padding: 3px; line-height: 1.2; overflow: hidden;
+}
+
+.cardBody  { padding: 11px; }
+.cardTitle { font-size: .82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+.cardSub   { font-size: .73rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 7px; }
+.cardMeta  { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+
+.pill { font-size: .6rem; padding: 2px 7px; border-radius: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+.pill.vinyl  { background: rgba(192,57,43,.2);  border: 1px solid rgba(192,57,43,.4);  color: var(--v-acc2); }
+.pill.rum    { background: rgba(181,101,29,.2); border: 1px solid rgba(181,101,29,.4); color: var(--ru-acc2); }
+.pill.whisky { background: rgba(26,74,122,.2);  border: 1px solid rgba(26,74,122,.4);  color: var(--wh-acc2); }
+
+.year { font-size: .63rem; color: var(--text3); flex-shrink: 0; }
