@@ -12,13 +12,14 @@ function countBy(arr, key) {
 
 // filters = objeto con los filtros activos { f1: valor, f2: valor }
 // setFilter = función para cambiar un filtro
-export default function Sidebar({ data, coll, filters, setFilter }) {
+// isOpen = controla si el drawer móvil está visible
+export default function Sidebar({ data, coll, filters, setFilter, isOpen }) {
   if (!data) return null
 
   const sections = getSections(data, coll)
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : ''}`}>
       {sections.map(({ title, key, entries }) => (
         <div className={styles.section} key={key}>
           <div className={styles.sectionTitle}>{title}</div>

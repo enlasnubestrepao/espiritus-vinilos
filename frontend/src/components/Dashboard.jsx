@@ -7,16 +7,19 @@ import Sidebar   from './Sidebar'
 import Modal     from './Modal'
 import AdminForm from './AdminForm'
 import PinModal  from './PinModal'
+import StatsView from './StatsView'
 import styles    from './Dashboard.module.css'
 
 const FETCHERS = { vinyl: getVinyls, rum: getRums, whisky: getWhiskies }
 
 export default function Dashboard({ coll }) {
-  const [search,    setSearch]    = useState('')
-  const [filters,   setFilters]   = useState({})
-  const [selected,  setSelected]  = useState(null)
-  const [adminItem, setAdminItem] = useState(undefined)
-  const [pinAction, setPinAction] = useState(null) // { label, onSuccess }
+  const [search,      setSearch]      = useState('')
+  const [filters,     setFilters]     = useState({})
+  const [selected,    setSelected]    = useState(null)
+  const [adminItem,   setAdminItem]   = useState(undefined)
+  const [pinAction,   setPinAction]   = useState(null) // { label, onSuccess }
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [view,        setView]        = useState('collection') // 'collection' | 'stats'
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [coll],
@@ -94,51 +97,75 @@ export default function Dashboard({ coll }) {
       )}
       <KpiBar data={data} coll={coll} />
       <div className={styles.layout}>
-        <Sidebar data={data} coll={coll} filters={filters} setFilter={setFilter} />
+        {/* Sidebar — hidden on mobile unless sidebarOpen */}
+        <Sidebar data={data} coll={coll} filters={filters} setFilter={setFilter} isOpen={sidebarOpen} />
+        {/* Overlay to close sidebar on mobile */}
+        {sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'fixed', inset: 0, zIndex: 149, background: 'rgba(0,0,0,.5)' }}
+          />
+        )}
         <main className={styles.content}>
 
           {/* Top bar */}
           <div className={styles.topBar}>
+            {/* Mobile: show filter toggle button */}
+            <button className={styles.filterToggle} onClick={() => setSidebarOpen(o => !o)}>
+              🎚 Filtros
+            </button>
             <SearchBar search={search} setSearch={setSearch} coll={coll} />
             {hasActive && (
               <button className={styles.clearBtn} onClick={clearAll}>
                 Limpiar
               </button>
             )}
+            {/* Stats / Collection view toggle */}
+            <button
+              className={styles.viewToggle}
+              onClick={() => setView(v => v === 'collection' ? 'stats' : 'collection')}
+            >
+              {view === 'collection' ? '📊 Stats' : '📋 Colección'}
+            </button>
             <button className={`${styles.addBtn} ${styles[coll]}`} onClick={() => requirePin('Agregar nuevo registro', () => setAdminItem(null))}>
               + Agregar
             </button>
           </div>
 
-          {/* Migas de pan — filtros activos */}
-          {hasActive && (
-            <div className={styles.crumbs}>
-              {activeFilters.map(([key, val]) => (
-                <span key={key} className={`${styles.crumb} ${styles[coll]}`}>
-                  {val}
-                  <button onClick={() => setFilter(key, null)}>✕</button>
-                </span>
-              ))}
-              {search.trim() && (
-                <span className={`${styles.crumb} ${styles[coll]}`}>
-                  "{search}"
-                  <button onClick={() => setSearch('')}>✕</button>
-                </span>
-              )}
-            </div>
-          )}
+          {view === 'stats'
+            ? <StatsView data={filtered.length < data.length ? filtered : data} coll={coll} />
+            : <>
+                {/* Migas de pan — filtros activos */}
+                {hasActive && (
+                  <div className={styles.crumbs}>
+                    {activeFilters.map(([key, val]) => (
+                      <span key={key} className={`${styles.crumb} ${styles[coll]}`}>
+                        {val}
+                        <button onClick={() => setFilter(key, null)}>✕</button>
+                      </span>
+                    ))}
+                    {search.trim() && (
+                      <span className={`${styles.crumb} ${styles[coll]}`}>
+                        "{search}"
+                        <button onClick={() => setSearch('')}>✕</button>
+                      </span>
+                    )}
+                  </div>
+                )}
 
-          <div className={styles.meta}>
-            {filtered.length} de {data.length} registros
-          </div>
+                <div className={styles.meta}>
+                  {filtered.length} de {data.length} registros
+                </div>
 
-          {filtered.length === 0
-            ? <div className={styles.empty}>🔍 Sin resultados</div>
-            : <div className={styles.grid}>
-                {filtered.map((item, i) => (
-                  <Card key={i} item={item} coll={coll} onClick={() => setSelected(item)} />
-                ))}
-              </div>
+                {filtered.length === 0
+                  ? <div className={styles.empty}>🔍 Sin resultados</div>
+                  : <div className={styles.grid}>
+                      {filtered.map((item, i) => (
+                        <Card key={i} item={item} coll={coll} onClick={() => setSelected(item)} />
+                      ))}
+                    </div>
+                }
+              </>
           }
         </main>
       </div>

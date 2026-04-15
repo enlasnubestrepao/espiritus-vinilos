@@ -109,3 +109,18 @@
   font-size: .75rem;
   color: var(--text3);
 }
+
+/* ── Responsive: mobile ── */
+@media (max-width: 767px) {
+  .box {
+    width: 95vw;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+  }
+}

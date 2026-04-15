@@ -89,5 +89,38 @@
   transition: background .15s;
 }
 .tokenIcon:hover { background: var(--bg3); }
-.tokenOk      { filter: none; opacity: 1; }
-.tokenMissing { filter: grayscale(1); opacity: .5; }
+.tokenOk      { filter: none; opacity: 1; color: var(--text); }
+.tokenMissing { filter: none; opacity: .85; color: var(--text2); }
+
+/* ── Responsive: mobile ── */
+@media (max-width: 767px) {
+  .header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .titleBlock h1 {
+    font-size: 1.1rem;
+  }
+
+  .titleBlock p {
+    font-size: .6rem;
+  }
+
+  .toggle {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0;
+    max-width: 100%;
+  }
+
+  .toggleBtn {
+    padding: 6px 12px;
+    font-size: .74rem;
+  }
+
+  .tokenInput {
+    width: 130px;
+  }
+}

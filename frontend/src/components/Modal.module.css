@@ -87,3 +87,20 @@
   border: 1px solid var(--border);
 }
 .btnSecondary:hover { border-color: var(--v-acc2); color: var(--text); }
+
+/* ── Responsive: mobile ── */
+@media (max-width: 767px) {
+  .box {
+    width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .hdr {
+    padding: 12px 14px;
+  }
+
+  .detGrid {
+    grid-template-columns: 1fr;
+  }
+}
