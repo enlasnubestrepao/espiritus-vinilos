@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from './Header.module.css'
+import About from './About'
 
 const COLLECTIONS = [
   { id: 'vinyl',  label: '🎵 Vinilos' },
@@ -12,6 +13,7 @@ const TITLES = { vinyl: 'Vinilos', rum: 'Rones', whisky: 'Whiskies' }
 export default function Header({ coll, setColl }) {
   const [showToken, setShowToken] = useState(false)
   const [tokenInput, setTokenInput] = useState('')
+  const [showAbout, setShowAbout] = useState(false)
   const hasToken = !!localStorage.getItem('discogs_token')
 
   useEffect(() => {
@@ -28,6 +30,8 @@ export default function Header({ coll, setColl }) {
   }
 
   return (
+    <>
+    {showAbout && <About onClose={() => setShowAbout(false)} />}
     <header className={`${styles.header} ${styles[coll]}`}>
       <div className={`${styles.logo} ${styles[`logo_${coll}`]}`} />
       <div className={styles.titleBlock}>
@@ -35,6 +39,16 @@ export default function Header({ coll, setColl }) {
         <p className={styles.sub}>Colección Personal · Federico</p>
       </div>
       <div style={{ flex: 1 }} />
+
+      {/* Botón About */}
+      <button
+        className={styles.tokenIcon}
+        onClick={() => setShowAbout(true)}
+        title="Documentación del proyecto"
+        style={{ opacity: 1, filter: 'none' }}
+      >
+        📖
+      </button>
 
       {/* Token Discogs */}
       <div className={styles.tokenWrap}>
@@ -74,5 +88,6 @@ export default function Header({ coll, setColl }) {
         ))}
       </nav>
     </header>
+    </>
   )
 }
