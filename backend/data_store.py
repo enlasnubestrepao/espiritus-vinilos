@@ -12,7 +12,7 @@ import psycopg2
 import psycopg2.extras
 from contextlib import contextmanager
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
 
 # Mapeo nombre de colección → tabla SQL
 _VINYL_COLS = ["artista","album","genero","agrupador","anio","pais",
