@@ -32,23 +32,21 @@ export default function About({ onClose }) {
             <pre className={styles.arch}>{ARCH}</pre>
           </section>
 
-          {/* ── Stack con analogías SQL ── */}
+          {/* ── Stack ── */}
           <section className={styles.section}>
-            <h3 className={styles.sectionTitle}>Stack — analogías SQL/Oracle</h3>
+            <h3 className={styles.sectionTitle}>Stack</h3>
             <div className={styles.tableWrap}>
               <table className={styles.table}>
                 <thead>
                   <tr>
                     <th>Tecnología</th>
-                    <th>Analogía SQL</th>
                     <th>Para qué sirve</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {STACK.map(([tech, sql, desc]) => (
+                  {STACK.map(([tech, desc]) => (
                     <tr key={tech}>
                       <td><code className={styles.code}>{tech}</code></td>
-                      <td className={styles.sql}>{sql}</td>
                       <td className={styles.desc}>{desc}</td>
                     </tr>
                   ))}
@@ -152,19 +150,19 @@ FastAPI Backend — Render.com
   data/  →  vinilos.json · rums.json · whiskies.json`
 
 const STACK = [
-  ['React components',  'Vistas / reportes',           'Piezas de UI reutilizables con su propio estado'],
-  ['useQuery',          'SELECT con cache + TTL',       'Fetcha datos, los cachea, refresca automáticamente'],
-  ['useMutation',       'DML + COMMIT',                 'INSERT/UPDATE/DELETE — invalida cache en onSuccess'],
-  ['useMemo',           'Columna computada / inline view', 'Recalcula solo cuando cambian sus dependencias'],
-  ['useState',          'Variable de sesión PL/SQL',    'Estado local del componente (filtros, item seleccionado…)'],
-  ['useEffect',         'Trigger con cleanup',          'Se activa al cambiar dependencias; return = deshabilitar'],
-  ['useCrud hook',      'Procedure DML reutilizable',   'Encapsula add/update/remove — se instancia por colección'],
-  ['CSS Modules',       'Scope por esquema',            'Nombres de clase únicos por componente, sin colisiones'],
-  ['axios',             'Database link / dblink',       'Cliente HTTP preconfigurado con URL base del backend'],
-  ['FastAPI routers',   'Packages PL/SQL',              'Agrupan endpoints por colección, se registran en main.py'],
-  ['data_store.py',     'Capa de acceso a datos',       'read = SELECT *, write = TRUNCATE + INSERT bulk'],
-  ['JSON files',        'Tablas',                       'Cada .json es una tabla; no hay motor de BD'],
-  ['CORSMiddleware',    'Permisos entre esquemas',       'Autoriza al browser a llamar al backend desde otro dominio'],
+  ['React + Vite',      'Librería de UI. Los componentes son piezas reutilizables que renderizan HTML según su estado'],
+  ['useQuery',          'Hook de React Query — fetcha datos del backend, los cachea y refresca automáticamente'],
+  ['useMutation',       'Hook de React Query — ejecuta POST/PUT/DELETE e invalida el cache al terminar'],
+  ['useMemo',           'Recalcula un valor derivado solo cuando cambian sus dependencias (ej: lista filtrada)'],
+  ['useState',          'Guarda estado local del componente: qué filtros están activos, qué item está seleccionado'],
+  ['useEffect',         'Ejecuta código al montar o al cambiar dependencias; el return limpia efectos secundarios'],
+  ['useCrud hook',      'Hook propio que encapsula add/update/remove con React Query para las tres colecciones'],
+  ['CSS Modules',       'Cada componente tiene su propio archivo .module.css con clases de scope local'],
+  ['axios',             'Cliente HTTP para llamar al backend — configurado con la URL base del API'],
+  ['FastAPI',           'Framework Python para construir APIs REST. Cada router agrupa endpoints de una colección'],
+  ['data_store.py',     'Capa que lee y escribe los archivos JSON — centraliza el acceso a los datos'],
+  ['JSON files',        'Archivos de datos (vinilos.json, rums.json, whiskies.json) — no hay base de datos'],
+  ['CORSMiddleware',    'Permite que el browser llame al backend desde un dominio distinto (GitHub Pages → Render)'],
 ]
 
 const COMPONENTS = [
