@@ -40,6 +40,20 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  border-radius: 6px;
+  padding: 3px 4px;
+  margin: 0 -4px;
+  transition: background .15s;
+}
+
+.barRowClickable {
+  cursor: pointer;
+}
+.barRowClickable:hover {
+  background: rgba(255,255,255,.06);
+}
+.barRowClickable:hover .barLabel {
+  color: var(--text);
 }
 
 .barLabel {
@@ -70,9 +84,18 @@
 .barCount {
   font-size: .68rem;
   color: var(--text3);
-  width: 28px;
+  width: 24px;
   text-align: right;
   flex-shrink: 0;
+}
+
+.barPct {
+  font-size: .60rem;
+  color: var(--text3);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+  opacity: .6;
 }
 
 /* ── Summary card ── */

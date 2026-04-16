@@ -19,8 +19,9 @@ export default function Dashboard({ coll }) {
   const [adminItem,   setAdminItem]   = useState(undefined)
   const [adminIndex,  setAdminIndex]  = useState(-1)   // índice capturado al abrir — no se recalcula
   const [pinAction,   setPinAction]   = useState(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [view,        setView]        = useState('collection')
+  const [sidebarOpen,  setSidebarOpen]  = useState(false)
+  const [view,         setView]         = useState('collection')
+  const [statsDetail,  setStatsDetail]  = useState(null) // { title, filterKey, value, items }
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [coll],
@@ -65,6 +66,11 @@ export default function Dashboard({ coll }) {
     return data.findIndex(r => JSON.stringify(r) === JSON.stringify(item))
   }
 
+  function handleBarClick(filterKey, value) {
+    const items = (data || []).filter(r => r[filterKey] === value)
+    setStatsDetail({ title: value, filterKey, value, items })
+  }
+
   function requirePin(label, onSuccess) {
     if (!localStorage.getItem('admin_pin')) { onSuccess(); return }
     setPinAction({ label, onSuccess })
@@ -72,6 +78,28 @@ export default function Dashboard({ coll }) {
 
   return (
     <>
+      {/* Stats drill-down modal */}
+      {statsDetail && (
+        <div className={styles.detailOverlay} onClick={() => setStatsDetail(null)}>
+          <div className={styles.detailBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.detailHeader}>
+              <div>
+                <h2 className={styles.detailTitle}>{statsDetail.title}</h2>
+                <p className={styles.detailSub}>{statsDetail.items.length} registros</p>
+              </div>
+              <button className={styles.detailClose} onClick={() => setStatsDetail(null)}>✕</button>
+            </div>
+            <div className={styles.detailGrid}>
+              {statsDetail.items.map((item, i) => (
+                <Card
+                  key={i} item={item} coll={coll}
+                  onClick={() => { setStatsDetail(null); setSelected(item) }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       {pinAction && (
         <PinModal
           action={pinAction.label}
@@ -134,7 +162,7 @@ export default function Dashboard({ coll }) {
           </div>
 
           {view === 'stats'
-            ? <StatsView data={filtered.length < data.length ? filtered : data} coll={coll} />
+            ? <StatsView data={filtered.length < data.length ? filtered : data} coll={coll} onBarClick={handleBarClick} />
             : <>
                 {/* Migas de pan — filtros activos */}
                 {hasActive && (
@@ -194,6 +222,8 @@ function Card({ item, coll, onClick }) {
         }
         {/* Dot: verde = tiene imagen · rojo = sin imagen */}
         <span className={`${styles.dot} ${item.cover_url ? styles.dotGreen : styles.dotRed}`} />
+        {/* Badge prestado */}
+        {item.fuera && <span className={styles.lentBadge} title="Prestado">📤</span>}
       </div>
       <div className={styles.cardBody}>
         <div className={styles.cardTitle}>{title}</div>

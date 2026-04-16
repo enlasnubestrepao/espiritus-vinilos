@@ -101,7 +101,7 @@ export default function Header({ coll, setColl }) {
             onClick={() => setShowPin(true)}
             title={hasPin ? 'PIN admin configurado — click para cambiar' : 'Sin PIN admin — click para configurar'}
           >
-            ⚙
+            🛡️
           </button>
       }
 

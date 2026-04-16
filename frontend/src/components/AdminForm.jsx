@@ -151,7 +151,7 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
 
         <div className={styles.body}>
           <div className={styles.formGrid}>
-            {fields.map(({ key, label, type, options }) => (
+            {fields.map(({ key, label, type, options, suggestions }) => (
               <div className={styles.fgroup} key={key}>
                 <label>{label}</label>
                 {options
@@ -159,11 +159,24 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
                       <option value="">—</option>
                       {options.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
-                  : <input
-                      type={type || 'text'}
-                      value={form[key] ?? ''}
-                      onChange={e => setField(key, e.target.value)}
-                    />
+                  : suggestions
+                    ? <>
+                        <input
+                          list={`dl-${key}`}
+                          type="text"
+                          value={form[key] ?? ''}
+                          onChange={e => setField(key, e.target.value)}
+                          placeholder="Escribir o elegir..."
+                        />
+                        <datalist id={`dl-${key}`}>
+                          {suggestions.map(s => <option key={s} value={s} />)}
+                        </datalist>
+                      </>
+                    : <input
+                        type={type || 'text'}
+                        value={form[key] ?? ''}
+                        onChange={e => setField(key, e.target.value)}
+                      />
                 }
               </div>
             ))}
@@ -263,8 +276,8 @@ function getFields(coll, data) {
     { key: 'anio',       label: 'Año',           type: 'number' },
     { key: 'pais',       label: 'País prensado' },
     { key: 'cat_num',    label: 'Cat. Nº' },
-    { key: 'origen',     label: 'Origen',        options: uniq('origen') },
-    { key: 'fuera',      label: 'Estado',        options: ['false', 'true'] },
+    { key: 'origen',     label: 'Origen',         suggestions: uniq('origen') },
+    { key: 'fuera',      label: 'Prestado',       options: ['No', 'Sí'] },
     { key: 'discogs',    label: 'En Discogs',    options: ['true', 'false'] },
     { key: 'url',        label: 'URL Discogs (página del release)' },
   ]
@@ -299,7 +312,7 @@ function parseForm(form, coll) {
   const f = { ...form }
   if (coll === 'vinyl') {
     f.anio   = f.anio   ? parseInt(f.anio)   : null
-    f.fuera  = f.fuera  === 'true'
+    f.fuera  = f.fuera  === 'Sí' || f.fuera === true
     f.discogs= f.discogs === 'true'
   }
   if (coll === 'rum') {
@@ -319,7 +332,7 @@ function buildInitial(item, coll) {
   if (!item) return {}
   const f = { ...item }
   if (coll === 'vinyl') {
-    f.fuera   = String(f.fuera   ?? false)
+    f.fuera   = f.fuera ? 'Sí' : 'No'
     f.discogs = String(f.discogs ?? false)
   }
   return f

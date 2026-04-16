@@ -105,6 +105,14 @@
 .dotGreen { background: #22c55e; }
 .dotRed   { background: #ef4444; }
 
+.lentBadge {
+  position: absolute;
+  bottom: 6px; right: 6px;
+  font-size: .75rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7));
+}
+
 .vinylDisc {
   width: 83%; height: 83%; border-radius: 50%;
   background: conic-gradient(#1a1a1a 0,#222 10deg,#1a1a1a 20deg,#222 30deg,#1a1a1a 40deg,#222 50deg,#1a1a1a 60deg,#222 70deg,#1a1a1a 80deg,#222 90deg,#1a1a1a 100deg,#222 110deg,#1a1a1a 120deg,#222 130deg,#1a1a1a 140deg,#222 150deg,#1a1a1a 160deg,#222 170deg,#1a1a1a 180deg,#222 190deg,#1a1a1a 200deg,#222 210deg,#1a1a1a 220deg,#222 230deg,#1a1a1a 240deg,#222 250deg,#1a1a1a 260deg,#222 270deg,#1a1a1a 280deg,#222 290deg,#1a1a1a 300deg,#222 310deg,#1a1a1a 320deg,#222 330deg,#1a1a1a 340deg,#222 350deg);
@@ -202,6 +210,67 @@
   flex-shrink: 0;
 }
 .viewToggle:hover { border-color: var(--v-acc2); color: var(--text); }
+
+/* ── Stats detail modal ── */
+.detailOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,.75);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+}
+
+.detailBox {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  width: 100%;
+  max-width: 900px;
+  padding: 24px;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.detailTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.detailSub {
+  font-size: .75rem;
+  color: var(--text3);
+  margin: 0;
+}
+
+.detailClose {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: .85rem;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.detailClose:hover { border-color: var(--v-acc2); color: var(--text); }
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
 
 /* ── Responsive: mobile ── */
 @media (max-width: 767px) {
