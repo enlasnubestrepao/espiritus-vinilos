@@ -90,31 +90,33 @@ function getFields(item, coll) {
     ['País sello',   item.pais_sello],
     ['Cat. Nº',      item.cat_num],
     ['Origen',       item.origen],
-    ['Estado',       item.fuera ? '📦 Fuera' : '✅ En colección'],
+    ['Prestado',     item.fuera ? '📤 Sí' : '—'],
     ['Discogs',      item.discogs ? '🔗 Sí' : '❌ No'],
   ]
   if (coll === 'rum') return [
     ['Marca',        item.brand],
     ['Nombre',       item.name],
     ['Tipo',         item.type],
+    ['País',         item.country],
     ['ABV',          item.abv ? `${item.abv}%` : null],
     ['Blend',        item.blend],
     ['Edad mín.',    item.age_low ? `${item.age_low} años` : null],
     ['Edad máx.',    item.age_max ? `${item.age_max} años` : null],
     ['Región',       item.region],
-    ['País',         item.country],
-    ['Escala',       item.scale ? '★'.repeat(item.scale) : null],
+    ['Escala',       item.scale ? '★'.repeat(Math.round(item.scale)) + ` (${item.scale})` : null],
+    ['Ya consumí',   item.terminado ? '🫗 Sí' : '—'],
   ]
   return [
     ['Marca',        item.brand],
     ['Expresión',    item.version],
     ['Tipo',         item.type],
+    ['País',         item.country],
     ['ABV',          item.abv ? `${item.abv}%` : null],
     ['Años',         item.years ? `${item.years} años` : 'NAS'],
     ['Región',       item.region],
-    ['País',         item.country],
     ['Origen',       item.origin],
     ['Destilería',   item.distillery],
+    ['Ya consumí',   item.terminado ? '🫗 Sí' : '—'],
   ]
 }
 

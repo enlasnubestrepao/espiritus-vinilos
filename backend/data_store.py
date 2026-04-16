@@ -30,9 +30,9 @@ COLUMNS = {
     "vinilos":  _VINYL_COLS,
     "vinyls":   _VINYL_COLS,
     "rums":     ["brand","name","type","country","abv","blend",
-                 "age_low","age_max","region","scale","url","cover_url"],
+                 "age_low","age_max","region","scale","url","cover_url","terminado"],
     "whiskies": ["brand","version","type","origin","country","abv",
-                 "years","region","distillery","url","cover_url"],
+                 "years","region","distillery","url","cover_url","terminado"],
 }
 
 

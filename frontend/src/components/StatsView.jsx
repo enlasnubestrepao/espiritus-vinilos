@@ -122,14 +122,23 @@ function VinylStats({ data, onBarClick }) {
 function RumStats({ data, onBarClick }) {
   const countries = useMemo(() => countBy(data, 'country'), [data])
   const types     = useMemo(() => countBy(data, 'type'),    [data])
+  const regions   = useMemo(() => countBy(data, 'region'),  [data])
   const blends    = useMemo(() => {
     const map = {}
     data.forEach(item => {
-      const val = item.blend ? 'Blend' : 'Single'
+      const val = item.blend === 'Si' ? 'Blend' : 'Single'
       map[val] = (map[val] || 0) + 1
     })
     return Object.entries(map).sort((a, b) => b[1] - a[1])
   }, [data])
+
+  const withCover   = data.filter(r => r.cover_url).length
+  const terminados  = data.filter(r => r.terminado).length
+  const withScale   = data.filter(r => r.scale)
+  const avgScale    = withScale.length
+    ? (withScale.reduce((s, r) => s + r.scale, 0) / withScale.length).toFixed(1)
+    : '—'
+  const pctCover    = data.length ? Math.round((withCover / data.length) * 100) : 0
 
   return (
     <>
@@ -148,20 +157,46 @@ function RumStats({ data, onBarClick }) {
             <span className={styles.statNum}>{types.length}</span>
             <span className={styles.statLbl}>Tipos</span>
           </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{avgScale}</span>
+            <span className={styles.statLbl}>Escala prom</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{withCover}</span>
+            <span className={styles.statLbl}>Con portada</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{pctCover}%</span>
+            <span className={styles.statLbl}>% Portada</span>
+          </div>
+          {terminados > 0 && (
+            <div className={styles.stat}>
+              <span className={styles.statNum}>{terminados}</span>
+              <span className={styles.statLbl}>Ya consumí</span>
+            </div>
+          )}
         </div>
       </div>
-      <BarChart title="Países"  entries={countries} accent="var(--ru-acc2)" filterKey="country" onBarClick={onBarClick} />
-      <BarChart title="Tipos"   entries={types}     accent="var(--ru-gold)" filterKey="type"    onBarClick={onBarClick} />
-      <BarChart title="Blend vs Single" entries={blends} accent="var(--ru-acc)" />
+      <BarChart title="Países"        entries={countries} accent="var(--ru-acc2)" filterKey="country" onBarClick={onBarClick} />
+      <BarChart title="Tipos"         entries={types}     accent="var(--ru-gold)" filterKey="type"    onBarClick={onBarClick} />
+      <BarChart title="Regiones"      entries={regions}   accent="var(--ru-acc)"  filterKey="region"  onBarClick={onBarClick} />
+      <BarChart title="Blend vs Single" entries={blends}  accent="var(--ru-acc)" />
     </>
   )
 }
 
 /* ── Whisky stats ── */
 function WhiskyStats({ data, onBarClick }) {
-  const countries = useMemo(() => countBy(data, 'country'), [data])
-  const types     = useMemo(() => countBy(data, 'type'),    [data])
-  const regions   = useMemo(() => countBy(data, 'region'),  [data])
+  const countries  = useMemo(() => countBy(data, 'country'),    [data])
+  const types      = useMemo(() => countBy(data, 'type'),       [data])
+  const regions    = useMemo(() => countBy(data, 'region'),     [data])
+  const origins    = useMemo(() => countBy(data, 'origin'),     [data])
+
+  const withCover  = data.filter(r => r.cover_url).length
+  const terminados = data.filter(r => r.terminado).length
+  const withAge    = data.filter(r => r.years).length
+  const nas        = data.length - withAge
+  const pctCover   = data.length ? Math.round((withCover / data.length) * 100) : 0
 
   return (
     <>
@@ -180,11 +215,34 @@ function WhiskyStats({ data, onBarClick }) {
             <span className={styles.statNum}>{regions.length}</span>
             <span className={styles.statLbl}>Regiones</span>
           </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{withAge}</span>
+            <span className={styles.statLbl}>Con edad</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{nas}</span>
+            <span className={styles.statLbl}>NAS</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{withCover}</span>
+            <span className={styles.statLbl}>Con portada</span>
+          </div>
+          <div className={styles.stat}>
+            <span className={styles.statNum}>{pctCover}%</span>
+            <span className={styles.statLbl}>% Portada</span>
+          </div>
+          {terminados > 0 && (
+            <div className={styles.stat}>
+              <span className={styles.statNum}>{terminados}</span>
+              <span className={styles.statLbl}>Ya consumí</span>
+            </div>
+          )}
         </div>
       </div>
       <BarChart title="Países"   entries={countries} accent="var(--wh-acc2)" filterKey="country" onBarClick={onBarClick} />
       <BarChart title="Tipos"    entries={types}     accent="var(--wh-gold)" filterKey="type"    onBarClick={onBarClick} />
       <BarChart title="Regiones" entries={regions}   accent="var(--wh-acc2)" filterKey="region"  onBarClick={onBarClick} />
+      <BarChart title="Origen"   entries={origins}   accent="var(--wh-acc)"  filterKey="origin"  onBarClick={onBarClick} />
     </>
   )
 }

@@ -207,7 +207,11 @@ function Card({ item, coll, onClick }) {
   const title = coll === 'vinyl' ? item.artista : item.brand
   const sub   = coll === 'vinyl' ? item.album   : (item.name || item.version || '')
   const tag   = coll === 'vinyl' ? item.genero  : item.type
-  const year  = coll === 'vinyl' ? item.anio    : (item.years ? `${item.years} años` : '')
+  const year  = coll === 'vinyl'
+    ? item.anio
+    : coll === 'whisky'
+      ? (item.years ? `${item.years} años` : 'NAS')
+      : (item.abv   ? `${item.abv}%`       : '')
 
   return (
     <div className={`${styles.card} ${styles[coll]}`} onClick={onClick}>
@@ -222,8 +226,9 @@ function Card({ item, coll, onClick }) {
         }
         {/* Dot: verde = tiene imagen · rojo = sin imagen */}
         <span className={`${styles.dot} ${item.cover_url ? styles.dotGreen : styles.dotRed}`} />
-        {/* Badge prestado */}
-        {item.fuera && <span className={styles.lentBadge} title="Prestado">📤</span>}
+        {/* Badge prestado (vinyl) / ya consumí (rum, whisky) */}
+        {item.fuera      && <span className={styles.lentBadge} title="Prestado">📤</span>}
+        {item.terminado  && <span className={styles.lentBadge} title="Ya consumí">🫗</span>}
       </div>
       <div className={styles.cardBody}>
         <div className={styles.cardTitle}>{title}</div>

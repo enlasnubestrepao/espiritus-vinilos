@@ -91,7 +91,7 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
         setShowManualUrl(false)
       } else {
         setCoverMsg('⚠ No se encontró imagen')
-        setShowManualUrl(coll === 'vinyl')
+        setShowManualUrl(true)
       }
     } catch {
       setCoverMsg('⚠ Error al buscar imagen')
@@ -282,29 +282,31 @@ function getFields(coll, data) {
     { key: 'url',        label: 'URL Discogs (página del release)' },
   ]
   if (coll === 'rum') return [
-    { key: 'brand',   label: 'Marca' },
-    { key: 'name',    label: 'Nombre' },
-    { key: 'type',    label: 'Tipo',    options: uniq('type') },
-    { key: 'country', label: 'País',    options: uniq('country') },
-    { key: 'abv',     label: 'ABV %',   type: 'number' },
-    { key: 'blend',   label: 'Blend',   options: ['Si', 'No'] },
-    { key: 'age_low', label: 'Edad mín', type: 'number' },
-    { key: 'age_max', label: 'Edad máx', type: 'number' },
-    { key: 'region',  label: 'Región' },
-    { key: 'scale',   label: 'Escala (1-5)', type: 'number' },
-    { key: 'url',     label: 'URL' },
+    { key: 'brand',      label: 'Marca' },
+    { key: 'name',       label: 'Nombre' },
+    { key: 'type',       label: 'Tipo',         options: uniq('type') },
+    { key: 'country',    label: 'País',          options: uniq('country') },
+    { key: 'abv',        label: 'ABV %',         type: 'number' },
+    { key: 'blend',      label: 'Blend',         options: ['Si', 'No'] },
+    { key: 'age_low',    label: 'Edad mín',      type: 'number' },
+    { key: 'age_max',    label: 'Edad máx',      type: 'number' },
+    { key: 'region',     label: 'Región',        suggestions: uniq('region') },
+    { key: 'scale',      label: 'Escala (1-5)',  type: 'number' },
+    { key: 'url',        label: 'URL' },
+    { key: 'terminado',  label: 'Ya consumí',    options: ['No', 'Sí'] },
   ]
   return [
     { key: 'brand',      label: 'Marca' },
     { key: 'version',    label: 'Expresión' },
-    { key: 'type',       label: 'Tipo',       options: uniq('type') },
-    { key: 'origin',     label: 'Origen',     options: uniq('origin') },
-    { key: 'country',    label: 'País',       options: uniq('country') },
-    { key: 'abv',        label: 'ABV %',      type: 'number' },
-    { key: 'years',      label: 'Años',       type: 'number' },
-    { key: 'region',     label: 'Región' },
+    { key: 'type',       label: 'Tipo',          options: uniq('type') },
+    { key: 'origin',     label: 'Origen',        suggestions: uniq('origin') },
+    { key: 'country',    label: 'País',          options: uniq('country') },
+    { key: 'abv',        label: 'ABV %',         type: 'number' },
+    { key: 'years',      label: 'Años (0 = NAS)', type: 'number' },
+    { key: 'region',     label: 'Región',        suggestions: uniq('region') },
     { key: 'distillery', label: 'Destilería' },
     { key: 'url',        label: 'URL' },
+    { key: 'terminado',  label: 'Ya consumí',    options: ['No', 'Sí'] },
   ]
 }
 
@@ -316,14 +318,16 @@ function parseForm(form, coll) {
     f.discogs= f.discogs === 'true'
   }
   if (coll === 'rum') {
-    f.abv     = f.abv     ? parseFloat(f.abv)   : null
-    f.age_low = f.age_low ? parseInt(f.age_low) : null
-    f.age_max = f.age_max ? parseInt(f.age_max) : null
-    f.scale   = f.scale   ? parseFloat(f.scale) : null
+    f.abv       = f.abv     ? parseFloat(f.abv)   : null
+    f.age_low   = f.age_low ? parseInt(f.age_low) : null
+    f.age_max   = f.age_max ? parseInt(f.age_max) : null
+    f.scale     = f.scale   ? parseFloat(f.scale) : null
+    f.terminado = f.terminado === 'Sí' || f.terminado === true
   }
   if (coll === 'whisky') {
-    f.abv   = f.abv   ? parseFloat(f.abv) : null
-    f.years = f.years ? parseInt(f.years) : null
+    f.abv       = f.abv   ? parseFloat(f.abv) : null
+    f.years     = f.years ? parseInt(f.years) : null
+    f.terminado = f.terminado === 'Sí' || f.terminado === true
   }
   return f
 }
@@ -334,6 +338,9 @@ function buildInitial(item, coll) {
   if (coll === 'vinyl') {
     f.fuera   = f.fuera ? 'Sí' : 'No'
     f.discogs = String(f.discogs ?? false)
+  }
+  if (coll === 'rum' || coll === 'whisky') {
+    f.terminado = f.terminado ? 'Sí' : 'No'
   }
   return f
 }
