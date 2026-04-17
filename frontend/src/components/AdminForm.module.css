@@ -110,6 +110,103 @@
   color: var(--text3);
 }
 
+/* ── Origen combo con botón + ── */
+.origenRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.origenSelect {
+  flex: 1;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: .82rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+.origenSelect:focus {
+  outline: none;
+  border-color: var(--v-acc2);
+}
+
+.origenPlusBtn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 7px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+  line-height: 1;
+}
+.origenPlusBtn:hover {
+  border-color: var(--v-acc2);
+  color: var(--v-acc2);
+  background: rgba(192,57,43,.1);
+}
+
+.origenAdd {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex: 1;
+  animation: fadeIn .15s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateX(-6px) } to { opacity: 1; transform: translateX(0) } }
+
+.origenInput {
+  flex: 1;
+  background: var(--bg4);
+  border: 1px solid var(--v-acc2);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: .8rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.origenConfirm,
+.origenCancel {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 6px;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .12s;
+}
+.origenConfirm {
+  background: rgba(29,185,84,.2);
+  color: #1DB954;
+  border: 1px solid rgba(29,185,84,.4);
+}
+.origenConfirm:hover { background: rgba(29,185,84,.35); }
+
+.origenCancel {
+  background: rgba(192,57,43,.15);
+  color: var(--v-acc2);
+  border: 1px solid rgba(192,57,43,.3);
+}
+.origenCancel:hover { background: rgba(192,57,43,.3); }
+
 /* ── Responsive: mobile ── */
 @media (max-width: 767px) {
   .box {

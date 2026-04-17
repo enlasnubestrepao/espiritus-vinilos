@@ -3,6 +3,83 @@ import { useCrud } from '../hooks/useCrud'
 import { fetchAndSaveCover, fetchAndSaveDiscogsCover, scrapeUrl } from '../services/api'
 import styles from './AdminForm.module.css'
 
+// ── Combo de origen con botón "+" para agregar opciones ──────────────────────
+const ORIGEN_STORAGE_KEY = 'vinyl_origen_extras'
+
+function getOrigenOptions(dataOptions) {
+  const base = dataOptions.length ? dataOptions : [
+    'Al vinilo', 'BogotaVinylSelectors', 'Discos Cosmos',
+    'La Academia del Vinilo', 'Regalado', 'Sindicato del Vinilo',
+  ]
+  let extras = []
+  try { extras = JSON.parse(localStorage.getItem(ORIGEN_STORAGE_KEY) || '[]') } catch {}
+  return [...new Set([...base, ...extras])].sort()
+}
+
+function OrigenCombo({ value, onChange, dataOptions, onRequestPin }) {
+  const [adding,   setAdding]   = useState(false)
+  const [newVal,   setNewVal]   = useState('')
+  const [options,  setOptions]  = useState(() => getOrigenOptions(dataOptions))
+
+  function handleAdd() {
+    const v = newVal.trim()
+    if (!v) return
+    // Guardar en localStorage
+    let extras = []
+    try { extras = JSON.parse(localStorage.getItem(ORIGEN_STORAGE_KEY) || '[]') } catch {}
+    if (!extras.includes(v)) {
+      extras.push(v)
+      localStorage.setItem(ORIGEN_STORAGE_KEY, JSON.stringify(extras))
+    }
+    const updated = getOrigenOptions(dataOptions)
+    setOptions(updated)
+    onChange(v)
+    setNewVal('')
+    setAdding(false)
+  }
+
+  function requestAdd() {
+    if (onRequestPin) {
+      onRequestPin('Agregar opción de origen', () => setAdding(true))
+    } else {
+      setAdding(true)
+    }
+  }
+
+  return (
+    <div className={styles.origenRow}>
+      <select
+        value={value ?? ''}
+        onChange={e => onChange(e.target.value)}
+        className={styles.origenSelect}
+      >
+        <option value="">—</option>
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+
+      {adding
+        ? <div className={styles.origenAdd}>
+            <input
+              autoFocus
+              type="text"
+              placeholder="Nueva opción..."
+              value={newVal}
+              onChange={e => setNewVal(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleAdd()
+                if (e.key === 'Escape') { setAdding(false); setNewVal('') }
+              }}
+              className={styles.origenInput}
+            />
+            <button className={styles.origenConfirm} onClick={handleAdd} title="Confirmar">✓</button>
+            <button className={styles.origenCancel} onClick={() => { setAdding(false); setNewVal('') }} title="Cancelar">✕</button>
+          </div>
+        : <button className={styles.origenPlusBtn} onClick={requestAdd} title="Agregar nueva opción">+</button>
+      }
+    </div>
+  )
+}
+
 // item = null → nuevo registro | item = {...} → editar
 // index = posición en el array del backend (necesario para PUT/DELETE)
 export default function AdminForm({ coll, item, index, data, onClose, onRequestPin }) {
@@ -155,7 +232,14 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
             {fields.map(({ key, label, type, options, suggestions }) => (
               <div className={styles.fgroup} key={key}>
                 <label>{label}</label>
-                {options
+                {type === 'origen'
+                  ? <OrigenCombo
+                      value={form[key]}
+                      onChange={v => setField(key, v)}
+                      dataOptions={options || []}
+                      onRequestPin={onRequestPin}
+                    />
+                  : options
                   ? <select value={form[key] ?? ''} onChange={e => setField(key, e.target.value)}>
                       <option value="">—</option>
                       {options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -277,7 +361,7 @@ function getFields(coll, data) {
     { key: 'anio',       label: 'Año',           type: 'number' },
     { key: 'pais',       label: 'País prensado' },
     { key: 'cat_num',    label: 'Cat. Nº' },
-    { key: 'origen',     label: 'Origen',         suggestions: uniq('origen') },
+    { key: 'origen',     label: 'Origen',         type: 'origen', options: uniq('origen') },
     { key: 'fuera',      label: 'Prestado',       options: ['No', 'Sí'] },
     { key: 'discogs',    label: 'En Discogs',    options: ['true', 'false'] },
     { key: 'url',        label: 'URL Discogs (página del release)' },
