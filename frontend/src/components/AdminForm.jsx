@@ -6,20 +6,29 @@ import styles from './AdminForm.module.css'
 // ── Combo de origen con botón "+" para agregar opciones ──────────────────────
 const ORIGEN_STORAGE_KEY = 'vinyl_origen_extras'
 
-function getOrigenOptions(dataOptions) {
-  const base = dataOptions.length ? dataOptions : [
-    'Al vinilo', 'BogotaVinylSelectors', 'Discos Cosmos',
-    'La Academia del Vinilo', 'Regalado', 'Sindicato del Vinilo',
-  ]
+// Lista canónica fija — NO se deriva del data (evita que valores viejos del cache reaparezcan)
+const ORIGEN_BASE = [
+  'Al vinilo',
+  'BogotaVinylSelectors',
+  'Discos Cosmos',
+  'La Academia del Vinilo',
+  'Regalado',
+  'Sindicato del Vinilo',
+]
+
+function getOrigenOptions() {
   let extras = []
   try { extras = JSON.parse(localStorage.getItem(ORIGEN_STORAGE_KEY) || '[]') } catch {}
-  return [...new Set([...base, ...extras])].sort()
+  // Limpiar cualquier valor viejo que pueda estar en localStorage
+  const LEGACY = ['Coleccion Amparo Montoya','Comprado en Espana','Eleonora Jimenez','Regalo']
+  extras = extras.filter(e => !LEGACY.includes(e))
+  return [...new Set([...ORIGEN_BASE, ...extras])].sort()
 }
 
-function OrigenCombo({ value, onChange, dataOptions, onRequestPin }) {
+function OrigenCombo({ value, onChange, onRequestPin }) {
   const [adding,   setAdding]   = useState(false)
   const [newVal,   setNewVal]   = useState('')
-  const [options,  setOptions]  = useState(() => getOrigenOptions(dataOptions))
+  const [options,  setOptions]  = useState(() => getOrigenOptions())
 
   function handleAdd() {
     const v = newVal.trim()
@@ -31,7 +40,7 @@ function OrigenCombo({ value, onChange, dataOptions, onRequestPin }) {
       extras.push(v)
       localStorage.setItem(ORIGEN_STORAGE_KEY, JSON.stringify(extras))
     }
-    const updated = getOrigenOptions(dataOptions)
+    const updated = getOrigenOptions()
     setOptions(updated)
     onChange(v)
     setNewVal('')
@@ -236,7 +245,6 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
                   ? <OrigenCombo
                       value={form[key]}
                       onChange={v => setField(key, v)}
-                      dataOptions={options || []}
                       onRequestPin={onRequestPin}
                     />
                   : options
