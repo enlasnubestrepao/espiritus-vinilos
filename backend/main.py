@@ -11,6 +11,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://federicojimenezpulido.github.io",
+        "https://enlasnubestrepao.github.io",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
