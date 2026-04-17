@@ -46,8 +46,23 @@ function BarChart({ title, entries, accent, filterKey, onBarClick }) {
   )
 }
 
+/* ── Stat helper ── */
+function Stat({ num, lbl, items, title, onStatClick, missing }) {
+  const clickable = !!(items && onStatClick)
+  return (
+    <div
+      className={[styles.stat, clickable ? styles.statClickable : '', missing ? styles.statMissing : ''].join(' ')}
+      onClick={clickable ? () => onStatClick(title || lbl, items) : undefined}
+      title={clickable ? `Ver ${items.length} registros` : undefined}
+    >
+      <span className={styles.statNum}>{num}</span>
+      <span className={styles.statLbl}>{lbl}</span>
+    </div>
+  )
+}
+
 /* ── Vinyl stats ── */
-function VinylStats({ data, onBarClick }) {
+function VinylStats({ data, onBarClick, onStatClick }) {
   const genres     = useMemo(() => countBy(data, 'agrupador'), [data])
   const categories = useMemo(() => countBy(data, 'genero'),    [data])
   const countries  = useMemo(() => countBy(data, 'pais'),      [data])
@@ -119,7 +134,7 @@ function VinylStats({ data, onBarClick }) {
 }
 
 /* ── Rum stats ── */
-function RumStats({ data, onBarClick }) {
+function RumStats({ data, onBarClick, onStatClick }) {
   const countries = useMemo(() => countBy(data, 'country'), [data])
   const types     = useMemo(() => countBy(data, 'type'),    [data])
   const regions   = useMemo(() => countBy(data, 'region'),  [data])
@@ -186,7 +201,7 @@ function RumStats({ data, onBarClick }) {
 }
 
 /* ── Whisky stats ── */
-function WhiskyStats({ data, onBarClick }) {
+function WhiskyStats({ data, onBarClick, onStatClick }) {
   const countries  = useMemo(() => countBy(data, 'country'),    [data])
   const types      = useMemo(() => countBy(data, 'type'),       [data])
   const regions    = useMemo(() => countBy(data, 'region'),     [data])
@@ -248,16 +263,16 @@ function WhiskyStats({ data, onBarClick }) {
 }
 
 /* ── Main component ── */
-export default function StatsView({ data, coll, onBarClick }) {
+export default function StatsView({ data, coll, onBarClick, onStatClick }) {
   if (!data || data.length === 0) {
     return <div className={styles.empty}>Sin datos para mostrar estadísticas</div>
   }
 
   return (
     <div className={styles.container}>
-      {coll === 'vinyl'  && <VinylStats  data={data} onBarClick={onBarClick} />}
-      {coll === 'rum'    && <RumStats    data={data} onBarClick={onBarClick} />}
-      {coll === 'whisky' && <WhiskyStats data={data} onBarClick={onBarClick} />}
+      {coll === 'vinyl'  && <VinylStats  data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}
+      {coll === 'rum'    && <RumStats    data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}
+      {coll === 'whisky' && <WhiskyStats data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}
     </div>
   )
 }

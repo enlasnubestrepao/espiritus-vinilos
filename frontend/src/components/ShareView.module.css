@@ -1,0 +1,202 @@
+.root {
+  position: fixed; inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn .4s ease;
+}
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.bgImg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) saturate(1.8) brightness(.55);
+  transform: scale(1.15);
+  z-index: 0;
+}
+
+.bgGrad {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 40%, var(--accent, #c0392b) 0%, #050505 70%);
+  opacity: .6;
+  z-index: 0;
+}
+
+.bgVeil {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,.3) 0%, rgba(0,0,0,.1) 30%, rgba(0,0,0,.55) 100%),
+    radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.5) 100%);
+  z-index: 1;
+}
+
+.topBar {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 32px;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.brandDot {
+  width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.brandName {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+}
+
+.closeBtn {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.55);
+  border-radius: 50%; width: 38px; height: 38px;
+  cursor: pointer; font-size: .9rem; transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.closeBtn:hover { background: rgba(255,255,255,.18); color: #fff; }
+
+.stage {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 72px; padding: 0 60px 20px;
+  position: relative; z-index: 10; min-height: 0;
+}
+
+.discSection { position: relative; flex-shrink: 0; }
+
+.disc {
+  width: 300px; height: 300px; border-radius: 50%;
+  background: #0d0d0d;
+  position: relative; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06), inset 0 0 30px rgba(0,0,0,.5);
+}
+
+.groove {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.04); pointer-events: none;
+}
+
+.label {
+  width: 42%; height: 42%; border-radius: 50%;
+  position: absolute; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.1), 0 4px 20px rgba(0,0,0,.5);
+  z-index: 2;
+}
+.labelImg { width: 100%; height: 100%; object-fit: cover; }
+.labelInitials {
+  font-size: 1.6rem; font-weight: 900;
+  color: rgba(255,255,255,.3); letter-spacing: -1px;
+}
+
+.hole {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: #000; position: absolute; z-index: 3;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15);
+}
+
+.discShadow {
+  width: 80%; height: 30px;
+  background: rgba(0,0,0,.6); border-radius: 50%;
+  filter: blur(18px); margin: 12px auto 0;
+}
+
+@keyframes spinVinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spin { animation: spinVinyl 5s linear infinite; }
+
+.infoPanel {
+  max-width: 460px; display: flex; flex-direction: column; gap: 18px; min-width: 0;
+}
+
+.fromLabel {
+  font-size: .6rem; font-weight: 700; letter-spacing: 3px;
+  color: rgba(255,255,255,.4); text-transform: uppercase; margin: 0;
+}
+
+.albumTitle {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.8rem; font-weight: 700; color: #fff;
+  line-height: 1.1; margin: 0;
+  text-shadow: 0 2px 30px rgba(0,0,0,.6);
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.artistName { font-size: 1.15rem; font-weight: 400; color: rgba(255,255,255,.65); margin: 0; }
+
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.pill {
+  font-size: .68rem;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.65); border-radius: 20px; padding: 5px 13px; white-space: nowrap;
+}
+
+.pillAccent {
+  font-size: .68rem; background: transparent; border: 1px solid;
+  border-radius: 20px; padding: 5px 13px; font-weight: 600; white-space: nowrap;
+}
+
+.playerWrap {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.btnPlay {
+  border: none; color: #000; font-weight: 700;
+  font-family: 'Inter', sans-serif; border-radius: 28px;
+  padding: 13px 28px; font-size: .88rem; cursor: pointer;
+  transition: all .15s; letter-spacing: .3px; flex-shrink: 0;
+}
+.btnPlay:hover:not(:disabled) { filter: brightness(1.12); transform: scale(1.02); }
+.btnPlay:disabled { opacity: .55; cursor: default; }
+
+.btnCollection {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.75); border-radius: 28px;
+  padding: 13px 24px; font-size: .88rem; cursor: pointer;
+  transition: all .15s; font-family: 'Inter', sans-serif;
+}
+.btnCollection:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+.footer {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 32px; font-size: .62rem; color: rgba(255,255,255,.25);
+  letter-spacing: 1px; text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.footerDot { opacity: .4; }
+
+@media (max-width: 900px) {
+  .stage { gap: 40px; padding: 0 32px 20px; }
+  .disc { width: 240px; height: 240px; }
+  .albumTitle { font-size: 2.2rem; }
+}
+
+@media (max-width: 640px) {
+  .topBar { padding: 14px 20px; }
+  .stage {
+    flex-direction: column; align-items: center;
+    justify-content: flex-start; gap: 24px;
+    padding: 0 20px 16px; overflow-y: auto;
+  }
+  .disc { width: 180px; height: 180px; }
+  .discShadow { display: none; }
+  .infoPanel { max-width: 100%; gap: 14px; align-items: center; text-align: center; }
+  .albumTitle { font-size: 1.8rem; -webkit-line-clamp: 2; }
+  .pills { justify-content: center; }
+  .actions { justify-content: center; }
+  .footer { display: none; }
+}

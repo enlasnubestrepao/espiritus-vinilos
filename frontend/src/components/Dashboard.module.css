@@ -291,19 +291,29 @@
 
 /* ── Responsive: mobile ── */
 @media (max-width: 767px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  .filterToggle {
-    display: block;
-  }
-
+  .layout { flex-direction: column; }
+  .content { padding: 12px 14px; }
+  .filterToggle { display: flex; align-items: center; }
   .grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
-
   .topBar {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 8px;
+    align-items: center;
   }
+  .viewToggle { padding: 8px 10px; font-size: .76rem; white-space: nowrap; }
+  .addBtn     { padding: 8px 10px; font-size: .76rem; }
+  .clearBtn   { padding: 7px 10px; font-size: .74rem; }
+  .cardBody  { padding: 8px; }
+  .cardTitle { font-size: .76rem; }
+  .cardSub   { font-size: .68rem; margin-bottom: 5px; }
+  .pill      { font-size: .56rem; }
+  .year      { font-size: .58rem; }
+  .spotifyBtn { display: none; }
+  .detailBox   { padding: 16px; }
+  .detailTitle { font-size: 1.05rem; }
+  .detailGrid  { grid-template-columns: repeat(2, 1fr); gap: 8px; }
 }

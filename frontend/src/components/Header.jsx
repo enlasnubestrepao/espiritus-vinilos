@@ -65,7 +65,7 @@ export default function Header({ coll, setColl }) {
 
       <div className={styles.titleBlock}>
         <h1 className={styles.title}>En Las Nubes Trepao</h1>
-        <p className={styles.sub}>Vinilos & Espíritus · {TITLES[coll]}</p>
+        <p className={styles.sub}>{coll === 'vinyl' ? 'Espíritus & Vinilos' : `Espíritus & Vinilos · ${TITLES[coll]}`}</p>
       </div>
       <div style={{ flex: 1 }} />
 

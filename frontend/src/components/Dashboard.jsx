@@ -1,7 +1,6 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getVinyls, getRums, getWhiskies } from '../services/api'
-import KpiBar    from './KpiBar'
 import SearchBar from './SearchBar'
 import Sidebar   from './Sidebar'
 import Modal     from './Modal'
@@ -9,6 +8,8 @@ import AdminForm from './AdminForm'
 import PinModal  from './PinModal'
 import StatsView      from './StatsView'
 import SpotifyModal   from './SpotifyModal'
+import FeaturedBanner, { setFeatured, getFeatured } from './FeaturedBanner'
+import ShareView      from './ShareView'
 import styles         from './Dashboard.module.css'
 
 const FETCHERS = { vinyl: getVinyls, rum: getRums, whisky: getWhiskies }
@@ -23,12 +24,33 @@ export default function Dashboard({ coll }) {
   const [sidebarOpen,  setSidebarOpen]  = useState(false)
   const [view,         setView]         = useState('collection')
   const [statsDetail,  setStatsDetail]  = useState(null)
-  const [spotifyItem,  setSpotifyItem]  = useState(null) // { item, index }
+  const [spotifyItem,  setSpotifyItem]  = useState(null)
+  const [featuredVer,  setFeaturedVer]  = useState(0)
+  const [shareItem,    setShareItem]    = useState(null)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [coll],
     queryFn: FETCHERS[coll],
   })
+
+  // Auto-open ShareView desde ?v=INDEX
+  useEffect(() => {
+    if (!data) return
+    const params = new URLSearchParams(window.location.search)
+    const vIdx = params.get('v')
+    if (vIdx !== null && coll === 'vinyl') {
+      const idx = parseInt(vIdx)
+      if (!isNaN(idx) && idx >= 0 && idx < data.length) {
+        setShareItem({ item: data[idx], index: idx })
+      }
+    }
+  }, [data, coll])
+
+  useEffect(() => {
+    const handler = () => setFeaturedVer(v => v + 1)
+    window.addEventListener('featured-changed', handler)
+    return () => window.removeEventListener('featured-changed', handler)
+  }, [])
 
   function setFilter(key, value) {
     setFilters(prev => ({ ...prev, [key]: value }))
@@ -90,11 +112,24 @@ export default function Dashboard({ coll }) {
 
   return (
     <>
+      {shareItem && (
+        <ShareView
+          item={shareItem.item}
+          index={shareItem.index}
+          onClose={() => setShareItem(null)}
+          onOpenCollection={() => {
+            setSelected(shareItem.item)
+            setShareItem(null)
+          }}
+        />
+      )}
+
       {/* Spotify player modal */}
       {spotifyItem && (
         <SpotifyModal
           item={spotifyItem.item}
           index={spotifyItem.index}
+          coll={coll}
           onClose={() => setSpotifyItem(null)}
         />
       )}
@@ -134,6 +169,11 @@ export default function Dashboard({ coll }) {
           index={findIndex(selected)}
           onClose={() => setSelected(null)}
           onEdit={() => { setAdminIndex(findIndex(selected)); setSelected(null); setAdminItem(selected) }}
+          onSetFeatured={coll === 'vinyl' ? (item, idx) => {
+            setFeatured(item, idx)
+            setFeaturedVer(v => v + 1)
+            setSelected(null)
+          } : null}
         />
       )}
       {adminItem !== undefined && (
@@ -146,7 +186,13 @@ export default function Dashboard({ coll }) {
           onRequestPin={(label, cb) => requirePin(label, cb)}
         />
       )}
-      <KpiBar data={data} coll={coll} />
+      {coll === 'vinyl' && (
+        <FeaturedBanner
+          key={featuredVer}
+          onOpen={item => setSelected(item)}
+          onSpotify={(item, idx) => setSpotifyItem({ item, index: idx })}
+        />
+      )}
       <div className={styles.layout}>
         {/* Sidebar — hidden on mobile unless sidebarOpen */}
         <Sidebar data={data} coll={coll} filters={filters} setFilter={setFilter} isOpen={sidebarOpen} />

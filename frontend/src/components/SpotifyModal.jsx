@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { fetchSpotifyId, saveSpotifyId, refreshSpotifyId } from '../services/api'
 import styles from './SpotifyModal.module.css'
 
-export default function SpotifyModal({ item, index, onClose }) {
+function spotifyEmbedUrl(id) {
+  if (!id) return null
+  if (id.includes('/')) return `https://open.spotify.com/embed/${id}?utm_source=generator&theme=0`
+  return `https://open.spotify.com/embed/album/${id}?utm_source=generator&theme=0`
+}
+
+export default function SpotifyModal({ item, index, coll, onClose }) {
   const [spotifyId,    setSpotifyId]    = useState(item?.spotify_id || null)
   const [fetching,     setFetching]     = useState(false)
   const [msg,          setMsg]          = useState('')
   const [manualId,     setManualId]     = useState('')
   const [showManual,   setShowManual]   = useState(false)
+
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     const handler = e => { if (e.key === 'Escape') onClose() }
@@ -22,6 +31,13 @@ export default function SpotifyModal({ item, index, onClose }) {
     }
   }, [])
 
+  async function persistId(id) {
+    try {
+      await saveSpotifyId(index, id)
+      if (coll) queryClient.invalidateQueries({ queryKey: [coll] })
+    } catch { }
+  }
+
   async function doSearch() {
     setFetching(true)
     setMsg('')
@@ -30,6 +46,7 @@ export default function SpotifyModal({ item, index, onClose }) {
       const result = await fetchSpotifyId(index)
       if (result.spotify_id) {
         setSpotifyId(result.spotify_id)
+        if (coll) queryClient.invalidateQueries({ queryKey: [coll] })
       } else {
         setMsg('⚠ Este álbum no se encontró en Spotify')
         setShowManual(true)
@@ -51,6 +68,7 @@ export default function SpotifyModal({ item, index, onClose }) {
       const result = await refreshSpotifyId(index)
       if (result.spotify_id) {
         setSpotifyId(result.spotify_id)
+        if (coll) queryClient.invalidateQueries({ queryKey: [coll] })
       } else {
         setMsg('⚠ No se encontró otro álbum — pegá la URL manualmente')
         setShowManual(true)
@@ -64,16 +82,19 @@ export default function SpotifyModal({ item, index, onClose }) {
   }
 
   async function applyManualId() {
-    const raw   = manualId.trim()
-    const match = raw.match(/album\/([A-Za-z0-9]+)/)
-    const id    = match ? match[1] : raw
-    if (!id) return
-    setSpotifyId(id)
+    const raw = manualId.trim()
+    if (!raw) return
+    const urlMatch = raw.match(/open\.spotify\.com\/(album|playlist|track)\/([A-Za-z0-9]+)/)
+    const uriMatch = raw.match(/spotify:(album|playlist|track):([A-Za-z0-9]+)/)
+    let storedId
+    if (urlMatch)      storedId = `${urlMatch[1]}/${urlMatch[2]}`
+    else if (uriMatch) storedId = `${uriMatch[1]}/${uriMatch[2]}`
+    else               storedId = raw
+    setSpotifyId(storedId)
     setShowManual(false)
     setMsg('')
     setManualId('')
-    // Persistir en DB
-    try { await saveSpotifyId(index, id) } catch { /* silencioso */ }
+    await persistId(storedId)
   }
 
   return (
@@ -111,7 +132,7 @@ export default function SpotifyModal({ item, index, onClose }) {
           {spotifyId && !fetching && (
             <>
               <iframe
-                src={`https://open.spotify.com/embed/album/${spotifyId}?utm_source=generator&theme=0`}
+                src={spotifyEmbedUrl(spotifyId)}
                 width="100%"
                 height="352"
                 frameBorder="0"
@@ -132,7 +153,7 @@ export default function SpotifyModal({ item, index, onClose }) {
                   : <div className={styles.manualRow}>
                       <input
                         className={styles.manualInput}
-                        placeholder="URL o ID del álbum en Spotify..."
+                        placeholder="URL de Spotify (álbum, playlist o canción)..."
                         value={manualId}
                         onChange={e => setManualId(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && applyManualId()}

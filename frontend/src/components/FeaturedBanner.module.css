@@ -1,0 +1,150 @@
+.banner {
+  background: linear-gradient(135deg, #0d1f0d 0%, #0a1a2e 50%, #1a0a0a 100%);
+  border-bottom: 1px solid rgba(29,185,84,.2);
+  padding: 14px 28px;
+  position: relative;
+}
+
+.label {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #1DB954;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cover {
+  width: 56px; height: 56px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+}
+
+.coverPlaceholder {
+  width: 56px; height: 56px;
+  border-radius: 6px;
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; flex-shrink: 0;
+}
+
+.info {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+.album {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.artista {
+  font-size: .78rem;
+  color: rgba(255,255,255,.6);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.tag {
+  font-size: .6rem;
+  background: rgba(29,185,84,.15);
+  border: 1px solid rgba(29,185,84,.3);
+  color: #1DB954;
+  border-radius: 10px;
+  padding: 1px 7px;
+  width: fit-content;
+}
+
+.year {
+  font-size: .65rem;
+  color: rgba(255,255,255,.35);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btnPlay {
+  background: #1DB954;
+  border: none; color: #000;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: .78rem; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+  white-space: nowrap;
+}
+.btnPlay:hover { filter: brightness(1.1); transform: scale(1.03); }
+
+.btnDetail {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.7);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: .78rem; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.btnDetail:hover { border-color: rgba(255,255,255,.4); color: #fff; }
+
+.btnShare {
+  background: none;
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.45);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: .75rem; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.btnShare:hover { border-color: #1DB954; color: #1DB954; }
+
+.btnClear {
+  background: none; border: none;
+  color: rgba(255,255,255,.2);
+  font-size: .85rem; cursor: pointer;
+  padding: 4px 6px; border-radius: 5px;
+  transition: all .15s;
+}
+.btnClear:hover { color: rgba(255,255,255,.6); background: rgba(255,255,255,.06); }
+
+@media (max-width: 767px) {
+  .banner { padding: 12px 16px; }
+
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cover, .coverPlaceholder { width: 44px; height: 44px; }
+
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .btnPlay   { flex: 1; min-width: 120px; justify-content: center; text-align: center; }
+  .btnDetail { flex: 1; min-width: 100px; text-align: center; }
+
+  .btnPlay, .btnDetail, .btnShare {
+    padding: 7px 12px;
+    font-size: .73rem;
+  }
+
+  .album   { font-size: .88rem; }
+  .artista { font-size: .72rem; }
+}

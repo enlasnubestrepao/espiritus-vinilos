@@ -2,13 +2,21 @@ import { useEffect, useState } from 'react'
 import { fetchSpotifyId } from '../services/api'
 import styles from './Modal.module.css'
 
+// ── Spotify embed URL ─────────────────────────────────────────────────────────
+function spotifyEmbedUrl(id) {
+  if (!id) return null
+  if (id.includes('/')) return `https://open.spotify.com/embed/${id}?utm_source=generator&theme=0`
+  return `https://open.spotify.com/embed/album/${id}?utm_source=generator&theme=0`
+}
+
 // Cerrar con Escape — useEffect con cleanup
 // Analogía: como un trigger que se activa y se desactiva
-export default function Modal({ item, coll, index, onClose, onEdit }) {
+export default function Modal({ item, coll, index, onClose, onEdit, onSetFeatured }) {
   const [spotifyId,      setSpotifyId]      = useState(item?.spotify_id || null)
   const [showPlayer,     setShowPlayer]     = useState(false)
   const [fetchingSpot,   setFetchingSpot]   = useState(false)
   const [spotifyMsg,     setSpotifyMsg]     = useState('')
+  const [copied,         setCopied]         = useState(false)
 
   useEffect(() => {
     const handler = e => { if (e.key === 'Escape') onClose() }
@@ -22,6 +30,14 @@ export default function Modal({ item, coll, index, onClose, onEdit }) {
     setShowPlayer(false)
     setSpotifyMsg('')
   }, [item])
+
+  function handleShare() {
+    const url = `${window.location.origin}${window.location.pathname}?v=${index}`
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   async function handleSpotify() {
     if (spotifyId) {
@@ -60,7 +76,12 @@ export default function Modal({ item, coll, index, onClose, onEdit }) {
         {/* Header con color por colección */}
         <div className={`${styles.hdr} ${styles[coll]}`}>
           <div className={styles.icon}>
-            {coll === 'vinyl' ? <VinylIcon agrupador={item.agrupador} artista={item.artista} /> : '🥃'}
+            {item.cover_url
+              ? <img src={item.cover_url} alt={title} style={{ width:'100%', height:'100%', objectFit:'cover', borderRadius:'50%' }} />
+              : coll === 'vinyl'
+                ? <VinylIcon agrupador={item.agrupador} artista={item.artista} />
+                : '🥃'
+            }
           </div>
           <div className={styles.hdrText}>
             <h2>{title}</h2>
@@ -84,7 +105,7 @@ export default function Modal({ item, coll, index, onClose, onEdit }) {
           {coll === 'vinyl' && showPlayer && spotifyId && (
             <div className={styles.spotifyWrap}>
               <iframe
-                src={`https://open.spotify.com/embed/album/${spotifyId}?utm_source=generator&theme=0`}
+                src={spotifyEmbedUrl(spotifyId)}
                 width="100%"
                 height="152"
                 frameBorder="0"
@@ -105,6 +126,19 @@ export default function Modal({ item, coll, index, onClose, onEdit }) {
                 disabled={fetchingSpot}
               >
                 {fetchingSpot ? '⏳ Buscando...' : showPlayer ? '⏹ Cerrar player' : spotifyId ? '▶ Escuchar álbum' : '🎵 Buscar en Spotify'}
+              </button>
+            )}
+            {coll === 'vinyl' && index >= 0 && (
+              <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={handleShare}>
+                {copied ? '✅ Link copiado' : '🔗 Compartir'}
+              </button>
+            )}
+            {onSetFeatured && (
+              <button
+                className={`${styles.btn} ${styles.btnSecondary}`}
+                onClick={() => onSetFeatured(item, index)}
+              >
+                ⭐ Destacar del mes
               </button>
             )}
             {coll === 'vinyl'
