@@ -8,7 +8,8 @@ const COLLECTIONS = [
   { id: 'whisky', label: '🥃 Whiskies'},
 ]
 
-const TITLES = { vinyl: 'Vinilos', rum: 'Rones', whisky: 'Whiskies' }
+const TITLES   = { vinyl: 'Vinilos', rum: 'Rones', whisky: 'Whiskies' }
+const LOGO_SRC = '/espiritus-vinilos/logo-enlt.png'
 
 export default function Header({ coll, setColl }) {
   const [showToken, setShowToken] = useState(false)
@@ -53,12 +54,36 @@ export default function Header({ coll, setColl }) {
     <>
     {showAbout && <About onClose={() => setShowAbout(false)} />}
     <header className={`${styles.header} ${styles[coll]}`}>
-      <div className={`${styles.logo} ${styles[`logo_${coll}`]}`} />
+      <img
+        src={LOGO_SRC}
+        alt="En Las Nubes Trepao"
+        className={styles.logo}
+        onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='block' }}
+      />
+      {/* fallback si no carga la imagen */}
+      <div className={`${styles.logo} ${styles[`logo_${coll}`]}`} style={{ display: 'none' }} />
+
       <div className={styles.titleBlock}>
-        <h1 className={styles.title}>{TITLES[coll]}</h1>
-        <p className={styles.sub}>Colección Personal · Federico</p>
+        <h1 className={styles.title}>En Las Nubes Trepao</h1>
+        <p className={styles.sub}>Espíritus & Vinilos · {TITLES[coll]}</p>
       </div>
       <div style={{ flex: 1 }} />
+
+      {/* Redes sociales */}
+      <div className={styles.socials}>
+        <a
+          href="https://www.tiktok.com/@enlasnubestrepao13"
+          target="_blank" rel="noreferrer"
+          className={styles.socialBtn}
+          title="TikTok"
+        >TikTok</a>
+        <a
+          href="https://www.instagram.com/enlasnubestrepao/"
+          target="_blank" rel="noreferrer"
+          className={styles.socialBtn}
+          title="Instagram"
+        >IG</a>
+      </div>
 
       {/* Botón About */}
       <button

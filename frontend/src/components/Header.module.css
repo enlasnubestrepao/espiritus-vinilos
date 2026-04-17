@@ -15,34 +15,61 @@
 .whisky { border-bottom-color: var(--wh-acc); }
 
 .logo {
-  width: 46px; height: 46px;
+  width: 52px; height: 52px;
   border-radius: 50%;
-  border: 2px solid var(--border);
   flex-shrink: 0;
+  object-fit: cover;
+  transition: transform .3s ease;
 }
+.logo:hover { transform: rotate(-5deg) scale(1.05); }
+
+/* fallback animado si no hay imagen */
 .logo_vinyl {
   background: conic-gradient(#111 0,#111 18%,var(--v-acc) 19%,var(--v-acc) 22%,#111 23%,#111 38%,#444 39%,#444 41%,#111 42%);
   animation: spin 8s linear infinite;
+  border: 2px solid var(--border);
 }
-.logo_rum   { background: linear-gradient(135deg,#3d1a00,#b5651d); }
-.logo_whisky{ background: linear-gradient(135deg,#0d2137,#1a6091); }
+.logo_rum   { background: linear-gradient(135deg,#3d1a00,#b5651d); border: 2px solid var(--border); }
+.logo_whisky{ background: linear-gradient(135deg,#0d2137,#1a6091); border: 2px solid var(--border); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+.titleBlock { cursor: default; }
 .titleBlock h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  background: linear-gradient(90deg, var(--v-gold), var(--v-acc2));
+  font-size: 1.3rem;
+  background: linear-gradient(90deg, #00d4ff, #00a8cc);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .titleBlock p {
-  font-size: .68rem;
+  font-size: .63rem;
   color: var(--text3);
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-top: 2px;
 }
+
+/* ── Redes sociales ── */
+.socials {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.socialBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text3);
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-size: .78rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.socialBtn:hover { border-color: #00d4ff; color: #00d4ff; }
 
 .toggle {
   display: flex;
