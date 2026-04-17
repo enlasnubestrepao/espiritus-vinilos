@@ -95,6 +95,58 @@
 }
 .retryBtn:hover { background: rgba(29,185,84,.1); border-color: #1DB954; }
 
+.footer {
+  padding: 10px 14px;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.wrongBtn {
+  background: none; border: none;
+  color: rgba(255,255,255,.3);
+  font-size: .7rem; cursor: pointer;
+  padding: 4px 0;
+  transition: color .15s;
+}
+.wrongBtn:hover { color: rgba(255,255,255,.6); }
+
+.manualRow {
+  display: flex; gap: 6px; align-items: center;
+}
+
+.manualInput {
+  flex: 1;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 7px;
+  padding: 7px 10px;
+  color: #fff;
+  font-size: .75rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+.manualInput:focus { border-color: #1DB954; }
+.manualInput::placeholder { color: rgba(255,255,255,.3); }
+
+.applyBtn {
+  background: #1DB954; border: none;
+  color: #000; border-radius: 7px;
+  padding: 7px 12px; font-size: .75rem;
+  font-weight: 600; cursor: pointer;
+  white-space: nowrap;
+  transition: filter .15s;
+}
+.applyBtn:hover { filter: brightness(1.1); }
+.applyBtn:disabled { opacity: .4; cursor: not-allowed; }
+
+.cancelBtn {
+  background: none; border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.4); border-radius: 7px;
+  padding: 7px 10px; font-size: .75rem; cursor: pointer;
+  transition: all .15s;
+}
+.cancelBtn:hover { border-color: rgba(255,255,255,.4); color: #fff; }
+
 @media (max-width: 767px) {
   .box { max-width: 100%; border-radius: 12px; }
 }
