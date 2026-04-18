@@ -89,7 +89,22 @@ export default function Dashboard({ coll }) {
 
   function findIndex(item) {
     if (!data || !item) return -1
-    return data.findIndex(r => JSON.stringify(r) === JSON.stringify(item))
+    // Igualdad de referencia — los objetos en filtered SON los mismos de data
+    // JSON.stringify es frágil si hay diferencias de orden de propiedades
+    const byRef = data.findIndex(r => r === item)
+    if (byRef !== -1) return byRef
+    // Fallback: comparar por artista + album (en caso de que el item venga de otra fuente)
+    if (item.artista && item.album) {
+      return data.findIndex(r =>
+        r.artista === item.artista && r.album === item.album
+      )
+    }
+    if (item.brand && (item.name || item.version)) {
+      return data.findIndex(r =>
+        r.brand === item.brand && (r.name || r.version) === (item.name || item.version)
+      )
+    }
+    return -1
   }
 
   function handleBarClick(filterKey, value) {
