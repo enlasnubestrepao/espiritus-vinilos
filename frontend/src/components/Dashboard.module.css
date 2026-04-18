@@ -138,22 +138,60 @@
 
 .year { font-size: .63rem; color: var(--text3); flex-shrink: 0; }
 
-.spotifyBtn {
-  margin-left: auto;
-  background: #1DB954;
-  border: none;
-  color: #000;
+/* ── Hover action overlay (Spotify + Share + IG sobre la portada) ── */
+.hoverActions {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent 0%, rgba(0,0,0,.82) 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 7px;
+  padding: 24px 8px 9px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.card:hover .hoverActions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.haBtn {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+  color: #fff;
   border-radius: 50%;
-  width: 22px; height: 22px;
-  font-size: .6rem;
+  width: 30px; height: 30px;
+  font-size: .65rem;
   cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all .15s;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  transition: all .15s;
-  opacity: 0;
+  line-height: 1;
 }
-.card:hover .spotifyBtn { opacity: 1; }
-.spotifyBtn:hover { transform: scale(1.15); }
+.haBtn:hover { background: rgba(255,255,255,.28); transform: scale(1.12); }
+
+.haBtnSpotify {
+  background: rgba(29,185,84,.35);
+  border-color: rgba(29,185,84,.6);
+  color: #1DB954;
+}
+.haBtnSpotify:hover { background: rgba(29,185,84,.55); color: #fff; }
+
+.haBtnCopied {
+  background: rgba(29,185,84,.35);
+  border-color: rgba(29,185,84,.6);
+  color: #1DB954;
+}
+
+.haBtnIg {
+  background: rgba(193,53,132,.3);
+  border-color: rgba(193,53,132,.5);
+  color: #e1306c;
+}
+.haBtnIg:hover { background: rgba(193,53,132,.5); color: #fff; }
 
 /* ── Botón Agregar ── */
 .addBtn {
@@ -338,8 +376,8 @@
   .pill      { font-size: .56rem; }
   .year      { font-size: .58rem; }
 
-  /* Ocultar botón Spotify en card (no hay hover en touch) */
-  .spotifyBtn { display: none; }
+  /* Ocultar hover overlay en touch (no hay hover) */
+  .hoverActions { display: none; }
 
   /* Detail modal full-width en mobile */
   .detailBox   { padding: 16px; }

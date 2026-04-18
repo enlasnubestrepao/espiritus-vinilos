@@ -371,8 +371,10 @@ function getFields(coll, data) {
     { key: 'cat_num',    label: 'Cat. Nº' },
     { key: 'origen',     label: 'Origen',         type: 'origen', options: uniq('origen') },
     { key: 'fuera',      label: 'Prestado',       options: ['No', 'Sí'] },
-    { key: 'discogs',    label: 'En Discogs',    options: ['true', 'false'] },
+    { key: 'discogs',    label: 'En Discogs',     options: ['true', 'false'] },
     { key: 'url',        label: 'URL Discogs (página del release)' },
+    { key: 'tiktok_url', label: '🎵 TikTok ENLT (URL del video)' },
+    { key: 'ig_url',     label: '📷 Instagram ENLT (URL del post/reel)' },
   ]
   if (coll === 'rum') return [
     { key: 'brand',      label: 'Marca' },

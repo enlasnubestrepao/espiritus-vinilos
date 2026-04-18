@@ -173,9 +173,11 @@ export default function Dashboard({ coll }) {
           onClose={() => setSelected(null)}
           onEdit={() => { setAdminIndex(findIndex(selected)); setSelected(null); setAdminItem(selected) }}
           onSetFeatured={coll === 'vinyl' ? (item, idx) => {
-            setFeatured(item, idx)
-            setFeaturedVer(v => v + 1)
-            setSelected(null)
+            requirePin('Destacar disco del mes', () => {
+              setFeatured(item, idx)
+              setFeaturedVer(v => v + 1)
+              setSelected(null)
+            })
           } : null}
         />
       )}
@@ -282,7 +284,21 @@ export default function Dashboard({ coll }) {
                         <Card
                           key={i} item={item} coll={coll}
                           onClick={() => setSelected(item)}
-                          onSpotify={coll === 'vinyl' ? () => setSpotifyItem({ item, index: findIndex(item) }) : null}
+                          onSpotify={coll === 'vinyl' ? (e) => { e.stopPropagation(); setSpotifyItem({ item, index: findIndex(item) }) } : null}
+                          onShare={coll === 'vinyl' ? (e) => {
+                            e.stopPropagation()
+                            const idx = findIndex(item)
+                            const url = `${window.location.origin}${window.location.pathname}?v=${idx}`
+                            navigator.clipboard.writeText(url).catch(() => {})
+                          } : null}
+                          onIgStory={coll === 'vinyl' ? (e) => {
+                            e.stopPropagation()
+                            const idx = findIndex(item)
+                            const url = `${window.location.origin}${window.location.pathname}?v=${idx}`
+                            const text = encodeURIComponent(`🎵 ${item.artista} — ${item.album}${item.anio ? ` (${item.anio})` : ''}\n\nEn Las Nubes Trepao · ${url}`)
+                            window.open(`https://www.instagram.com/create/story`, '_blank')
+                            navigator.clipboard.writeText(`${item.artista} — ${item.album}\n${url}`).catch(() => {})
+                          } : null}
                         />
                       ))}
                     </div>
@@ -296,7 +312,9 @@ export default function Dashboard({ coll }) {
 }
 
 // ── CARD ─────────────────────────────────────────────────────────────────────
-function Card({ item, coll, onClick, onSpotify }) {
+function Card({ item, coll, onClick, onSpotify, onShare, onIgStory }) {
+  const [copied, setCopied] = useState(false)
+
   const title = coll === 'vinyl' ? item.artista : item.brand
   const sub   = coll === 'vinyl' ? item.album   : (item.name || item.version || '')
   const tag   = coll === 'vinyl' ? item.genero  : item.type
@@ -305,6 +323,13 @@ function Card({ item, coll, onClick, onSpotify }) {
     : coll === 'whisky'
       ? (item.years ? `${item.years} años` : 'NAS')
       : (item.abv   ? `${item.abv}%`       : '')
+
+  function handleShare(e) {
+    if (!onShare) return
+    onShare(e)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1800)
+  }
 
   return (
     <div className={`${styles.card} ${styles[coll]}`} onClick={onClick}>
@@ -317,25 +342,47 @@ function Card({ item, coll, onClick, onSpotify }) {
             ? <img src={item.cover_url} alt={item.brand} loading="lazy" />
             : <div className={styles.bottle}>🥃</div>
         }
-        {/* Dot: verde = tiene imagen · rojo = sin imagen */}
         <span className={`${styles.dot} ${item.cover_url ? styles.dotGreen : styles.dotRed}`} />
-        {/* Badge prestado (vinyl) / ya consumí (rum, whisky) */}
-        {item.fuera      && <span className={styles.lentBadge} title="Prestado">📤</span>}
-        {item.terminado  && <span className={styles.lentBadge} title="Ya consumí">🫗</span>}
+        {item.fuera     && <span className={styles.lentBadge} title="Prestado">📤</span>}
+        {item.terminado && <span className={styles.lentBadge} title="Ya consumí">🫗</span>}
+
+        {/* ── Hover overlay con acciones rápidas ── */}
+        {(onSpotify || onShare || onIgStory) && (
+          <div className={styles.hoverActions}>
+            {onSpotify && (
+              <button
+                className={`${styles.haBtn} ${styles.haBtnSpotify}`}
+                onClick={onSpotify}
+                title="Escuchar en Spotify"
+              >▶</button>
+            )}
+            {onShare && (
+              <button
+                className={`${styles.haBtn} ${copied ? styles.haBtnCopied : ''}`}
+                onClick={handleShare}
+                title={copied ? '¡Link copiado!' : 'Copiar link'}
+              >{copied ? '✓' : '🔗'}</button>
+            )}
+            {onIgStory && (
+              <button
+                className={`${styles.haBtn} ${styles.haBtnIg}`}
+                onClick={onIgStory}
+                title="Compartir en IG Stories"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </button>
+            )}
+          </div>
+        )}
       </div>
       <div className={styles.cardBody}>
         <div className={styles.cardTitle}>{title}</div>
         <div className={styles.cardSub}>{sub}</div>
         <div className={styles.cardMeta}>
-          {tag && <span className={`${styles.pill} ${styles[coll]}`}>{tag}</span>}
+          {tag  && <span className={`${styles.pill} ${styles[coll]}`}>{tag}</span>}
           {year && <span className={styles.year}>{year}</span>}
-          {onSpotify && (
-            <button
-              className={styles.spotifyBtn}
-              onClick={e => { e.stopPropagation(); onSpotify() }}
-              title="Escuchar en Spotify"
-            >▶</button>
-          )}
         </div>
       </div>
     </div>

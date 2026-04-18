@@ -55,6 +55,14 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
     })
   }
 
+  function handleIgStory() {
+    const url = `${window.location.origin}${window.location.pathname}?v=${index}`
+    const text = `${item.artista} — ${item.album}${item.anio ? ` (${item.anio})` : ''}\n\n${url}`
+    navigator.clipboard.writeText(text).catch(() => {})
+    // Abre IG Stories en el browser; en mobile con la app instalada abre la cámara
+    window.open('https://www.instagram.com/create/story', '_blank')
+  }
+
   if (!item) return null
 
   const fields = getFields(item, coll)
@@ -83,8 +91,10 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           <button className={styles.closeBtn} onClick={onClose}>✕</button>
         </div>
 
-        {/* Grilla de detalles */}
+        {/* Cuerpo */}
         <div className={styles.body}>
+
+          {/* Grilla de detalles */}
           <div className={styles.detGrid}>
             {fields.map(([label, value]) => (
               <div className={styles.det} key={label}>
@@ -94,62 +104,122 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             ))}
           </div>
 
+          {/* ── En Las Nubes Trepao lo posteó ── */}
+          {coll === 'vinyl' && (item.tiktok_url || item.ig_url) && (
+            <div className={styles.enltSection}>
+              <div className={styles.enltLabel}>
+                <span className={styles.enltDot} />
+                En Las Nubes Trepao lo posteó
+              </div>
+              <div className={styles.enltEmbeds}>
+                {item.tiktok_url && (
+                  <div className={styles.enltEmbed}>
+                    <iframe
+                      src={tiktokEmbedUrl(item.tiktok_url)}
+                      width="100%"
+                      height="700"
+                      frameBorder="0"
+                      allow="autoplay; clipboard-write"
+                      loading="lazy"
+                      className={styles.enltFrame}
+                      scrolling="no"
+                    />
+                    <a href={item.tiktok_url} target="_blank" rel="noreferrer" className={styles.enltLink}>
+                      Ver en TikTok ↗
+                    </a>
+                  </div>
+                )}
+                {item.ig_url && (
+                  <div className={styles.enltEmbed}>
+                    <iframe
+                      src={igEmbedUrl(item.ig_url)}
+                      width="100%"
+                      height="540"
+                      frameBorder="0"
+                      scrolling="no"
+                      allow="autoplay; clipboard-write; encrypted-media"
+                      loading="lazy"
+                      className={styles.enltFrame}
+                    />
+                    <a href={item.ig_url} target="_blank" rel="noreferrer" className={styles.enltLink}>
+                      Ver en Instagram ↗
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Player Spotify */}
           {coll === 'vinyl' && showPlayer && spotifyId && (
             <div className={styles.spotifyWrap}>
               <iframe
                 src={spotifyEmbedUrl(spotifyId)}
-                width="100%"
-                height="152"
-                frameBorder="0"
+                width="100%" height="152" frameBorder="0"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                className={styles.spotifyFrame}
+                loading="lazy" className={styles.spotifyFrame}
               />
             </div>
           )}
           {spotifyMsg && <p className={styles.spotifyMsg}>{spotifyMsg}</p>}
 
-          {/* Acciones */}
+          {/* ── Acciones ── */}
           <div className={styles.actions}>
+
+            {/* Spotify */}
             {coll === 'vinyl' && (
               <button
                 className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify}`}
-                onClick={handleSpotify}
-                disabled={fetchingSpot}
+                onClick={handleSpotify} disabled={fetchingSpot}
               >
                 {fetchingSpot ? '⏳ Buscando...' : showPlayer ? '⏹ Cerrar player' : spotifyId ? '▶ Escuchar álbum' : '🎵 Buscar en Spotify'}
               </button>
             )}
+
+            {/* Compartir + IG Stories */}
             {coll === 'vinyl' && index >= 0 && (
-              <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={handleShare}>
-                {copied ? '✅ Link copiado' : '🔗 Compartir'}
-              </button>
+              <div className={styles.shareGroup}>
+                <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={handleShare}>
+                  {copied ? '✅ Link copiado' : '🔗 Compartir'}
+                </button>
+                <button
+                  className={`${styles.btn} ${styles.btnIg}`}
+                  onClick={handleIgStory}
+                  title="Abrir IG Stories y pegar el link como sticker"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style={{marginRight:5}}>
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                  IG Stories
+                </button>
+              </div>
             )}
+
+            {/* Destacar del mes */}
             {onSetFeatured && (
-              <button
-                className={`${styles.btn} ${styles.btnSecondary}`}
-                onClick={() => onSetFeatured(item, index)}
-              >
+              <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => onSetFeatured(item, index)}>
                 ⭐ Destacar del mes
               </button>
             )}
+
+            {/* Discogs / Sitio oficial */}
             {coll === 'vinyl'
-              ? (
-                  <a
-                    href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
-                    target="_blank" rel="noreferrer"
-                    className={`${styles.btn} ${styles.btnSecondary}`}
-                  >
-                    🔗 Ver en Discogs
-                  </a>
-                )
+              ? <a
+                  href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
+                  target="_blank" rel="noreferrer"
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                >
+                  🔗 Ver en Discogs
+                </a>
               : url && (
-                  <a href={url} target="_blank" rel="noreferrer" className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`}>
+                  <a href={url} target="_blank" rel="noreferrer"
+                    className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`}>
                     🌐 Sitio oficial
                   </a>
                 )
             }
+
+            {/* Admin */}
             {onEdit && (
               <button className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`} onClick={onEdit}>
                 ✏ Editar
@@ -165,13 +235,30 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
   )
 }
 
-// ── Spotify embed URL — soporta album / playlist / track ─────────────────────
+// ── Spotify embed URL ────────────────────────────────────────────────────────
 function spotifyEmbedUrl(id) {
   if (!id) return null
-  // Formato nuevo: "album/ID", "playlist/ID", "track/ID"
   if (id.includes('/')) return `https://open.spotify.com/embed/${id}?utm_source=generator&theme=0`
-  // Formato legacy: solo el ID → asumir album
   return `https://open.spotify.com/embed/album/${id}?utm_source=generator&theme=0`
+}
+
+// ── TikTok embed URL ─────────────────────────────────────────────────────────
+// Entrada: https://www.tiktok.com/@enlasnubestrepao13/video/7123456789
+// Salida:  https://www.tiktok.com/embed/v2/7123456789
+function tiktokEmbedUrl(url) {
+  if (!url) return null
+  const match = url.match(/\/video\/(\d+)/)
+  if (match) return `https://www.tiktok.com/embed/v2/${match[1]}`
+  return url
+}
+
+// ── Instagram embed URL ──────────────────────────────────────────────────────
+// Entrada: https://www.instagram.com/p/ABC123/ o /reel/ABC123/
+// Salida:  https://www.instagram.com/p/ABC123/embed/
+function igEmbedUrl(url) {
+  if (!url) return null
+  const clean = url.replace(/\?.*$/, '').replace(/\/$/, '')
+  return `${clean}/embed/`
 }
 
 // ── Campos por colección ──────────────────────────────────────────────────────

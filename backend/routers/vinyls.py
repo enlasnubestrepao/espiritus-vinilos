@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Header
 from typing import Optional
 from data_store import read_collection, write_collection
 
@@ -63,3 +63,39 @@ def delete_vinyl(index: int):
         raise HTTPException(status_code=404, detail="Vinilo no encontrado")
     data.pop(index)
     write_collection("vinilos", data)
+
+# ── PATCH /api/vinyls/{index}/social — endpoint para Zapier ──────────────────
+# Guarda tiktok_url y/o ig_url en un vinilo existente.
+# Uso: POST desde Zapier con body { "tiktok_url": "...", "artista": "...", "album": "..." }
+# Si se pasa index=-1 busca por artista+album y actualiza el primero que coincida.
+@router.patch("/{index}/social")
+def patch_social(index: int, payload: dict, x_zapier_token: Optional[str] = Header(None)):
+    # Protección mínima por token (configurable en Render env vars)
+    import os
+    zapier_token = os.environ.get("ZAPIER_TOKEN", "")
+    if zapier_token and x_zapier_token != zapier_token:
+        raise HTTPException(status_code=401, detail="Token inválido")
+
+    data = read_collection("vinilos")
+
+    # Si index == -1, buscar por artista + album
+    if index == -1:
+        artista = (payload.get("artista") or "").lower()
+        album   = (payload.get("album")   or "").lower()
+        index   = next(
+            (i for i, r in enumerate(data)
+             if artista in (r.get("artista") or "").lower()
+             or album   in (r.get("album")   or "").lower()),
+            -1
+        )
+
+    if index < 0 or index >= len(data):
+        raise HTTPException(status_code=404, detail="Vinilo no encontrado")
+
+    if "tiktok_url" in payload:
+        data[index]["tiktok_url"] = payload["tiktok_url"]
+    if "ig_url" in payload:
+        data[index]["ig_url"] = payload["ig_url"]
+
+    write_collection("vinilos", data)
+    return {"index": index, "artista": data[index].get("artista"), "album": data[index].get("album")}
