@@ -164,26 +164,33 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           )}
           {spotifyMsg && <p className={styles.spotifyMsg}>{spotifyMsg}</p>}
 
-          {/* ── Acciones — dos filas claras ── */}
+          {/* ── Acciones ── */}
           <div className={styles.actionsWrap}>
 
-            {/* Fila 1: acciones principales de contenido */}
-            <div className={styles.actionsRow}>
-              {coll === 'vinyl' && (
-                <button
-                  className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify}`}
-                  onClick={handleSpotify} disabled={fetchingSpot}
-                >
-                  {fetchingSpot ? '⏳' : showPlayer ? '⏹ Cerrar player' : spotifyId ? '▶ Escuchar' : '🎵 Buscar en Spotify'}
-                </button>
-              )}
-              {coll === 'vinyl' && index >= 0 && (
+            {/* Acción primaria — ancho completo */}
+            {coll === 'vinyl' && (
+              <button
+                className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify} ${styles.btnFull}`}
+                onClick={handleSpotify} disabled={fetchingSpot}
+              >
+                {fetchingSpot ? '⏳ Buscando...' : showPlayer ? '⏹ Cerrar player' : spotifyId ? '▶ Escuchar en Spotify' : '🎵 Buscar en Spotify'}
+              </button>
+            )}
+            {coll !== 'vinyl' && url && (
+              <a href={url} target="_blank" rel="noreferrer"
+                className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]} ${styles.btnFull}`}>
+                🌐 Ver sitio oficial
+              </a>
+            )}
+
+            {/* Grid secundario — acciones de contenido */}
+            {coll === 'vinyl' && index >= 0 && (
+              <div className={styles.actionsGrid}>
                 <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={handleShare}>
                   {copied ? '✅ Copiado' : '🔗 Compartir'}
                 </button>
-              )}
-              {coll === 'vinyl' && index >= 0 && (
-                item.ig_url
+
+                {item.ig_url
                   ? <a
                       href={item.ig_url} target="_blank" rel="noreferrer"
                       className={`${styles.btn} ${styles.btnIg}`}
@@ -196,29 +203,23 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                       onClick={handleIgCopy}
                       title="Copiar texto para pegar en IG Stories"
                     >
-                      {igCopied ? '✓ Copiado para IG' : <><IgIcon /> Copiar para IG</>}
+                      {igCopied ? '✓ Copiado' : <><IgIcon /> Copiar IG</>}
                     </button>
-              )}
-              {coll === 'vinyl'
-                ? <a
-                    href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
-                    target="_blank" rel="noreferrer"
-                    className={`${styles.btn} ${styles.btnSecondary}`}
-                  >🔗 Discogs</a>
-                : url && (
-                    <a href={url} target="_blank" rel="noreferrer"
-                      className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`}>
-                      🌐 Sitio oficial
-                    </a>
-                  )
-              }
-            </div>
+                }
 
-            {/* Fila 2: acciones admin */}
-            <div className={styles.actionsRow}>
+                <a
+                  href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
+                  target="_blank" rel="noreferrer"
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                >🔗 Discogs</a>
+              </div>
+            )}
+
+            {/* Grid admin — separado visualmente */}
+            <div className={styles.actionsAdmin}>
               {onSetFeatured && (
                 <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => onSetFeatured(item, index)}>
-                  ⭐ Destacar del mes
+                  ⭐ Destacar
                 </button>
               )}
               {onEdit && (

@@ -208,14 +208,30 @@
   border-top: 1px solid var(--border);
 }
 
-.actionsRow {
-  display: flex;
+/* Grid 3 columnas iguales — acciones secundarias de contenido */
+.actionsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 7px;
-  flex-wrap: wrap;
+}
+
+/* Row admin — separado por borde superior */
+.actionsAdmin {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* Botón ancho completo */
+.btnFull {
+  width: 100%;
+  justify-content: center;
 }
 
 .btn {
-  padding: 8px 15px;
+  padding: 9px 12px;
   border-radius: 9px;
   font-family: 'Inter', sans-serif;
   font-size: .78rem;
@@ -226,8 +242,10 @@
   border: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   white-space: nowrap;
+  text-align: center;
 }
 
 /* Primary por colección */
@@ -301,14 +319,13 @@
 
   .row { flex-direction: column; gap: 6px; }
 
-  .actionsRow {
+  .actionsGrid,
+  .actionsAdmin {
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
   }
   .btn {
-    font-size: .74rem;
-    padding: 8px 12px;
-    flex: 1;
-    justify-content: center;
-    min-width: calc(50% - 3px);
+    font-size: .72rem;
+    padding: 8px 8px;
   }
 }
