@@ -31,7 +31,7 @@ def save_pin(body: PinBody):
 def verify_pin(body: PinBody):
     stored = get_config("admin_pin")
     if stored is None:
-        return {"valid": True}   # sin PIN → acceso libre
+        return {"valid": False}  # sin PIN → bloqueado, debe configurar uno
     return {"valid": _pwd.verify(body.pin, stored)}
 
 
