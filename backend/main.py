@@ -12,6 +12,8 @@ app.add_middleware(
         "http://localhost:5173",
         "https://federicojimenezpulido.github.io",
         "https://enlasnubestrepao.github.io",
+        "https://enlasnubestrepao.com",
+        "https://www.enlasnubestrepao.com",
     ],
     allow_methods=["*"],
     allow_headers=["*"],
