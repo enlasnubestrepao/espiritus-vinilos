@@ -8,6 +8,7 @@ import AdminForm from './AdminForm'
 import PinModal  from './PinModal'
 import StatsView      from './StatsView'
 import CrateView      from './CrateView'
+import AtlasView      from './AtlasView'
 import SpotifyModal   from './SpotifyModal'
 import FeaturedBanner, { setFeatured, getFeatured } from './FeaturedBanner'
 import ShareView      from './ShareView'
@@ -272,8 +273,8 @@ export default function Dashboard({ coll, pinIsSet }) {
               ? <button className={styles.viewToggle} onClick={() => setView(v => v === 'collection' ? 'stats' : v === 'stats' ? 'crate' : 'collection')}>
                   {view === 'collection' ? `📊 ${t('stats')}` : view === 'stats' ? `🗄 ${t('crate')}` : `📋 ${t('collection')}`}
                 </button>
-              : <button className={styles.viewToggle} onClick={() => setView(v => v === 'collection' ? 'stats' : 'collection')}>
-                  {view === 'collection' ? `📊 ${t('stats')}` : `📋 ${t('collection')}`}
+              : <button className={styles.viewToggle} onClick={() => setView(v => v === 'collection' ? 'stats' : v === 'stats' ? 'atlas' : 'collection')}>
+                  {view === 'collection' ? `📊 ${t('stats')}` : view === 'stats' ? `🗺 ${t('atlas')}` : `📋 ${t('collection')}`}
                 </button>
             }
             <button className={`${styles.addBtn} ${styles[coll]}`} onClick={() => requirePin(t('addNew'), () => setAdminItem(null))}>
@@ -284,6 +285,12 @@ export default function Dashboard({ coll, pinIsSet }) {
           {view === 'crate'
             ? <CrateView
                 data={filtered.length < data.length ? filtered : data}
+                onSelect={item => setSelected(item)}
+              />
+            : view === 'atlas'
+            ? <AtlasView
+                data={data}
+                coll={coll}
                 onSelect={item => setSelected(item)}
               />
             : view === 'stats'

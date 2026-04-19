@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useCrud } from '../hooks/useCrud'
 import { fetchAndSaveCover, fetchAndSaveDiscogsCover, scrapeUrl, fetchPurchaseInfo } from '../services/api'
+import { useLang } from '../LangContext'
 import styles from './AdminForm.module.css'
 
 // ── Combo de origen con botón "+" para agregar opciones ──────────────────────
@@ -93,6 +94,7 @@ function OrigenCombo({ value, onChange, onRequestPin }) {
 // index = posición en el array del backend (necesario para PUT/DELETE)
 export default function AdminForm({ coll, item, index, data, onClose, onRequestPin, pinIsSet }) {
   const { add, update, remove } = useCrud(coll)
+  const { t } = useLang()
   const isEdit = item !== null && index !== undefined
 
   const [form, setForm] = useState(buildInitial(item, coll))
@@ -165,7 +167,7 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
 
   function handleDelete() {
     if (!pinIsSet) {
-      alert('Configurá un PIN en ⚙ Configuración para habilitar la edición.')
+      alert(t('requirePinMsg'))
       return
     }
     if (!confirm(`¿Eliminar este registro? Esta acción no se puede deshacer.`)) return

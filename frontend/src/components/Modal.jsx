@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense, lazy } from 'react'
 import { fetchSpotifyId } from '../services/api'
 import SocialDrawer from './SocialDrawer'
 import { useLang } from '../LangContext'
 import styles from './Modal.module.css'
+
+const CountryMiniMap = lazy(() => import('./CountryMiniMap'))
 
 export default function Modal({ item, coll, index, onClose, onEdit, onSetFeatured }) {
   const { t } = useLang()
@@ -116,6 +118,37 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
               ))}
             </div>
           ))}
+
+          {/* ── Mini-mapa de origen — solo rones y whiskies ── */}
+          {coll !== 'vinyl' && item.country && (
+            <div className={styles.mapRow}>
+              <Suspense fallback={<div className={styles.mapLoading} />}>
+                <CountryMiniMap country={item.country} coll={coll} />
+              </Suspense>
+            </div>
+          )}
+
+          {/* ── ¿Dónde comprar? ── */}
+          {coll !== 'vinyl' && item.buy_url && (
+            <div className={styles.buySection}>
+              <div className={styles.buyLabel}>¿Dónde comprar?</div>
+              <div className={styles.buyContent}>
+                {(item.buy_price || item.buy_currency) && (
+                  <span className={styles.buyPrice}>
+                    {[item.buy_price, item.buy_currency].filter(Boolean).join(' ')}
+                  </span>
+                )}
+                {item.buy_availability && (
+                  <span className={`${styles.buyAvail} ${item.buy_availability?.toLowerCase().includes('stock') ? styles.buyInStock : ''}`}>
+                    {item.buy_availability}
+                  </span>
+                )}
+                <a href={item.buy_url} target="_blank" rel="noreferrer" className={styles.buyLink}>
+                  Ver en tienda →
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* ── ENLT lo posteó ── */}
           {coll === 'vinyl' && (item.tiktok_url || item.ig_url) && (

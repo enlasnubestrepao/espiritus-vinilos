@@ -1,0 +1,22 @@
+.wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #111;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.wrap svg {
+  display: block;
+}
+
+.label {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: .85;
+}

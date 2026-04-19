@@ -1,0 +1,198 @@
+.wrap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  position: relative;
+  min-height: 320px;
+}
+
+/* ── Mapa ── */
+.mapContainer {
+  background: #0d0d0d;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.mapContainer svg {
+  display: block;
+}
+
+/* ── Leyenda ── */
+.legend {
+  position: absolute;
+  bottom: 32px;
+  left: 14px;
+  width: 100px;
+}
+.legendBar {
+  height: 6px;
+  border-radius: 3px;
+  margin-bottom: 3px;
+}
+.legendLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: .55rem;
+  color: var(--text3);
+  letter-spacing: .5px;
+}
+
+/* ── Stat ── */
+.countryStat {
+  position: absolute;
+  bottom: 12px;
+  right: 14px;
+  font-size: .62rem;
+  color: var(--text3);
+  letter-spacing: .5px;
+}
+
+/* ── Panel lateral ── */
+.panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300px;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn .2s ease;
+}
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.panelTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+.panelSub {
+  font-size: .7rem;
+  color: var(--text3);
+  margin: 0;
+  letter-spacing: .5px;
+}
+.panelClose {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  border-radius: 6px;
+  padding: 4px 9px;
+  cursor: pointer;
+  font-size: .8rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.panelClose:hover { color: var(--text); border-color: var(--text3); }
+
+.panelCards {
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Spirit cards en el panel ── */
+.spiritCard {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  cursor: pointer;
+  transition: all .15s;
+}
+.spiritCard:hover { border-color: var(--text3); background: var(--bg4); }
+
+.cardImg {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.cardImgPlaceholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  background: var(--bg4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.cardBody { flex: 1; min-width: 0; }
+.cardBrand {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cardName {
+  font-size: .72rem;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.cardMeta { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+
+.pill {
+  font-size: .58rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+.pill.rum    { background: rgba(180,90,20,.2);  color: var(--ru-acc); }
+.pill.whisky { background: rgba(30,100,160,.2); color: var(--wh-acc); }
+
+.abv {
+  font-size: .62rem;
+  color: var(--text3);
+}
+.finished { font-size: .75rem; }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .panel {
+    width: 100%;
+    top: auto;
+    height: 55vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+    animation: slideUp .2s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .legend { bottom: 28px; }
+  .countryStat { bottom: 10px; }
+}

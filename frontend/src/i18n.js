@@ -10,6 +10,7 @@ const T = {
   sortOrder:            { es: '↕ Orden',                        en: '↕ Order' },
   stats:                { es: 'Stats',                          en: 'Stats' },
   crate:                { es: 'Anaquel',                        en: 'Crate' },
+  atlas:                { es: 'Atlas',                          en: 'Atlas' },
   collection:           { es: 'Colección',                      en: 'Collection' },
   addNew:               { es: '+ Agregar',                      en: '+ Add' },
   records:              { es: 'registros',                      en: 'records' },
