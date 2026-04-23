@@ -24,7 +24,7 @@ const HeroSection = forwardRef(function HeroSection({ onScrollDown }, ref) {
 
         <p className={styles.tagline}>
           Vinilos, rones y whiskies.<br />
-          Una colección personal desde Bogotá.
+          Una colección personal desde Medellín, Colombia.
         </p>
 
         <button
