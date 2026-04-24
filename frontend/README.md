@@ -1,5 +1,7 @@
 # En Las Nubes Trepao — Frontend
 
+> **Última actualización:** 2026-04-24 · commit `865463f`
+
 Archivo personal de vinilos, rones y whiskies. Una colección curada desde Medellín, Colombia.
 
 **Sitio en producción:** [enlasnubestrepao.com](https://enlasnubestrepao.com)
@@ -53,6 +55,8 @@ frontend/
 │   │   ├── SocialDrawer.jsx    # Drawer de Instagram / TikTok
 │   │   ├── PinModal.jsx        # Autenticación por PIN
 │   │   ├── SettingsPanel.jsx   # Panel de configuración
+│   │   ├── SessionesView.jsx    # Feature Sesiones (EDIT-04) — registro, lista, detalle
+│   │   ├── SessionesView.module.css
 │   │   ├── FeaturedBanner.jsx
 │   │   ├── CrateView.jsx       # Vista crate digger
 │   │   ├── KpiBar.jsx
@@ -130,11 +134,13 @@ git push origin main
 
 ## Variables de entorno
 
-No hay variables de entorno en el frontend. La URL base del backend está hardcodeada en `src/services/api.js`:
+No hay variables de entorno en el frontend. La URL base del backend se resuelve así en `src/services/api.js`:
 
 ```js
-const BASE_URL = 'https://espiritus-vinilos-api.onrender.com'
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 ```
+
+En producción apunta a `https://espiritus-vinilos-api.onrender.com` (definido en Render como variable de entorno del backend, no del frontend).
 
 ---
 

@@ -1,5 +1,7 @@
 # Backlog — En Las Nubes Trepao
 
+> **Última actualización:** 2026-04-24 · commit `865463f`
+
 Decisiones pendientes y mejoras estructurales que requieren decisión del owner antes de ejecutar.
 
 ---
@@ -139,20 +141,20 @@ Mood: patience, process, craft over marketing. 16:9+.
 
 ## TRACK B — Concepto editorial (siguiente iteración)
 
-**Status:** Pendiente — requiere contenido y decisión estratégica del owner
+**Status:** En curso — EDIT-04 completado, resto pendiente de decisión estratégica
 **Priority:** Alta para posicionamiento a largo plazo
 **Effort:** Grande (arquitectura + contenido + desarrollo)
-**Blocker:** TRACK A debe estar completo. Owner debe definir estructura de contenido.
+**Blocker:** Owner debe definir estructura de contenido editorial.
 
 ### Tareas de este track
 
 - **EDIT-01** — Arquitectura por mood/concepto en vez de tabs por categoría
 - **EDIT-02** — Feature de pairing vinilo + espíritu (el framework Booze & Vinyl digitalizado)
 - **EDIT-03** — Voz editorial: reseñas, liner notes, notas de cata — primer contenido escrito
-- **EDIT-04** — Página "Sesiones" — concepto de evento/experiencia compartida, con diseño que genere anticipación
+- **EDIT-04** ✅ — Sesiones — playlist de vinilos + espíritus por noche; registro por email+token, templates, tracks Spotify, preview
 - **EDIT-05** — Profundidad progresiva: entradas simples en la colección + artículos largos para quien quiere más
 - **EDIT-06** — Integración fotográfica editorial (hero, artículos, pairing pages)
 
 ---
 
-*Última actualización: Abril 2026*
+*Actualizado automáticamente en cada commit a main.*
