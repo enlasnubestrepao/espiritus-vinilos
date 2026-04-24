@@ -1,159 +1,126 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-24 · commit `865463f`
+> **Última actualización:** 2026-04-24 · commit `41d0601`
 
-Decisiones pendientes y mejoras estructurales que requieren decisión del owner antes de ejecutar.
+---
+
+## Tabla de estado — resumen ejecutivo
+
+| ID | Feature | Prioridad | Esfuerzo | Estado |
+|---|---|---|---|---|
+| ARCH-01 | Migrar SPA a SSG (Astro) | 🔴 Alta | Grande | ⏳ Pendiente decisión |
+| UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Pendiente decisión |
+| PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Pendiente decisión |
+| EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Pendiente |
+| EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Pendiente |
+| EDIT-03 | Voz editorial / reseñas | 🔴 Alta | Grande | ⏳ Pendiente contenido |
+| EDIT-04 | Sesiones | 🔴 Alta | Grande | ✅ Completado |
+| EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | ⏳ Pendiente |
+| EDIT-06 | Integración fotográfica editorial | 🟡 Media | Medio | ⏳ Pendiente |
 
 ---
 
 ## ARCH-01 — Migrar SPA a Static Site Generator (SSG)
 
-**Status:** No iniciado
-**Priority:** Alta — bloquea todo el SEO orgánico de contenido
+**Status:** ⏳ No iniciado — requiere decisión del owner
+**Priority:** 🔴 Alta — bloquea todo el SEO orgánico de contenido
 **Effort:** Grande (3–5 días mínimo)
-**Dependency:** Decisión del owner sobre Astro vs Eleventy vs Hugo
+**Dependency:** Decisión sobre Astro vs Eleventy vs Hugo
 
-**Problema:**
-Todo el contenido renderiza client-side. Los crawlers (Google, Bing) y los scrapers de redes sociales (WhatsApp, Telegram, iMessage) solo ven el `<title>` tag. Ninguna reseña de disco, ninguna entrada de curaduría, ninguna página de colección puede ser indexada ni previsualizada.
-
-Los OG tags y robots.txt implementados en esta sesión establecen autoridad de dominio y habilitan el social sharing de la URL raíz — pero no resuelven la indexabilidad de contenido individual.
+Todo el contenido renderiza client-side. Los crawlers (Google, Bing) y los scrapers de redes sociales (WhatsApp, Telegram, iMessage) solo ven el `<title>` tag. Ninguna reseña de disco ni página de colección puede ser indexada ni previsualizada individualmente.
 
 **Opciones:**
-- **Astro (recomendado):** migración sin fricción, mantiene los componentes React existentes, genera HTML estático en build time, deploy gratis en GitHub Pages vía GitHub Actions.
-- **Eleventy:** más simple, cero JS por defecto, mayor esfuerzo en migración de contenido.
-- **Hugo:** build más rápido, templates en Go, curva de aprendizaje más alta.
-
-No ejecutar hasta que el owner confirme el framework y el plan de migración de contenido.
+- **Astro (recomendado):** mantiene los componentes React existentes, genera HTML estático en build time, deploy gratis en GitHub Pages vía GitHub Actions.
+- **Eleventy:** más simple, cero JS por defecto, mayor esfuerzo en migración.
+- **Hugo:** build más rápido, templates en Go, curva de aprendizaje alta.
 
 ---
 
 ## UXUI-02 — Resiliencia ante caídas / Fallback hosting
 
-**Status:** No iniciado
-**Priority:** Media
-**Effort:** Pequeño (1–2 horas una vez confirmado el DNS)
+**Status:** ⏳ No iniciado — requiere confirmar DNS con Porkbun
+**Priority:** 🟡 Media
+**Effort:** Pequeño (1–2 horas)
 
-**Problema:**
-Cuando GitHub Pages tiene un incidente, los usuarios con JS activo ven pantalla blanca.
-El bloque `<noscript>` es el único safety net server-rendered actual.
-
-**Opción:**
-Configurar Cloudflare (free tier) frente a GitHub Pages.
-Cloudflare puede servir una página estática cacheada "estamos volviendo" ante falla del origen.
-Requiere migrar los DNS del dominio a los nameservers de Cloudflare.
-Confirmar con el owner si el registrador (Porkbun) permite cambio de NS.
+Cuando GitHub Pages cae, los usuarios ven pantalla blanca. Solución: Cloudflare free tier frente a GitHub Pages — puede servir una página cacheada "estamos volviendo" ante falla del origen. Requiere migrar los NS del dominio a Cloudflare.
 
 ---
 
 ## PROD-01 — Canal de audiencia propia / Email capture
 
-**Status:** No iniciado — requiere decisión del owner
-**Priority:** Crítica para monetización
+**Status:** ⏳ No iniciado — requiere decisión del owner
+**Priority:** 🔴 Crítica para monetización
 **Effort:** Pequeño una vez elegida la plataforma (1 snippet de embed)
 **Blocker:** Owner debe elegir plataforma y crear cuenta
 
-**Problema:**
-100% de la audiencia vive en Instagram, plataforma que el owner no controla.
-Sin lista de emails no hay base de monetización ni resiliencia ante cambios de algoritmo.
+100% de la audiencia vive en Instagram. Sin lista de emails no hay base de monetización ni resiliencia ante cambios de algoritmo.
 
 **Opciones:**
-1. **Kit (ConvertKit) — recomendado.** Gratis hasta 1,000 suscriptores. Nativo para creadores. Opción de newsletter pago integrada.
-2. **Buttondown** — más simple, gratis hasta 100, fácil upgrade.
-3. **Substack — evitar.** Crea dependencia de plataforma y tensión estética con el posicionamiento underground/análogo.
+1. **Kit (ConvertKit) — recomendado.** Gratis hasta 1,000 suscriptores. Nativo para creadores. Newsletter pago integrado.
+2. **Buttondown** — más simple, gratis hasta 100.
+3. **Substack — evitar.** Crea dependencia de plataforma.
 
-**Una vez elegida la plataforma:**
-- La plataforma provee un snippet JS de embed.
-- Agregar el snippet en el SPA en un lugar contextualmente apropiado (después de la primera sección de contenido, nunca como popup).
-- Copy en español, voz de curador. No "suscríbete a nuestro newsletter."
-  Registro correcto: *"Si querés saber cuándo llega un disco nuevo, dejá tu correo acá."*
-
-Esta feature se vuelve significativamente más valiosa después de ARCH-01 (migración a SSG), que permitiría que cada reseña de disco tenga su propia landing page y punto de conversión.
+Copy correcto: *"Si querés saber cuándo llega un disco nuevo, dejá tu correo acá."*
+Se vuelve más valioso después de ARCH-01 (cada disco tendría su propia landing page).
 
 ---
 
----
+## TRACK B — Concepto editorial
 
-## TRACK A — Capa gráfica ✅ COMPLETADO
+**Status:** En curso — EDIT-04 completado
+**Priority:** 🔴 Alta para posicionamiento a largo plazo
 
-**Status:** Cerrado
-**Sesiones:** 3
+### EDIT-01 — Arquitectura por mood/concepto
 
-### Diagnóstico de partida — 6 ejes editoriales
+**Status:** ⏳ Pendiente decisión estratégica
+**Effort:** Grande
 
-| Eje | Estado | Gap |
-|---|---|---|
-| 1. Concepto dual (vinilo + espíritus conversan) | ❌ Coexisten en tabs separados | Alto |
-| 2. Voz editorial e identidad | ❌ Visor de colección, sin voz propia | Alto |
-| 3. Profundidad progresiva del conocimiento | ⚠️ Modal con datos, sin capas curioso/experto | Medio |
-| 4. Potencial de sesión / experiencia compartida | ❌ Sin concepto de pairing ni evento en el UI | Alto |
-| 5. Fotografía y lenguaje visual | ⚠️ Artwork presente, estética UI genérica | Medio |
-| 6. Arquitectura / descubribilidad | ⚠️ Solo filtros — sin mood, concepto ni narrativa | Medio |
-
-### Tareas completadas
-
-- **GRFX-01** ✅ — Hero fotográfico con `hero-4.png`. Headline Fraunces 900, eyebrow, tagline, scroll cue animado.
-- **GRFX-02** ✅ — Paleta resuelta por integración fotográfica. Tokens `--font-display` centralizado.
-- **GRFX-03** ✅ — Cards: overlay de metadatos sobre imagen. Gradient editorial. Hover actions con z-index correcto.
-- **GRFX-04** ✅ — Tipografía migrada a **Fraunces** (variable font, ink traps). Token `--font-display` en todos los componentes.
-- **GRFX-05** ✅ — Franja surco macro (`hero-3.png`) entre Hero y colección. WelcomeModal con foto editorial.
-- **GRFX-06** ✅ — Scroll-progress bar en header (color por colección). Zoom en portadas al hover. Animaciones de entrada en Hero.
+Reemplazar los tabs por categoría (Vinilos / Rones / Whiskies) por una arquitectura de descubrimiento basada en mood, ocasión o concepto curatorial. El usuario no entraría a "buscar un ron" sino a "encontrar algo para una noche de lluvia".
 
 ---
 
-## SPRINT ACTUAL — Features y bugs (Abril 2026)
+### EDIT-02 — Feature de pairing vinilo + espíritu
 
-### Completados en este sprint
-- ✅ Hero dinámico por colección — imagen y copy distinto para Vinilos / Rones / Whiskies
-- ✅ Copy editorial: "Afinando el vinilo entre espíritus" (Vinilos), "Saboreando la barrica entre melodías" (Rones/Whiskies)
-- ✅ Hover actions en tarjetas de espíritus — botón "¿Dónde comprar?" (buy_url) + botón destilería (url)
-- ✅ Exportar CSV en StatsView — descarga `enlt-{coll}-{fecha}.csv` compatible con Excel
-- ✅ robots.txt mejorado con Disallow /api/ y Crawl-delay
-- ✅ **EDIT-04 Sesiones** — feature completo (registro, plantillas, sesiones, tracks, espíritus, preview)
-- ✅ **Breadcrumb de navegación** — indicador contextual de ubicación (Vinilos › Estadísticas, Rones › Atlas, etc.)
-- ✅ **Compartir vinilo abre nueva pestaña** — el link se copia Y se abre en nueva ventana para que quien comparte vea lo que verá el receptor
-- ✅ **Rediseño modal de licores** — header cinemático de 210px con imagen de fondo, gradiente editorial y metadatos clave superpuestos
+**Status:** ⏳ Pendiente
+**Effort:** Grande
 
-### Completado
-- ✅ **Imágenes hero** — `hero-1.png` para Rones, `hero-2.png` para Whiskies — funcionan correctamente en producción
-- ✅ README.md — reescrito con arquitectura, stack, estructura, instrucciones de deploy y features
-
-### Prompts de referencia (para reemplazar imágenes en el futuro si se desea)
-
-**Hero Rones:**
-```
-Editorial photography, analog warmth. A worn wooden table in a dimly lit bar or home library. 
-Center: a glass of dark amber rum, slightly backlit, with condensation. Behind it: a vinyl record 
-sleeve leaning against a rum bottle from the Caribbean (no brand visible). Warm candlelight from 
-the right. Dark background with bokeh. Film grain. Palette: deep amber, burnt sienna, dark mahogany.
-Overhead or 3/4 angle. No people. Mood: after midnight, ritual, Latin Caribbean soul. 16:9+.
-```
-
-**Hero Whiskies:**
-```
-Editorial photography, Scottish/Japanese whisky aesthetic. A glass of pale gold whisky neat, 
-resting on a thick leather-bound book or atlas. Copper still or whisky barrel detail slightly 
-out of focus. Cool morning light from a window. Mist or smoke effect. Vinyl record barely visible 
-in the background. Palette: gold, slate grey, deep charcoal, copper. Minimal, architectural.
-Mood: patience, process, craft over marketing. 16:9+.
-```
+El núcleo del concepto editorial: el framework *Booze & Vinyl* digitalizado. Una vista o página que propone combinaciones concretas: este disco con este espíritu, por qué, qué notas comparten. Requiere contenido curatorial del owner.
 
 ---
 
-## TRACK B — Concepto editorial (siguiente iteración)
+### EDIT-03 — Voz editorial: reseñas y notas de cata
 
-**Status:** En curso — EDIT-04 completado, resto pendiente de decisión estratégica
-**Priority:** Alta para posicionamiento a largo plazo
-**Effort:** Grande (arquitectura + contenido + desarrollo)
-**Blocker:** Owner debe definir estructura de contenido editorial.
+**Status:** ⏳ Pendiente — bloqueado por contenido
+**Effort:** Grande (arquitectura + contenido)
 
-### Tareas de este track
+Primer contenido escrito del sitio: liner notes de discos seleccionados, notas de cata de espíritus clave. Define la voz de ENLT como curador, no solo como coleccionista. Prerequisito para ARCH-01 (cada reseña sería una página indexable).
 
-- **EDIT-01** — Arquitectura por mood/concepto en vez de tabs por categoría
-- **EDIT-02** — Feature de pairing vinilo + espíritu (el framework Booze & Vinyl digitalizado)
-- **EDIT-03** — Voz editorial: reseñas, liner notes, notas de cata — primer contenido escrito
-- **EDIT-04** ✅ — Sesiones — playlist de vinilos + espíritus por noche; registro por email+token, templates, tracks Spotify, preview
-- **EDIT-05** — Profundidad progresiva: entradas simples en la colección + artículos largos para quien quiere más
-- **EDIT-06** — Integración fotográfica editorial (hero, artículos, pairing pages)
+---
+
+### EDIT-04 — Sesiones ✅ Completado
+
+**Status:** ✅ En producción desde 2026-04-24
+**Commits:** `0f7c41a`, `865463f`
+
+Permite armar una playlist de vinilos + espíritus para una noche específica. Identidad por email + token UUID (sin auth complejo). 8 plantillas de ambiente, máx 2h de música, máx 3 espíritus, vista previa de la sesión completa.
+
+---
+
+### EDIT-05 — Profundidad progresiva
+
+**Status:** ⏳ Pendiente
+**Effort:** Grande
+
+Dos capas de contenido para cada ítem: la tarjeta/modal actual (curioso) + un artículo largo accesible desde el modal (experto). Requiere ARCH-01 para que los artículos sean páginas indexables.
+
+---
+
+### EDIT-06 — Integración fotográfica editorial
+
+**Status:** ⏳ Pendiente
+**Effort:** Medio
+
+Fotografía propia o editorial para artículos, páginas de pairing y sesiones. Los heroes actuales son placeholders generados por AI — el siguiente nivel es fotografía real del dueño de la colección en contexto.
 
 ---
 
