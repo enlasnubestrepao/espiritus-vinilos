@@ -106,6 +106,10 @@ Esta feature se vuelve significativamente más valiosa después de ARCH-01 (migr
 - ✅ Hover actions en tarjetas de espíritus — botón "¿Dónde comprar?" (buy_url) + botón destilería (url)
 - ✅ Exportar CSV en StatsView — descarga `enlt-{coll}-{fecha}.csv` compatible con Excel
 - ✅ robots.txt mejorado con Disallow /api/ y Crawl-delay
+- ✅ **EDIT-04 Sesiones** — feature completo (registro, plantillas, sesiones, tracks, espíritus, preview)
+- ✅ **Breadcrumb de navegación** — indicador contextual de ubicación (Vinilos › Estadísticas, Rones › Atlas, etc.)
+- ✅ **Compartir vinilo abre nueva pestaña** — el link se copia Y se abre en nueva ventana para que quien comparte vea lo que verá el receptor
+- ✅ **Rediseño modal de licores** — header cinemático de 210px con imagen de fondo, gradiente editorial y metadatos clave superpuestos
 
 ### Completado
 - ✅ **Imágenes hero** — `hero-1.png` para Rones, `hero-2.png` para Whiskies — funcionan correctamente en producción

@@ -54,6 +54,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
+    window.open(url, '_blank', 'noopener')
   }
 
   function handleIgCopy() {
@@ -77,28 +78,53 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
       <div className={styles.box}>
 
         {/* ── Header ── */}
-        <div className={`${styles.hdr} ${styles[coll]}`}>
-          <div className={styles.icon}>
-            {item.cover_url
-              ? <img src={item.cover_url} alt={title} />
-              : coll === 'vinyl'
-                ? <VinylIcon agrupador={item.agrupador} artista={item.artista} />
-                : '🥃'
-            }
+        {coll === 'vinyl' ? (
+          <div className={`${styles.hdr} ${styles.vinyl}`}>
+            <div className={styles.icon}>
+              {item.cover_url
+                ? <img src={item.cover_url} alt={title} />
+                : <VinylIcon agrupador={item.agrupador} artista={item.artista} />
+              }
+            </div>
+            <div className={styles.hdrText}>
+              <h2>{title}</h2>
+              <p>{sub}</p>
+              <div className={styles.hdrPills}>
+                {item.agrupador && <span className={styles.hdrPill}>{item.agrupador}</span>}
+                {item.anio      && <span className={styles.hdrPillYear}>{item.anio}</span>}
+              </div>
+            </div>
+            <button className={styles.closeBtn} onClick={onClose}>✕</button>
           </div>
-          <div className={styles.hdrText}>
-            <h2>{title}</h2>
-            <p>{sub}</p>
-            {/* Pills rápidas en el header */}
-            <div className={styles.hdrPills}>
-              {coll === 'vinyl' && item.agrupador && <span className={styles.hdrPill}>{item.agrupador}</span>}
-              {coll === 'vinyl' && item.anio      && <span className={styles.hdrPillYear}>{item.anio}</span>}
-              {coll !== 'vinyl' && item.type      && <span className={styles.hdrPill}>{item.type}</span>}
-              {coll !== 'vinyl' && item.country   && <span className={styles.hdrPillYear}>{item.country}</span>}
+        ) : (
+          /* ── Spirit header — cinemático ── */
+          <div className={`${styles.spiritHdr} ${styles[coll]}`}>
+            {item.cover_url && (
+              <div className={styles.spiritHdrBg}>
+                <img src={item.cover_url} alt={title} className={styles.spiritHdrBgImg} />
+                <div className={styles.spiritHdrBgOverlay} />
+              </div>
+            )}
+            <button className={styles.closeBtn} style={{ zIndex: 2 }} onClick={onClose}>✕</button>
+            <div className={styles.spiritHdrContent}>
+              <div className={styles.hdrPills}>
+                {item.type    && <span className={styles.hdrPill}>{item.type}</span>}
+                {item.country && <span className={styles.hdrPillYear}>{item.country}</span>}
+                {item.abv     && <span className={styles.hdrPillYear}>{item.abv}%</span>}
+                {coll === 'rum' && (item.age_low || item.age_max) && (
+                  <span className={styles.hdrPillYear}>
+                    {item.age_low}{item.age_max && item.age_max !== item.age_low ? `–${item.age_max}` : ''} años
+                  </span>
+                )}
+                {coll === 'whisky' && item.years !== undefined && (
+                  <span className={styles.hdrPillYear}>{item.years > 0 ? `${item.years} años` : 'NAS'}</span>
+                )}
+              </div>
+              <h2 className={styles.spiritHdrTitle}>{title}</h2>
+              <p className={styles.spiritHdrSub}>{item.brand}{item.country ? ` · ${item.country}` : ''}</p>
             </div>
           </div>
-          <button className={styles.closeBtn} onClick={onClose}>✕</button>
-        </div>
+        )}
 
         <div className={styles.body}>
 

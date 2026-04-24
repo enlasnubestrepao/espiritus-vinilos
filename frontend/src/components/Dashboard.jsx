@@ -18,6 +18,30 @@ import styles         from './Dashboard.module.css'
 
 const FETCHERS = { vinyl: getVinyls, rum: getRums, whisky: getWhiskies }
 
+const COLL_LABELS = { vinyl: 'Vinilos', rum: 'Rones', whisky: 'Whiskies' }
+const VIEW_LABELS  = { collection: null, stats: 'Estadísticas', crate: 'Anaquel', atlas: 'Atlas' }
+
+function Breadcrumb({ coll, view, activeFilters }) {
+  const viewLabel = VIEW_LABELS[view]
+  return (
+    <nav className={styles.breadcrumb} aria-label="Ubicación">
+      <span className={`${styles.bcRoot} ${styles[coll]}`}>{COLL_LABELS[coll]}</span>
+      {viewLabel && (
+        <><span className={styles.bcSep}>›</span><span className={styles.bcCrumb}>{viewLabel}</span></>
+      )}
+      {!viewLabel && activeFilters.length > 0 && (
+        <>
+          <span className={styles.bcSep}>›</span>
+          <span className={styles.bcCrumb}>{activeFilters[0][1]}</span>
+          {activeFilters.length > 1 && (
+            <span className={styles.bcMore}>+{activeFilters.length - 1}</span>
+          )}
+        </>
+      )}
+    </nav>
+  )
+}
+
 export default function Dashboard({ coll, pinIsSet }) {
   const { t } = useLang()
   const [search,      setSearch]      = useState('')
@@ -248,6 +272,8 @@ export default function Dashboard({ coll, pinIsSet }) {
         )}
         <main className={styles.content}>
 
+          <Breadcrumb coll={coll} view={view} activeFilters={activeFilters} />
+
           {/* Top bar */}
           <div className={styles.topBar}>
             {/* Mobile: show filter toggle button */}
@@ -338,6 +364,7 @@ export default function Dashboard({ coll, pinIsSet }) {
                               ? `${window.location.origin}${window.location.pathname}?v=${idx}`
                               : window.location.href
                             navigator.clipboard.writeText(url).catch(() => {})
+                            if (coll === 'vinyl') window.open(url, '_blank', 'noopener')
                           }}
                           onIgStory={(coll === 'vinyl' && item.ig_url) ? (e) => {
                             e.stopPropagation()

@@ -112,7 +112,11 @@ git push origin main
 - **Hero dinámico por colección** — imagen y copy editorial distinto para Vinilos, Rones y Whiskies
 - **Cards con overlay editorial** — metadata integrada sobre la portada, zoom al hover
 - **Hover actions** — Spotify y share para vinilos; compra y destilería para espíritus
-- **Modal de detalle** — mini-mapa del país, sección de compra, grupos de metadatos
+- **Modal de detalle vinilos** — Spotify player, sharing, social media, grupos de metadatos
+- **Modal de detalle licores** — header cinemático 210px con foto de fondo, metadatos clave superpuestos, mini-mapa del país, sección de compra
+- **Breadcrumb de navegación** — indicador contextual siempre visible (Ej: Vinilos › Anaquel)
+- **Compartir vinilo** — copia el link Y abre nueva pestaña para que quien comparte vea lo que verá el receptor
+- **Sesiones (EDIT-04)** — armá una playlist de vinilos + espíritus para una noche específica; identidad por email+token, sin auth complejo
 - **Atlas view** — mapa mundial con intensidad por cantidad de espíritus por país
 - **StatsView + exportar CSV** — estadísticas de la colección descargables en Excel
 - **Scroll-progress bar** — en el header, color según colección activa
