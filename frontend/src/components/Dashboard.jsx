@@ -77,6 +77,15 @@ export default function Dashboard({ coll, pinIsSet }) {
     }
   }, [data, coll])
 
+  // Resetear vista y filtros al cambiar de colección
+  useEffect(() => {
+    setView('collection')
+    setFilters({})
+    setSearch('')
+    setSelected(null)
+    setStatsDetail(null)
+  }, [coll])
+
   // Listen for featured-changed events (clear or set from other components)
   useEffect(() => {
     const handler = () => setFeaturedVer(v => v + 1)
