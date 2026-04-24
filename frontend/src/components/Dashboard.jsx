@@ -331,12 +331,14 @@ export default function Dashboard({ coll, pinIsSet }) {
                           key={i} item={item} coll={coll}
                           onClick={() => setSelected(item)}
                           onSpotify={coll === 'vinyl' ? (e) => { e.stopPropagation(); setSpotifyItem({ item, index: findIndex(item) }) } : null}
-                          onShare={coll === 'vinyl' ? (e) => {
+                          onShare={(e) => {
                             e.stopPropagation()
                             const idx = findIndex(item)
-                            const url = `${window.location.origin}${window.location.pathname}?v=${idx}`
+                            const url = coll === 'vinyl'
+                              ? `${window.location.origin}${window.location.pathname}?v=${idx}`
+                              : window.location.href
                             navigator.clipboard.writeText(url).catch(() => {})
-                          } : null}
+                          }}
                           onIgStory={(coll === 'vinyl' && item.ig_url) ? (e) => {
                             e.stopPropagation()
                             setSocialDrawer({ type: 'instagram', url: item.ig_url })
@@ -344,6 +346,14 @@ export default function Dashboard({ coll, pinIsSet }) {
                           onTikTok={(coll === 'vinyl' && item.tiktok_url) ? (e) => {
                             e.stopPropagation()
                             setSocialDrawer({ type: 'tiktok', url: item.tiktok_url })
+                          } : null}
+                          onBuy={(coll !== 'vinyl' && item.buy_url) ? (e) => {
+                            e.stopPropagation()
+                            window.open(item.buy_url, '_blank', 'noopener')
+                          } : null}
+                          onDistillery={(coll !== 'vinyl' && item.url) ? (e) => {
+                            e.stopPropagation()
+                            window.open(item.url, '_blank', 'noopener')
                           } : null}
                         />
                       ))}
@@ -358,7 +368,7 @@ export default function Dashboard({ coll, pinIsSet }) {
 }
 
 // ── CARD ─────────────────────────────────────────────────────────────────────
-function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok }) {
+function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok, onBuy, onDistillery }) {
   const [copied, setCopied] = useState(false)
 
   const title = coll === 'vinyl' ? item.artista : item.brand
@@ -396,7 +406,7 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok }) 
         {item.terminado && <span className={styles.lentBadge} title="Ya consumí">🫗</span>}
 
         {/* ── Hover overlay con acciones rápidas ── */}
-        {(onSpotify || onShare || onIgStory || onTikTok) && (
+        {(onSpotify || onShare || onIgStory || onTikTok || onBuy || onDistillery) && (
           <div className={styles.hoverActions}>
             {onSpotify && (
               <button
@@ -404,6 +414,28 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok }) 
                 onClick={onSpotify}
                 title="Escuchar en Spotify"
               >▶</button>
+            )}
+            {onBuy && (
+              <button
+                className={`${styles.haBtn} ${styles.haBtnBuy}`}
+                onClick={onBuy}
+                title="¿Dónde comprar?"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
+              </button>
+            )}
+            {onDistillery && (
+              <button
+                className={`${styles.haBtn} ${styles.haBtnDistillery}`}
+                onClick={onDistillery}
+                title="Sitio de la destilería"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </button>
             )}
             {onShare && (
               <button
@@ -436,13 +468,15 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok }) 
             )}
           </div>
         )}
-      </div>
-      <div className={styles.cardBody}>
-        <div className={styles.cardTitle}>{title}</div>
-        <div className={styles.cardSub}>{sub}</div>
-        <div className={styles.cardMeta}>
-          {tag  && <span className={`${styles.pill} ${styles[coll]}`}>{tag}</span>}
-          {year && <span className={styles.year}>{year}</span>}
+
+        {/* Overlay de metadatos sobre la imagen */}
+        <div className={styles.cardOverlay}>
+          <div className={styles.cardTitle}>{title}</div>
+          <div className={styles.cardSub}>{sub}</div>
+          <div className={styles.cardMeta}>
+            {tag  && <span className={`${styles.pill} ${styles[coll]}`}>{tag}</span>}
+            {year && <span className={styles.year}>{year}</span>}
+          </div>
         </div>
       </div>
     </div>

@@ -23,7 +23,7 @@
 .hdr.vinyl  { background: linear-gradient(135deg, var(--v-acc),  #5a1808); }
 .hdr.rum    { background: linear-gradient(135deg, var(--ru-acc), #5c2800); }
 .hdr.whisky { background: linear-gradient(135deg, var(--wh-acc), #0a2840); }
-.hdr h2 { font-family: 'Playfair Display', serif; font-size: 1rem; color: #fff; }
+.hdr h2 { font-family: var(--font-display); font-size: 1rem; color: #fff; }
 
 .closeBtn {
   background: rgba(255,255,255,.1); border: none;

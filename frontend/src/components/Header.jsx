@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import styles from './Header.module.css'
 
 const LOGO_SRC = '/espiritus-vinilos/logo-enlt.jpeg'
@@ -66,8 +67,23 @@ const COLLECTIONS = [
 ]
 
 export default function Header({ coll, setColl, onSettings, lang, setLang }) {
+  const progressRef = useRef(null)
+
+  useEffect(() => {
+    function onScroll() {
+      const doc = document.documentElement
+      const scrolled = doc.scrollTop || document.body.scrollTop
+      const total = doc.scrollHeight - doc.clientHeight
+      const pct = total > 0 ? (scrolled / total) * 100 : 0
+      if (progressRef.current) progressRef.current.style.width = `${pct}%`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <header className={`${styles.header} ${styles[coll]}`}>
+      <div className={`${styles.progressBar} ${styles[coll]}`} ref={progressRef} />
       <img
         src={LOGO_SRC}
         alt="En Las Nubes Trepao"

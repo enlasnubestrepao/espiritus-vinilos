@@ -47,7 +47,14 @@ function AppInner() {
       )}
 
       <Header coll={coll} setColl={setColl} onSettings={handleSettingsClick} lang={lang} setLang={setLang} />
-      <HeroSection onScrollDown={() => dashboardRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+      <HeroSection coll={coll} onScrollDown={() => dashboardRef.current?.scrollIntoView({ behavior: 'smooth' })} />
+
+      {/* Franja de transición — surco de vinilo */}
+      <div className="grooveStrip" aria-hidden="true">
+        <img src="/hero-3.png" alt="" className="grooveStripImg" />
+        <div className="grooveStripOverlay" />
+      </div>
+
       <div ref={dashboardRef}>
         <Dashboard coll={coll} pinIsSet={pinIsSet} />
       </div>

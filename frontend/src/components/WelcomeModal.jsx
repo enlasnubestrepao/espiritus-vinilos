@@ -71,8 +71,12 @@ export default function WelcomeModal({ onClose }) {
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && handleClose()}>
       <div className={styles.box}>
 
-        {/* Hero con logo/título */}
+        {/* Hero con foto de fondo */}
         <div className={styles.hero}>
+          <div className={styles.heroBg} aria-hidden="true">
+            <img src="/hero-1.png" alt="" className={styles.heroBgImg} />
+            <div className={styles.heroBgOverlay} />
+          </div>
           <div className={styles.heroTitle}>En Las Nubes Trepao</div>
           <div className={styles.heroSub}>Espíritus &amp; Vinilos</div>
           <div className={styles.heroTagline}>{t('welcomeTagline')}</div>

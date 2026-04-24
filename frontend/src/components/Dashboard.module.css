@@ -79,7 +79,7 @@
   transition: all .2s;
   position: relative;
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.55); }
 .card.vinyl:hover  { border-color: var(--v-acc2); }
 .card.rum:hover    { border-color: var(--ru-acc2); }
 .card.whisky:hover { border-color: var(--wh-acc2); }
@@ -93,7 +93,11 @@
   overflow: hidden;
   position: relative;
 }
-.cardArt img { width: 100%; height: 100%; object-fit: cover; }
+.cardArt img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .4s ease;
+}
+.card:hover .cardArt img { transform: scale(1.05); }
 .bottle { font-size: 2.5rem; }
 
 .dot {
@@ -141,9 +145,19 @@
   color: #fff; padding: 3px; line-height: 1.2; overflow: hidden;
 }
 
-.cardBody  { padding: 11px; }
-.cardTitle { font-size: .82rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
-.cardSub   { font-size: .73rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 7px; }
+/* ── Card overlay — metadata sobre la imagen ── */
+.cardOverlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  padding: 28px 10px 10px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(4,3,2,.88) 55%, rgba(4,3,2,.97) 100%);
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.cardTitle { font-size: .8rem; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+.cardSub   { font-size: .7rem; color: rgba(255,255,255,.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
 .cardMeta  { display: flex; justify-content: space-between; align-items: center; gap: 4px; }
 
 .pill { font-size: .6rem; padding: 2px 7px; border-radius: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
@@ -157,12 +171,13 @@
 .hoverActions {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  background: linear-gradient(transparent 0%, rgba(0,0,0,.82) 100%);
+  z-index: 3;
+  background: linear-gradient(transparent 0%, rgba(0,0,0,.88) 100%);
   display: flex;
   justify-content: center;
   align-items: flex-end;
   gap: 7px;
-  padding: 24px 8px 9px;
+  padding: 48px 8px 10px;
   opacity: 0;
   pointer-events: none;
   transition: opacity .2s ease;
@@ -170,6 +185,10 @@
 .card:hover .hoverActions {
   opacity: 1;
   pointer-events: auto;
+}
+/* Cuando hay hover actions, el overlay de metadatos cede el paso */
+.card:hover .cardOverlay {
+  opacity: 0;
 }
 
 .haBtn {
@@ -200,6 +219,20 @@
   border-color: rgba(29,185,84,.6);
   color: #1DB954;
 }
+
+.haBtnBuy {
+  background: rgba(181,101,29,.3);
+  border-color: rgba(181,101,29,.55);
+  color: var(--ru-acc2);
+}
+.haBtnBuy:hover { background: rgba(181,101,29,.55); color: #fff; }
+
+.haBtnDistillery {
+  background: rgba(26,74,122,.3);
+  border-color: rgba(26,74,122,.55);
+  color: var(--wh-acc2);
+}
+.haBtnDistillery:hover { background: rgba(26,74,122,.55); color: #fff; }
 
 .haBtnIg {
   background: rgba(193,53,132,.3);
@@ -408,11 +441,11 @@
   }
 
   /* Cards más compactas en mobile */
-  .cardBody  { padding: 8px; }
-  .cardTitle { font-size: .76rem; }
-  .cardSub   { font-size: .68rem; margin-bottom: 5px; }
-  .pill      { font-size: .56rem; }
-  .year      { font-size: .58rem; }
+  .cardOverlay { padding: 22px 8px 8px; }
+  .cardTitle   { font-size: .74rem; }
+  .cardSub     { font-size: .65rem; margin-bottom: 4px; }
+  .pill        { font-size: .56rem; }
+  .year        { font-size: .58rem; }
 
   /* Ocultar hover overlay en touch (no hay hover) */
   .hoverActions { display: none; }
