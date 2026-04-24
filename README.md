@@ -345,6 +345,8 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 
 ## Historial de fases
 
+> **Última actualización:** 2026-04-24 · commit `e80bd85`
+
 | Fase | Qué se construyó |
 |------|-----------------|
 | 1 | Setup monorepo, FastAPI + 3 routers, React + Vite, tema oscuro, grid básico |
@@ -354,6 +356,8 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 | 5 | Deploy GitHub Pages + Render, About modal, README |
 | 6 | SpotifyModal, FeaturedBanner, ShareView, StatsView, PinModal, WelcomeModal, responsive mobile |
 | 7 | Migración a Supabase PostgreSQL, PIN bcrypt en backend, i18n ES/EN (LangContext), SocialDrawer, SettingsPanel, Header SVG icons, dominio custom `enlasnubestrepao.com`, OG tags + SEO baseline, BACKLOG.md |
+| 8 | Track A gráfico completo: hero fotográfico por colección, tipografía Fraunces, cards con overlay editorial, hover actions, scroll-progress bar, WelcomeModal con foto, franja surco vinilo, exportar CSV, breadcrumb de navegación, modal licores cinemático, compartir vinilo abre nueva pestaña |
+| 9 | EDIT-04 Sesiones: schema Supabase, 13 endpoints FastAPI, SessionesView con registro email+token, 8 plantillas, picker de tracks Spotify, picker de espíritus, vista previa; `spotify_album_id` en AdminForm; fix reset de vista al cambiar colección |
 
 ---
 
