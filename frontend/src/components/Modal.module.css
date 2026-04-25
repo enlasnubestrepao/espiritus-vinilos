@@ -303,6 +303,20 @@
 }
 .spotifyFrame { display: block; border-radius: 10px; }
 .spotifyMsg   { font-size: .72rem; color: var(--text3); margin: 0 0 10px; }
+.spotifyCorrect {
+  display: block;
+  width: 100%;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  border-top: 1px solid rgba(29,185,84,.15);
+  color: var(--text3);
+  font-size: .7rem;
+  cursor: pointer;
+  text-align: center;
+  transition: color .15s;
+}
+.spotifyCorrect:hover { color: #1DB954; }
 
 /* ── Acciones ── */
 .actionsWrap {

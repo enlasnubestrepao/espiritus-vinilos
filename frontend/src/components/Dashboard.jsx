@@ -257,6 +257,7 @@ export default function Dashboard({ coll, pinIsSet }) {
           index={findIndex(selected)}
           onClose={() => setSelected(null)}
           onEdit={() => requirePin('Editar registro', () => { setAdminIndex(findIndex(selected)); setSelected(null); setAdminItem(selected) })}
+          onOpenSpotify={coll === 'vinyl' ? (item, idx) => { setSelected(null); setSpotifyItem({ item, index: idx }) } : undefined}
           onSetFeatured={coll === 'vinyl' ? (item, idx) => {
             requirePin('Destacar disco del mes', () => {
               setFeatured(item, idx)

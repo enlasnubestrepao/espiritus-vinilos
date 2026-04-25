@@ -6,7 +6,7 @@ import styles from './Modal.module.css'
 
 const CountryMiniMap = lazy(() => import('./CountryMiniMap'))
 
-export default function Modal({ item, coll, index, onClose, onEdit, onSetFeatured }) {
+export default function Modal({ item, coll, index, onClose, onEdit, onSetFeatured, onOpenSpotify }) {
   const { t } = useLang()
   const [spotifyId,    setSpotifyId]    = useState(item?.spotify_id || null)
   const [showPlayer,   setShowPlayer]   = useState(false)
@@ -228,6 +228,11 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy" className={styles.spotifyFrame}
               />
+              {onOpenSpotify && (
+                <button className={styles.spotifyCorrect} onClick={() => onOpenSpotify(item, index)}>
+                  ¿Álbum incorrecto? Corregir
+                </button>
+              )}
             </div>
           )}
           {spotifyMsg && <p className={styles.spotifyMsg}>{spotifyMsg}</p>}
