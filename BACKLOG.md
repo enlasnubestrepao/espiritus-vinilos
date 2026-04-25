@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-24 · commit `486fd58`
+> **Última actualización:** 2026-04-25 · commit `a0c8cb0`
 
 ---
 
@@ -14,7 +14,6 @@
 | EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Pendiente |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Pendiente |
 | EDIT-03 | Voz editorial / reseñas | 🔴 Alta | Grande | ⏳ Pendiente contenido |
-| EDIT-04 | Sesiones | 🔴 Alta | Grande | ✅ Completado |
 | EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | ⏳ Pendiente |
 | EDIT-06 | Integración fotográfica editorial | 🟡 Media | Medio | ⏳ Pendiente |
 
@@ -67,7 +66,6 @@ Se vuelve más valioso después de ARCH-01 (cada disco tendría su propia landin
 
 ## TRACK B — Concepto editorial
 
-**Status:** En curso — EDIT-04 completado
 **Priority:** 🔴 Alta para posicionamiento a largo plazo
 
 ### EDIT-01 — Arquitectura por mood/concepto
@@ -94,15 +92,6 @@ El núcleo del concepto editorial: el framework *Booze & Vinyl* digitalizado. Un
 **Effort:** Grande (arquitectura + contenido)
 
 Primer contenido escrito del sitio: liner notes de discos seleccionados, notas de cata de espíritus clave. Define la voz de ENLT como curador, no solo como coleccionista. Prerequisito para ARCH-01 (cada reseña sería una página indexable).
-
----
-
-### EDIT-04 — Sesiones ✅ Completado
-
-**Status:** ✅ En producción desde 2026-04-24
-**Commits:** `0f7c41a`, `865463f`
-
-Permite armar una playlist de vinilos + espíritus para una noche específica. Identidad por email + token UUID (sin auth complejo). 8 plantillas de ambiente, máx 2h de música, máx 3 espíritus, vista previa de la sesión completa.
 
 ---
 

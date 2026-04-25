@@ -340,6 +340,7 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 --v-acc, --v-acc2, --v-gold /* Vinilos: rojo */
 --ru-acc, --ru-acc2         /* Rones: ámbar */
 --wh-acc, --wh-acc2         /* Whiskies: azul */
+--se-acc, --se-acc2         /* Sesiones: violeta */
 --r                         /* Border radius estándar */
 ```
 
@@ -347,7 +348,7 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 
 ## Historial de fases
 
-> **Última actualización:** 2026-04-24 · commit `486fd58`
+> **Última actualización:** 2026-04-25 · commit `a0c8cb0`
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -360,6 +361,7 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 | 7 | Migración a Supabase PostgreSQL, PIN bcrypt en backend, i18n ES/EN (LangContext), SocialDrawer, SettingsPanel, Header SVG icons, dominio custom `enlasnubestrepao.com`, OG tags + SEO baseline, BACKLOG.md |
 | 8 | Track A gráfico completo: hero fotográfico por colección, tipografía Fraunces, cards con overlay editorial, hover actions, scroll-progress bar, WelcomeModal con foto, franja surco vinilo, exportar CSV, breadcrumb de navegación, modal licores cinemático, compartir vinilo abre nueva pestaña |
 | 9 | EDIT-04 Sesiones: schema Supabase, 13 endpoints FastAPI, SessionesView con registro email+token, 8 plantillas, picker de tracks Spotify, picker de espíritus, vista previa; `spotify_album_id` en AdminForm; fix reset de vista al cambiar colección |
+| 10 | UX/editorial: filtro Década reemplaza Sello en vinilos; Atlas enriquecido con bandera + nota editorial por país; modal espíritus con hero image contextual (hero-1/hero-2) + botella flotante; WelcomeModal con copy editorial de Federico, photo cards y Sesiones como 5ª feature; git tags v1.0.0 y v2.0.0 |
 
 ---
 
