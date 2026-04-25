@@ -131,6 +131,11 @@ export default function Dashboard({ coll, pinIsSet }) {
         (a.artista || '').localeCompare(b.artista || '', 'es', { sensitivity: 'base' })
       )
     }
+    if (coll !== 'vinyl' && sortBy === 'artista') {
+      result = [...result].sort((a, b) =>
+        (a.brand || '').localeCompare(b.brand || '', 'es', { sensitivity: 'base' })
+      )
+    }
     return result
   }, [data, search, filters, coll, sortBy])
 
@@ -304,7 +309,7 @@ export default function Dashboard({ coll, pinIsSet }) {
                 {t('clear')}
               </button>
             )}
-            {coll === 'vinyl' && view === 'collection' && (
+            {view === 'collection' && (
               <button
                 className={styles.sortToggle}
                 onClick={() => setSortBy(s => s === 'artista' ? 'default' : 'artista')}
