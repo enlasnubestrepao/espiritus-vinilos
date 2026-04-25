@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-25 · commit `920b37d`
+> **Última actualización:** 2026-04-25 · commit `c3a8896`
 
 ---
 
@@ -8,6 +8,7 @@
 
 | ID | Feature | Prioridad | Esfuerzo | Estado |
 |---|---|---|---|---|
+| QA-01 | Triage responsive end-to-end v2.0 | 🔴 Alta | Medio | ⏳ Pendiente |
 | ARCH-01 | Migrar SPA a SSG (Astro) | 🔴 Alta | Grande | ⏳ Pendiente decisión |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Pendiente decisión |
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Pendiente decisión |
@@ -16,6 +17,16 @@
 | EDIT-03 | Voz editorial / reseñas | 🔴 Alta | Grande | ⏳ Pendiente contenido |
 | EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | ⏳ Pendiente |
 | EDIT-06 | Integración fotográfica editorial | 🟡 Media | Medio | ⏳ Pendiente |
+
+---
+
+## QA-01 — Triage responsive end-to-end v2.0
+
+**Status:** ⏳ Pendiente
+**Priority:** 🔴 Alta — la v2.0 está en producción sin QA mobile formal
+**Effort:** Medio (1 sesión)
+
+Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos, modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form, welcome modal. Documentar issues encontrados y resolverlos en la misma sesión.
 
 ---
 
