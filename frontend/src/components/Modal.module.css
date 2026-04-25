@@ -120,9 +120,24 @@
 .spiritHdrBgImg {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: center 15%;
-  opacity: .38;
-  filter: blur(1px) saturate(1.3);
+  object-position: center 30%;
+  opacity: .52;
+  filter: blur(0px) saturate(1.2);
+}
+
+/* Botella flotante — thumbnail sobre el fondo editorial */
+.spiritHdrBottle {
+  position: absolute;
+  top: 12px;
+  right: 52px;
+  height: 138px;
+  width: auto;
+  max-width: 90px;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,.6));
+  z-index: 1;
+  opacity: .88;
 }
 .spiritHdrBgOverlay {
   position: absolute;
@@ -473,6 +488,7 @@
   .spiritHdr { min-height: 170px; }
   .spiritHdrContent { padding: 14px 44px 16px 16px; }
   .spiritHdrTitle { font-size: 1.15rem; }
+  .spiritHdrBottle { height: 100px; right: 46px; }
 
   .body { padding: 12px 14px 16px; }
 

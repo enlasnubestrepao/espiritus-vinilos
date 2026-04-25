@@ -106,7 +106,16 @@ export default function Dashboard({ coll, pinIsSet }) {
     if (!data) return []
     let result = data
     Object.entries(filters).forEach(([key, val]) => {
-      if (val) result = result.filter(r => r[key] === val)
+      if (!val) return
+      if (key === 'decade') {
+        result = result.filter(r => {
+          const y = parseInt(r.anio)
+          if (!r.anio || isNaN(y)) return val === 'Sin año'
+          return `${Math.floor(y / 10) * 10}s` === val
+        })
+      } else {
+        result = result.filter(r => r[key] === val)
+      }
     })
     if (search.trim()) {
       const s = search.toLowerCase()

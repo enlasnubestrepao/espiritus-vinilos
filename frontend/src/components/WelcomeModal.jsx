@@ -8,43 +8,6 @@ export function shouldShowWelcome() {
   return !localStorage.getItem(STORAGE_KEY)
 }
 
-function VinylIcon() {
-  return (
-    <svg viewBox="0 0 64 64" width="48" height="48" fill="none">
-      <circle cx="32" cy="32" r="30" fill="#1a0a0a" stroke="#c0392b" strokeWidth="1.5"/>
-      <circle cx="32" cy="32" r="22" fill="none" stroke="#333" strokeWidth="1"/>
-      <circle cx="32" cy="32" r="15" fill="none" stroke="#333" strokeWidth="1"/>
-      <circle cx="32" cy="32" r="9"  fill="none" stroke="#333" strokeWidth="1"/>
-      <circle cx="32" cy="32" r="10" fill="#c0392b"/>
-      <circle cx="32" cy="32" r="3"  fill="#111"/>
-    </svg>
-  )
-}
-
-function RumIcon() {
-  return (
-    <svg viewBox="0 0 64 80" width="38" height="48" fill="none">
-      <rect x="22" y="4" width="20" height="8" rx="3" fill="#7a4a1a" stroke="#a0622a" strokeWidth="1.2"/>
-      <path d="M18 14 Q16 26 16 40 Q16 68 32 68 Q48 68 48 40 Q48 26 46 14 Z" fill="#b5651d" stroke="#a0622a" strokeWidth="1.2"/>
-      <path d="M20 30 Q32 24 44 30" stroke="rgba(255,255,255,.15)" strokeWidth="1.5" fill="none"/>
-      <path d="M18 48 Q32 42 46 48" stroke="rgba(255,255,255,.1)" strokeWidth="1" fill="none"/>
-      <rect x="24" y="4" width="16" height="3" rx="1.5" fill="#c07830"/>
-    </svg>
-  )
-}
-
-function WhiskyIcon() {
-  return (
-    <svg viewBox="0 0 64 80" width="38" height="48" fill="none">
-      <path d="M16 20 L20 68 Q20 72 32 72 Q44 72 44 68 L48 20 Z" fill="#1a3a5c" stroke="#2a5a8c" strokeWidth="1.2"/>
-      <path d="M16 20 L48 20 L46 12 Q44 8 32 8 Q20 8 18 12 Z" fill="#2a5a8c" stroke="#3a7abf" strokeWidth="1"/>
-      <path d="M20 36 Q32 30 44 36" stroke="rgba(255,255,255,.15)" strokeWidth="1.5" fill="none"/>
-      <path d="M22 52 Q32 46 42 52" stroke="rgba(255,255,255,.1)" strokeWidth="1" fill="none"/>
-      <rect x="24" y="8" width="16" height="2" rx="1" fill="#3a7abf"/>
-    </svg>
-  )
-}
-
 function SearchIcon() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
 }
@@ -56,6 +19,9 @@ function SpotifyIcon() {
 }
 function ShareIcon() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+}
+function SessionIcon() {
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
 }
 
 export default function WelcomeModal({ onClose }) {
@@ -83,24 +49,35 @@ export default function WelcomeModal({ onClose }) {
         </div>
 
         <div className={styles.intro}>
-          <p>{t('welcomeBody')}</p>
+          {t('welcomeBody').split('\n\n').map((para, i) => (
+            <p key={i} className={styles.introPara}>{para}</p>
+          ))}
         </div>
 
         <div className={styles.collectionsRow}>
           <div className={`${styles.collCard} ${styles.collVinyl}`}>
-            <div className={styles.collIcon}><VinylIcon /></div>
-            <div className={styles.collName}>{t('vinyls')}</div>
-            <div className={styles.collDesc}>{t('welcomeVinylDesc')}</div>
+            <div className={styles.collCardPhoto} style={{ backgroundImage: 'url(/hero-4.png)' }} />
+            <div className={styles.collCardOverlay} />
+            <div className={styles.collCardContent}>
+              <div className={styles.collName}>{t('vinyls')}</div>
+              <div className={styles.collDesc}>{t('welcomeVinylDesc')}</div>
+            </div>
           </div>
           <div className={`${styles.collCard} ${styles.collRum}`}>
-            <div className={styles.collIcon}><RumIcon /></div>
-            <div className={styles.collName}>{t('rums')}</div>
-            <div className={styles.collDesc}>{t('welcomeRumDesc')}</div>
+            <div className={styles.collCardPhoto} style={{ backgroundImage: 'url(/hero-1.png)' }} />
+            <div className={styles.collCardOverlay} />
+            <div className={styles.collCardContent}>
+              <div className={styles.collName}>{t('rums')}</div>
+              <div className={styles.collDesc}>{t('welcomeRumDesc')}</div>
+            </div>
           </div>
           <div className={`${styles.collCard} ${styles.collWhisky}`}>
-            <div className={styles.collIcon}><WhiskyIcon /></div>
-            <div className={styles.collName}>{t('whiskies')}</div>
-            <div className={styles.collDesc}>{t('welcomeWhiskyDesc')}</div>
+            <div className={styles.collCardPhoto} style={{ backgroundImage: 'url(/hero-2.png)' }} />
+            <div className={styles.collCardOverlay} />
+            <div className={styles.collCardContent}>
+              <div className={styles.collName}>{t('whiskies')}</div>
+              <div className={styles.collDesc}>{t('welcomeWhiskyDesc')}</div>
+            </div>
           </div>
         </div>
 
@@ -111,7 +88,9 @@ export default function WelcomeModal({ onClose }) {
             <li><StatsIcon /> {t('welcomeAction2')}</li>
             <li><SpotifyIcon /> {t('welcomeAction3')}</li>
             <li><ShareIcon /> {t('welcomeAction4')}</li>
+            <li className={styles.featureSessions}><SessionIcon /> {t('welcomeAction5')}</li>
           </ul>
+          <p className={styles.introCta}>{t('welcomeBodyCta')}</p>
         </div>
 
         <div className={styles.footer}>

@@ -51,6 +51,55 @@ const COUNTRY_ISO = {
   'Campbeltown':         '826',
 }
 
+// ISO 2 para banderas (flagcdn.com)
+const COUNTRY_ISO2 = {
+  'Jamaica': 'jm', 'Barbados': 'bb', 'Trinidad and Tobago': 'tt', 'Trinidad': 'tt',
+  'Cuba': 'cu', 'Dominican Republic': 'do', 'Colombia': 'co', 'Venezuela': 've',
+  'Nicaragua': 'ni', 'Guatemala': 'gt', 'Panama': 'pa', 'Haiti': 'ht',
+  'Guyana': 'gy', 'Martinique': 'mq', 'Belize': 'bz', 'Puerto Rico': 'pr',
+  'Grenada': 'gd', 'Mexico': 'mx', 'Brazil': 'br', 'Peru': 'pe',
+  'Bolivia': 'bo', 'Ecuador': 'ec', 'Scotland': 'gb', 'Ireland': 'ie',
+  'Japan': 'jp', 'USA': 'us', 'United States': 'us', 'Canada': 'ca',
+  'India': 'in', 'Taiwan': 'tw', 'Australia': 'au', 'Sweden': 'se',
+  'France': 'fr', 'South Africa': 'za', 'New Zealand': 'nz',
+  'England': 'gb', 'Wales': 'gb', 'United Kingdom': 'gb',
+  'Islay': 'gb', 'Speyside': 'gb', 'Highlands': 'gb', 'Lowlands': 'gb', 'Campbeltown': 'gb',
+}
+
+// Nota editorial por país/región
+const COUNTRY_EDITORIAL = {
+  'Scotland':            'Cuna del single malt. Islay, Speyside y Highlands definen estilos completamente distintos: turba, fruta, miel.',
+  'Islay':               'La isla del whisky más ahumado. Turba intensa, sal marina y complejidad única.',
+  'Speyside':            'El corazón del single malt escocés. Frutal, dulce, elegante. Más destilerías por km² que en ningún otro lugar.',
+  'Highlands':           'La región más grande de Escocia. Perfil diverso: desde lo floral hasta lo robusto.',
+  'Lowlands':            'Whisky ligero, triple destilación, sin turba. El más suave de Escocia.',
+  'Campbeltown':         'Antigua capital del whisky. Carácter salino, con notas de fruta y turba leve.',
+  'Ireland':             'Triple destilación, perfil suave. El estilo más antiguo del mundo — más de 1.000 años de historia.',
+  'Japan':               'Precisión japonesa aplicada al whisky. Métodos escoceses + materia prima local + climas extremos.',
+  'USA':                 'Bourbon de maíz americano. Roble nuevo quemado, vainilla y caramelo.',
+  'United States':       'Bourbon de maíz americano. Roble nuevo quemado, vainilla y caramelo.',
+  'Canada':              'Whisky de centeno, suave y accesible. Historia de más de dos siglos.',
+  'India':               'Whisky de melaza y grain. El mercado de mayor volumen del mundo.',
+  'Taiwan':              'Clima tropical que acelera la maduración. Perfiles únicos en tiempo récord.',
+  'Australia':           'Nueva ola del whisky artesanal. Experimentación con granos y maderas locales.',
+  'France':              'Influencia del cognac y el armagnac. Maduración en barricas con historia.',
+  'Sweden':              'Vanguardia del whisky escandinavo. Pequeñas destilerías con enfoques únicos.',
+  'Jamaica':             'Ron de alta éster, fuerte y complejo. El más expresivo y aromático del Caribe.',
+  'Barbados':            'Cuna del ron. Suave, equilibrado, con historia desde el siglo XVII.',
+  'Trinidad and Tobago': 'Ron ligero y refinado. Base de muchos de los grandes blends caribeños.',
+  'Trinidad':            'Ron ligero y refinado. Base de muchos de los grandes blends caribeños.',
+  'Cuba':                'El ron más ligero del Caribe. Columna de destilación, maduración en roble blanco americano.',
+  'Dominican Republic':  'Tradición de añejamiento lento. Rones complejos y suaves.',
+  'Colombia':            'Caña panelera, clima tropical constante. Producción artesanal con identidad propia.',
+  'Venezuela':           'Ron de solera y añejamiento en altura. Suave, dulce y complejo.',
+  'Nicaragua':           'Maíz y caña. Añejamiento de larga data en la única gran destilería del país.',
+  'Guatemala':           'Altitud extrema, clima frío. El único ron con denominación de origen del continente.',
+  'Panama':              'Ron ligero, triple destilado. Madurado en roble americano durante años.',
+  'Mexico':              'Ron de piloncillo y caña. Perfiles únicos influenciados por la tradición tequilera.',
+  'Haiti':               'Rhum agricole de caña fresca. Estilo francés, vegetal e intenso.',
+  'Martinique':          'AOC Rhum Agricole. Caña fresca prensada, el único ron con denominación de origen protegida.',
+}
+
 // Color base por colección (RGB)
 const BASE_COLOR = {
   rum:    [180, 90, 20],   // ámbar
@@ -145,13 +194,25 @@ export default function AtlasView({ data, coll, onSelect }) {
       {/* Panel lateral — aparece al hacer click en un país */}
       {activeEntry && (
         <div className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
+          {/* Hero con bandera de fondo */}
+          <div className={styles.panelHero}>
+            <div
+              className={styles.panelFlagBg}
+              style={{ backgroundImage: `url(https://flagcdn.com/w320/${COUNTRY_ISO2[activeEntry.label] || 'un'}.png)` }}
+            />
+            <div className={styles.panelHeroOverlay} />
+            <button className={styles.panelClose} onClick={() => setActiveIso(null)}>✕</button>
+            <div className={styles.panelHeroContent}>
               <h3 className={styles.panelTitle}>{activeEntry.label}</h3>
               <p className={styles.panelSub}>{activeEntry.items.length} {activeEntry.items.length === 1 ? 'expresión' : 'expresiones'}</p>
             </div>
-            <button className={styles.panelClose} onClick={() => setActiveIso(null)}>✕</button>
           </div>
+          {/* Nota editorial de producción */}
+          {COUNTRY_EDITORIAL[activeEntry.label] && (
+            <div className={styles.panelEditorial}>
+              {COUNTRY_EDITORIAL[activeEntry.label]}
+            </div>
+          )}
           <div className={styles.panelCards}>
             {activeEntry.items.map((item, i) => (
               <div

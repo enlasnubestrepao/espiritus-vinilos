@@ -99,11 +99,16 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
         ) : (
           /* ── Spirit header — cinemático ── */
           <div className={`${styles.spiritHdr} ${styles[coll]}`}>
+            <div className={styles.spiritHdrBg}>
+              <img
+                src={coll === 'rum' ? '/hero-1.png' : '/hero-2.png'}
+                alt=""
+                className={styles.spiritHdrBgImg}
+              />
+              <div className={styles.spiritHdrBgOverlay} />
+            </div>
             {item.cover_url && (
-              <div className={styles.spiritHdrBg}>
-                <img src={item.cover_url} alt={title} className={styles.spiritHdrBgImg} />
-                <div className={styles.spiritHdrBgOverlay} />
-              </div>
+              <img src={item.cover_url} alt={title} className={styles.spiritHdrBottle} />
             )}
             <button className={styles.closeBtn} style={{ zIndex: 2 }} onClick={onClose}>✕</button>
             <div className={styles.spiritHdrContent}>

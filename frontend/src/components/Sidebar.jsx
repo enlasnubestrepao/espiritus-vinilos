@@ -11,6 +11,21 @@ function countBy(arr, key) {
   return Object.entries(map).sort((a, b) => b[1] - a[1])
 }
 
+// countByDecade — agrupa vinilos por década usando el campo anio
+function countByDecade(arr) {
+  const map = {}
+  arr.forEach(r => {
+    const y = parseInt(r.anio)
+    const key = (!r.anio || isNaN(y)) ? 'Sin año' : `${Math.floor(y / 10) * 10}s`
+    map[key] = (map[key] || 0) + 1
+  })
+  return Object.entries(map).sort((a, b) => {
+    if (a[0] === 'Sin año') return 1
+    if (b[0] === 'Sin año') return -1
+    return parseInt(a[0]) - parseInt(b[0])
+  })
+}
+
 // filters = objeto con los filtros activos { f1: valor, f2: valor }
 // setFilter = función para cambiar un filtro
 // isOpen = controla si el drawer móvil está visible
@@ -46,7 +61,7 @@ function getSections(data, coll, t) {
     return [
       { title: `🎵 ${t('sidebarCategory')}`, key: 'agrupador', entries: countBy(data, 'agrupador') },
       { title: `🎼 ${t('sidebarGenre')}`,    key: 'genero',    entries: countBy(data, 'genero') },
-      { title: `🏷 ${t('sidebarLabel')}`,    key: 'sello',     entries: countBy(data, 'sello') },
+      { title: `📅 ${t('sidebarDecade')}`,   key: 'decade',    entries: countByDecade(data) },
     ]
   }
   if (coll === 'rum') {
