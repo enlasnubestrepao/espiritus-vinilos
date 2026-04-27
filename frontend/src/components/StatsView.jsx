@@ -125,7 +125,7 @@ function VinylStats({ data, onBarClick, onStatClick }) {
 
   const totalArtists = useMemo(() => new Set(data.map(r => r.artista).filter(Boolean)).size, [data])
   const withDiscogs  = data.filter(r => r.discogs).length
-  const withSpotify  = data.filter(r => r.spotify_album_id).length
+  const withSpotify  = data.filter(r => r.spotify_id).length
   const pctDiscogs   = data.length ? Math.round((withDiscogs / data.length) * 100) : 0
   const pctSpotify   = data.length ? Math.round((withSpotify / data.length) * 100) : 0
   const prestados    = data.filter(r => r.fuera).length
@@ -134,7 +134,7 @@ function VinylStats({ data, onBarClick, onStatClick }) {
   const kpis = [
     { num: totalArtists,     lbl: t('artists') },
     { num: `${pctDiscogs}%`, lbl: t('onDiscogs'),  desc: t('discogsDesc'),  clickable: true, items: data.filter(r => r.discogs),          title: t('withDiscogs') },
-    { num: `${pctSpotify}%`, lbl: 'Spotify',       desc: t('spotifyLinked'), clickable: true, items: data.filter(r => r.spotify_album_id), title: t('withSpotify') },
+    { num: `${pctSpotify}%`, lbl: 'Spotify',       desc: t('spotifyLinked'), clickable: true, items: data.filter(r => r.spotify_id), title: t('withSpotify') },
     ...(prestados > 0 ? [{ num: prestados, lbl: t('lentOut'), clickable: true, items: data.filter(r => r.fuera), title: t('lentOut') }] : []),
   ]
 
