@@ -2,32 +2,6 @@ import { useMemo } from 'react'
 import { useLang } from '../LangContext'
 import styles from './StatsView.module.css'
 
-/* ── CSV export ── */
-function toCSV(data, coll) {
-  if (!data.length) return ''
-  const keys = Object.keys(data[0]).filter(k => !['id'].includes(k))
-  const header = keys.join(',')
-  const rows = data.map(item =>
-    keys.map(k => {
-      const v = item[k] ?? ''
-      const str = String(v).replace(/"/g, '""')
-      return str.includes(',') || str.includes('\n') || str.includes('"') ? `"${str}"` : str
-    }).join(',')
-  )
-  return [header, ...rows].join('\n')
-}
-
-function downloadCSV(data, coll) {
-  const csv = toCSV(data, coll)
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `enlt-${coll}-${new Date().toISOString().slice(0,10)}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
 /* ── helpers ── */
 function countBy(arr, key) {
   const map = {}
@@ -246,16 +220,6 @@ export default function StatsView({ data, coll, onBarClick, onStatClick }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.exportBar}>
-        <span className={styles.exportLabel}>{data.length} {t('records')} — {collLabel}</span>
-        <button
-          className={styles.exportBtn}
-          onClick={() => downloadCSV(data, coll)}
-          title={t('exportCsvTitle')}
-        >
-          {t('exportCsvBtn')}
-        </button>
-      </div>
       {coll === 'vinyl'  && <VinylStats  data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}
       {coll === 'rum'    && <RumStats    data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}
       {coll === 'whisky' && <WhiskyStats data={data} onBarClick={onBarClick} onStatClick={onStatClick} />}

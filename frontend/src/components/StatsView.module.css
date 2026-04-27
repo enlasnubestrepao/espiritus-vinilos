@@ -5,38 +5,6 @@
   padding-bottom: 24px;
 }
 
-/* ── Export bar ── */
-.exportBar {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 12px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-}
-.exportLabel {
-  font-size: .78rem;
-  color: var(--text3);
-}
-.exportBtn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text2);
-  border-radius: 7px;
-  padding: 6px 14px;
-  font-size: .78rem;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.exportBtn:hover {
-  border-color: var(--v-acc2);
-  color: var(--text);
-}
 
 .empty {
   padding: 60px;

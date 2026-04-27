@@ -20,6 +20,28 @@ const AUDIT_FIELDS_DEF = [
   { key: 'ig_url',     tKey: 'afInstagram'   },
 ]
 
+/* ── CSV export ── */
+function downloadCSV(data, coll) {
+  if (!data.length) return
+  const keys = Object.keys(data[0]).filter(k => k !== 'id')
+  const header = keys.join(',')
+  const rows = data.map(item =>
+    keys.map(k => {
+      const v = item[k] ?? ''
+      const str = String(v).replace(/"/g, '""')
+      return str.includes(',') || str.includes('\n') || str.includes('"') ? `"${str}"` : str
+    }).join(',')
+  )
+  const csv = [header, ...rows].join('\n')
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `enlt-${coll}-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function SettingsPanel({ onClose, onPinChange }) {
   const { t } = useLang()
   const [tab, setTab] = useState('config')
@@ -248,6 +270,12 @@ export default function SettingsPanel({ onClose, onPinChange }) {
                   onClick={() => setAuditSort('artista')}
                 >{t('az')}</button>
               </div>
+              <button
+                className={styles.filterBtn}
+                onClick={() => downloadCSV(vinyls, 'vinyl')}
+                title={t('exportCsvTitle')}
+                disabled={!vinyls.length}
+              >{t('exportCsvBtn')}</button>
             </div>
 
             {isLoading
