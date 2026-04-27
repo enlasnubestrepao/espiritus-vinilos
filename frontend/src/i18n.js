@@ -146,16 +146,16 @@ const T = {
 
   // ── HeroSection ───────────────────────────────────────────────────────────
   heroVinylEyebrow:   { es: 'En Las Nubes Trepao',                         en: 'En Las Nubes Trepao' },
-  heroVinylHeadline:  { es: 'Para escuchar\ncon algo\nen la mano.',         en: 'To listen\nwith something\nin hand.' },
+  heroVinylHeadline:  { es: 'Melodías de\nantes y\nde siempre.',              en: 'Melodies of\nyesterday\nand always.' },
   heroVinylTagline:   { es: 'Afinando el vinilo entre espíritus.\nUna colección personal desde Medellín, Colombia.', en: 'Tuning the vinyl between spirits.\nA personal collection from Medellín, Colombia.' },
   heroVinylCta:       { es: 'La colección',                                 en: 'The collection' },
   heroRumEyebrow:     { es: 'La colección — Rones',                         en: 'The collection — Rums' },
   heroRumHeadline:    { es: 'Caña destilada.\nTiempo.\nIdentidad.',         en: 'Distilled cane.\nTime.\nIdentity.' },
-  heroRumTagline:     { es: 'Saboreando la barrica entre melodías.\nDesde el Caribe hasta Latinoamérica.', en: 'Savoring the barrel between melodies.\nFrom the Caribbean to Latin America.' },
+  heroRumTagline:     { es: 'Saboreando la barrica entre melodías.\nUna colección personal desde Medellín, Colombia.', en: 'Savoring the barrel between melodies.\nA personal collection from Medellín, Colombia.' },
   heroRumCta:         { es: 'Los rones',                                    en: 'The rums' },
   heroWhiskyEyebrow:  { es: 'La colección — Whiskies',                      en: 'The collection — Whiskies' },
   heroWhiskyHeadline: { es: 'Turba, madera\ny tiempo\nen la copa.',         en: 'Peat, oak\nand time\nin the glass.' },
-  heroWhiskyTagline:  { es: 'Saboreando la barrica entre melodías.\nDestilerías que priorizan el proceso.', en: 'Savoring the barrel between melodies.\nDistilleries that prioritize process.' },
+  heroWhiskyTagline:  { es: 'Saboreando la barrica entre melodías.\nUna colección personal desde Medellín, Colombia.', en: 'Savoring the barrel between melodies.\nA personal collection from Medellín, Colombia.' },
   heroWhiskyCta:      { es: 'Los whiskies',                                 en: 'The whiskies' },
 
   // ── StatsView ─────────────────────────────────────────────────────────────
