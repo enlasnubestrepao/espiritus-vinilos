@@ -43,7 +43,7 @@ function Breadcrumb({ coll, view, activeFilters }) {
   )
 }
 
-export default function Dashboard({ coll, pinIsSet }) {
+export default function Dashboard({ coll, pinIsSet, auditEdit, onAuditEditClose }) {
   const { t } = useLang()
   const [search,      setSearch]      = useState('')
   const [filters,     setFilters]     = useState({})
@@ -93,6 +93,13 @@ export default function Dashboard({ coll, pinIsSet }) {
     window.addEventListener('featured-changed', handler)
     return () => window.removeEventListener('featured-changed', handler)
   }, [])
+
+  // Abrir AdminForm desde el Auditor
+  useEffect(() => {
+    if (!auditEdit || !data) return
+    setAdminItem(auditEdit.item)
+    setAdminIndex(auditEdit.idx)
+  }, [auditEdit, data])
 
   function setFilter(key, value) {
     setFilters(prev => ({ ...prev, [key]: value }))
@@ -275,7 +282,11 @@ export default function Dashboard({ coll, pinIsSet }) {
           item={adminItem}
           index={adminItem === null ? -1 : adminIndex}
           data={data}
-          onClose={() => { setAdminItem(undefined); setAdminIndex(-1) }}
+          onClose={() => {
+            setAdminItem(undefined)
+            setAdminIndex(-1)
+            if (auditEdit) onAuditEditClose?.()
+          }}
           pinIsSet={pinIsSet}
           onRequestPin={(label, cb) => requirePin(label, cb)}
         />

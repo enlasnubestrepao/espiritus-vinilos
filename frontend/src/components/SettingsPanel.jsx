@@ -42,9 +42,9 @@ function downloadCSV(data, coll) {
   URL.revokeObjectURL(url)
 }
 
-export default function SettingsPanel({ onClose, onPinChange }) {
+export default function SettingsPanel({ onClose, onPinChange, initialTab = 'config', onEditItem }) {
   const { t } = useLang()
-  const [tab, setTab] = useState('config')
+  const [tab, setTab] = useState(initialTab)
 
   // ── Config state ──
   const [token,    setToken]    = useState(() => localStorage.getItem('discogs_token') || '')
@@ -297,7 +297,12 @@ export default function SettingsPanel({ onClose, onPinChange }) {
                     </thead>
                     <tbody>
                       {displayed.map(({ item, idx, missing, score }) => (
-                        <tr key={idx} className={styles.auditRow}>
+                        <tr
+                          key={idx}
+                          className={`${styles.auditRow} ${onEditItem ? styles.auditRowClickable : ''}`}
+                          onClick={onEditItem ? () => onEditItem(item, idx) : undefined}
+                          title={onEditItem ? `${t('edit')} — ${item.artista} · ${item.album}` : undefined}
+                        >
                           <td className={styles.tdArtista}>{item.artista}</td>
                           <td className={styles.tdAlbum}>{item.album}</td>
                           <td className={styles.tdScore}>

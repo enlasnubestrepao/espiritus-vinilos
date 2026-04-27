@@ -17,6 +17,8 @@ function AppInner() {
   const [showSettingsPin, setShowSettingsPin] = useState(false)
   const [showSettings,    setShowSettings]    = useState(false)
   const [pinIsSet,        setPinIsSet]        = useState(false)
+  const [auditEdit,       setAuditEdit]       = useState(null)  // { item, idx } — desde Auditor
+  const [settingsTab,     setSettingsTab]     = useState('config')
 
   useEffect(() => {
     getPinStatus().then(({ set }) => setPinIsSet(set)).catch(() => {})
@@ -44,7 +46,15 @@ function AppInner() {
       )}
 
       {showSettings && (
-        <SettingsPanel onClose={() => setShowSettings(false)} onPinChange={refreshPinStatus} />
+        <SettingsPanel
+          onClose={() => { setShowSettings(false); setSettingsTab('config') }}
+          onPinChange={refreshPinStatus}
+          initialTab={settingsTab}
+          onEditItem={(item, idx) => {
+            setShowSettings(false)
+            setAuditEdit({ item, idx })
+          }}
+        />
       )}
 
       <Header coll={coll} setColl={setColl} onSettings={handleSettingsClick} lang={lang} setLang={setLang} />
@@ -63,7 +73,16 @@ function AppInner() {
           </div>
 
           <div ref={dashboardRef}>
-            <Dashboard coll={coll} pinIsSet={pinIsSet} />
+            <Dashboard
+              coll={coll}
+              pinIsSet={pinIsSet}
+              auditEdit={auditEdit}
+              onAuditEditClose={() => {
+                setAuditEdit(null)
+                setSettingsTab('audit')
+                setShowSettings(true)
+              }}
+            />
           </div>
         </>
       )}

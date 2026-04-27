@@ -282,6 +282,8 @@
 }
 .auditRow:last-child { border-bottom: none; }
 .auditRow:hover { background: rgba(255,255,255,.03); }
+.auditRowClickable { cursor: pointer; }
+.auditRowClickable:hover { background: rgba(255,255,255,.07) !important; }
 
 .tdArtista {
   padding: 7px 6px 7px 12px;
