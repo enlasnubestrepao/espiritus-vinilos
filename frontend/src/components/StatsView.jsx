@@ -59,6 +59,7 @@ function HeroSummary({ heroNum, heroLbl, heroAccent, kpis, onStatClick }) {
           >
             <span className={styles.kpiNum}>{kpi.num}</span>
             <span className={styles.kpiLbl}>{kpi.lbl}</span>
+            {kpi.desc && <span className={styles.kpiDesc}>{kpi.desc}</span>}
           </div>
         ))}
       </div>
@@ -124,18 +125,16 @@ function VinylStats({ data, onBarClick, onStatClick }) {
 
   const totalArtists = useMemo(() => new Set(data.map(r => r.artista).filter(Boolean)).size, [data])
   const withDiscogs  = data.filter(r => r.discogs).length
-  const withCover    = data.filter(r => r.cover_url).length
+  const withSpotify  = data.filter(r => r.spotify_album_id).length
   const pctDiscogs   = data.length ? Math.round((withDiscogs / data.length) * 100) : 0
-  const pctCover     = data.length ? Math.round((withCover  / data.length) * 100) : 0
+  const pctSpotify   = data.length ? Math.round((withSpotify / data.length) * 100) : 0
   const prestados    = data.filter(r => r.fuera).length
   const noDiscogs    = data.filter(r => !r.discogs)
-  const noCover      = data.filter(r => !r.cover_url)
 
   const kpis = [
     { num: totalArtists,     lbl: t('artists') },
-    { num: `${pctDiscogs}%`, lbl: t('onDiscogs'),   clickable: true, items: data.filter(r => r.discogs),   title: t('withDiscogs') },
-    { num: `${pctCover}%`,   lbl: t('withCover'),   clickable: true, items: data.filter(r => r.cover_url), title: t('withCover') },
-    { num: `${100 - pctCover}%`, lbl: t('withoutCover'), clickable: true, items: noCover, title: t('withoutCover'), alert: noCover.length > 0 },
+    { num: `${pctDiscogs}%`, lbl: t('onDiscogs'),  desc: t('discogsDesc'),  clickable: true, items: data.filter(r => r.discogs),          title: t('withDiscogs') },
+    { num: `${pctSpotify}%`, lbl: 'Spotify',       desc: t('spotifyLinked'), clickable: true, items: data.filter(r => r.spotify_album_id), title: t('withSpotify') },
     ...(prestados > 0 ? [{ num: prestados, lbl: t('lentOut'), clickable: true, items: data.filter(r => r.fuera), title: t('lentOut') }] : []),
   ]
 

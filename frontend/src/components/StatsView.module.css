@@ -137,6 +137,17 @@
   white-space: nowrap;
 }
 
+.kpiDesc {
+  font-size: .52rem;
+  color: var(--text3);
+  text-align: center;
+  font-style: italic;
+  opacity: .65;
+  max-width: 90px;
+  line-height: 1.3;
+  white-space: normal;
+}
+
 /* ── Chart card ── */
 .card {
   background: var(--bg3);
