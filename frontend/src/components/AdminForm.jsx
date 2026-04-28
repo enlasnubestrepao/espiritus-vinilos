@@ -4,6 +4,45 @@ import { fetchAndSaveCover, fetchAndSaveDiscogsCover, scrapeUrl, fetchPurchaseIn
 import { useLang } from '../LangContext'
 import styles from './AdminForm.module.css'
 
+// ── Normalización de valores — alias → canónico ───────────────────────────────
+// Todas las claves en minúsculas; se aplica case-insensitive al leer datos
+const NORMALIZE = {
+  // Países / Press countries
+  'uk':              'UK',
+  'u.k.':            'UK',
+  'united kingdom':  'UK',
+  'gran bretaña':    'UK',
+  'gran bretana':    'UK',
+  'us':              'USA',
+  'u.s.':            'USA',
+  'united states':   'USA',
+  'estados unidos':  'USA',
+  'europe':          'Europa',
+  'european':        'Europa',
+  'japon':           'Japón',
+  'japan':           'Japón',
+  'alemania':        'Alemania',
+  'germany':         'Alemania',
+  'france':          'Francia',
+  'francia':         'Francia',
+  'italia':          'Italia',
+  'italy':           'Italia',
+  'brasil':          'Brasil',
+  'brazil':          'Brasil',
+  'puerto rico':     'Puerto Rico',
+  'cuba':            'Cuba',
+  'mexico':          'México',
+  'méxico':          'México',
+  'desconocido':     'Desconocido',
+  'unknown':         'Desconocido',
+}
+
+function normalize(val) {
+  if (!val) return val
+  const lower = String(val).trim().toLowerCase()
+  return NORMALIZE[lower] ?? val.trim()
+}
+
 // ── localStorage helpers ─────────────────────────────────────────────────────
 function storageKey(coll, field) {
   return `enlt_opts_${coll}_${field}`
@@ -404,7 +443,7 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
 
 // ── Campos por colección ──────────────────────────────────────────────────────
 function getFields(coll, data, t) {
-  const uniq = (key) => [...new Set((data || []).map(r => r[key]).filter(Boolean))].sort()
+  const uniq = (key) => [...new Set((data || []).map(r => normalize(r[key])).filter(Boolean))].sort()
 
   if (coll === 'vinyl') return [
     { key: 'artista',    label: t('artist') },
@@ -475,9 +514,13 @@ function parseForm(form, coll) {
   return f
 }
 
+const NORMALIZE_FIELDS = ['pais', 'pais_sello', 'country', 'origin', 'origen']
+
 function buildInitial(item, coll) {
   if (!item) return {}
   const f = { ...item }
+  // Normalizar campos de país/origen para que el select muestre el canónico
+  NORMALIZE_FIELDS.forEach(k => { if (f[k]) f[k] = normalize(f[k]) })
   if (coll === 'vinyl') {
     f.fuera   = f.fuera ? 'Sí' : 'No'
     f.discogs = String(f.discogs ?? false)
