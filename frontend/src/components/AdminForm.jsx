@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useCrud } from '../hooks/useCrud'
-import { fetchAndSaveCover, fetchAndSaveDiscogsCover, scrapeUrl, fetchPurchaseInfo } from '../services/api'
+import { fetchAndSaveCover, fetchAndSaveDiscogsCover, scrapeUrl, fetchPurchaseInfo, fetchDiscogsRelease } from '../services/api'
 import { useLang } from '../LangContext'
 import styles from './AdminForm.module.css'
 
@@ -128,6 +128,8 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
   const [saveError, setSaveError]               = useState('')
   const [fetchingPurchase, setFetchingPurchase] = useState(false)
   const [purchaseMsg, setPurchaseMsg]           = useState('')
+  const [importingCredits, setImportingCredits] = useState(false)
+  const [creditsMsg, setCreditsMsg]             = useState('')
 
   // Al abrir un vinilo existente → auto-fetch Discogs si no tiene portada
   useEffect(() => {
@@ -162,6 +164,34 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
 
   function setField(key, value) {
     setForm(prev => ({ ...prev, [key]: value }))
+  }
+
+  async function handleImportCredits() {
+    if (!form.url) return
+    setImportingCredits(true)
+    setCreditsMsg('')
+    try {
+      const result = await fetchDiscogsRelease(form.url)
+      if (result.error) {
+        setCreditsMsg(t('creditsImportError'))
+        return
+      }
+      const imported = (result.credits || []).filter(c => c.name && c.role)
+      if (imported.length === 0) {
+        setCreditsMsg(t('creditsNotFound'))
+        return
+      }
+      // Merge: mantener créditos manuales existentes, agregar los de Discogs que no estén
+      const existing = form.credits || []
+      const existingKeys = new Set(existing.map(c => `${c.name}|${c.role}`))
+      const toAdd = imported.filter(c => !existingKeys.has(`${c.name}|${c.role}`))
+      setForm(prev => ({ ...prev, credits: [...existing, ...toAdd] }))
+      setCreditsMsg(`✅ ${imported.length} ${t('creditsImported')}`)
+    } catch {
+      setCreditsMsg(t('creditsImportError'))
+    } finally {
+      setImportingCredits(false)
+    }
   }
 
   function addCredit() {
@@ -385,7 +415,20 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
           {/* Sección de créditos manuales — solo vinilos */}
           {coll === 'vinyl' && (
             <div className={styles.creditsSection}>
-              <div className={styles.creditsSectionLabel}>{t('manualCredits')}</div>
+              <div className={styles.creditsSectionHeader}>
+                <div className={styles.creditsSectionLabel}>{t('manualCredits')}</div>
+                {form.url && /discogs\.com\/release\/\d+/.test(form.url) && (
+                  <button
+                    className={styles.creditsImportBtn}
+                    onClick={handleImportCredits}
+                    disabled={importingCredits}
+                    title={t('importFromDiscogs')}
+                  >
+                    {importingCredits ? '⏳' : '🔍'} {importingCredits ? t('importingCredits') : t('importFromDiscogs')}
+                  </button>
+                )}
+              </div>
+              {creditsMsg && <div className={styles.creditsMsg}>{creditsMsg}</div>}
               {(form.credits || []).map((c, i) => (
                 <div key={i} className={styles.creditRow}>
                   <input

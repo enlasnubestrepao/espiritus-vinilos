@@ -290,6 +290,11 @@ const T = {
   addCredit:            { es: 'Agregar crédito',                en: 'Add credit' },
   creditName:           { es: 'Nombre',                         en: 'Name' },
   creditRole:           { es: 'Rol  (ej: Arreglos, Bajo, Mezcla…)', en: 'Role (e.g.: Arrangements, Bass, Mixing…)' },
+  importFromDiscogs:    { es: 'Importar de Discogs',            en: 'Import from Discogs' },
+  importingCredits:     { es: 'Importando...',                  en: 'Importing...' },
+  creditsImported:      { es: 'créditos importados',            en: 'credits imported' },
+  creditsNotFound:      { es: '⚠ Sin créditos en Discogs para este release', en: '⚠ No credits found on Discogs for this release' },
+  creditsImportError:   { es: '⚠ Error al importar — verificá el token de Discogs', en: '⚠ Import error — check your Discogs token' },
 
   // ── Tracklist Discogs ─────────────────────────────────────────────────────
   tracklist:            { es: 'Tracklist',                      en: 'Tracklist' },

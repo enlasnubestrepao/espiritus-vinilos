@@ -62,10 +62,25 @@
   padding: 12px 14px;
   background: rgba(0,0,0,.15);
 }
+.creditsSectionHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
 .creditsSectionLabel {
   font-size: .62rem; text-transform: uppercase;
   letter-spacing: 1px; color: var(--text3);
-  margin-bottom: 10px;
+}
+.creditsImportBtn {
+  background: rgba(192,57,43,.12); border: 1px solid rgba(192,57,43,.3);
+  color: var(--v-acc2); border-radius: 7px;
+  padding: 4px 10px; font-size: .72rem; font-family: 'Inter', sans-serif;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.creditsImportBtn:hover:not(:disabled) { background: rgba(192,57,43,.22); border-color: var(--v-acc2); }
+.creditsImportBtn:disabled { opacity: .5; cursor: not-allowed; }
+.creditsMsg {
+  font-size: .75rem; color: var(--text3);
+  margin-bottom: 8px; font-style: italic;
 }
 .creditRow {
   display: flex; gap: 8px; align-items: center;
