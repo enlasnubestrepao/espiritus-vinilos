@@ -284,6 +284,27 @@ const T = {
   pinConnError:         { es: 'Error de conexión',              en: 'Connection error' },
   confirm:              { es: 'Confirmar',                      en: 'Confirm' },
 
+  // ── Créditos manuales ─────────────────────────────────────────────────────
+  manualCredits:        { es: 'Créditos manuales',              en: 'Manual credits' },
+  viewCredits:          { es: '📋 Ver créditos',                en: '📋 View credits' },
+  addCredit:            { es: 'Agregar crédito',                en: 'Add credit' },
+  creditName:           { es: 'Nombre',                         en: 'Name' },
+  creditRole:           { es: 'Rol  (ej: Arreglos, Bajo, Mezcla…)', en: 'Role (e.g.: Arrangements, Bass, Mixing…)' },
+
+  // ── Tracklist Discogs ─────────────────────────────────────────────────────
+  tracklist:            { es: 'Tracklist',                      en: 'Tracklist' },
+  tracklistCredits:     { es: 'Créditos',                       en: 'Credits' },
+  tracklistLoad:        { es: '📋 Ver tracklist',               en: '📋 View tracklist' },
+  tracklistHide:        { es: 'Ocultar',                        en: 'Hide' },
+  tracklistLoading:     { es: 'Cargando desde Discogs...',      en: 'Loading from Discogs...' },
+  tracklistNoToken:     { es: 'Configurá tu token de Discogs en ⚙ para ver el tracklist.', en: 'Set your Discogs token in ⚙ to view the tracklist.' },
+  tracklistError:       { es: 'No se pudo cargar el tracklist.', en: 'Could not load the tracklist.' },
+  tracklistEmpty:       { es: 'Sin tracklist disponible.',       en: 'No tracklist available.' },
+
+  // ── Voz editorial ────────────────────────────────────────────────────────
+  vinylNotes:           { es: 'Notas editoriales',              en: 'Editorial notes' },
+  notesPlaceholder:     { es: 'Liner notes, notas de cata, por qué este disco…', en: 'Liner notes, tasting notes, why this record…' },
+
   // ── SpotifyModal ──────────────────────────────────────────────────────────
   spotifyNotFound:      { es: '⚠ Este álbum no se encontró en Spotify', en: '⚠ This album was not found on Spotify' },
   spotifyError:         { es: '⚠ Error conectando con Spotify', en: '⚠ Error connecting to Spotify' },

@@ -1,6 +1,6 @@
 # Espíritus & Vinilos — En Las Nubes Trepao
 
-![Version](https://img.shields.io/badge/version-v2.0.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
+![Version](https://img.shields.io/badge/version-v2.1.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
 
 Dashboard personal para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
 
@@ -192,8 +192,11 @@ backend/
 **vinyls**
 ```sql
 id SERIAL PRIMARY KEY, artista TEXT, album TEXT, genero TEXT, agrupador TEXT,
-anio INTEGER, pais TEXT, sello TEXT, origen TEXT, fuera BOOLEAN,
-discogs TEXT, cover_url TEXT, spotify_id TEXT, ig_url TEXT, tiktok_url TEXT
+anio INTEGER, pais TEXT, pais_sello TEXT, cat_num TEXT, sello TEXT, origen TEXT,
+fuera BOOLEAN, discogs BOOLEAN, url TEXT, cover_url TEXT, spotify_id TEXT,
+ig_url TEXT, tiktok_url TEXT,
+notes TEXT,          -- liner notes editoriales (Fase 12)
+credits JSONB        -- créditos manuales [{name, role}] (Fase 12)
 ```
 
 **rums / whiskies**
@@ -241,6 +244,7 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 | `POST` | `/api/covers/fetch` | Raspar og:image y guardar en licor |
 | `POST` | `/api/covers/fetch-discogs` | Buscar en Discogs y guardar en vinilo |
 | `POST` | `/api/covers/bulk-discogs` | Portadas Discogs para todos los vinilos sin cover_url |
+| `GET` | `/api/covers/discogs-release?url=` | Tracklist + créditos de un release de Discogs |
 
 ### Spotify
 
@@ -277,6 +281,12 @@ Tab en SettingsPanel (⚙). Muestra una tabla de todos los vinilos con semáforo
 
 ### AdminForm con DynamicSelect
 Todos los campos de opciones usan `DynamicSelect`: dropdown estándar + botón "+" para agregar opciones nuevas que se persisten en `localStorage`. Los valores de país/origen se normalizan automáticamente (UK, USA, Europa, Japón, etc.) para eliminar duplicados.
+
+### Voz editorial (Fase 12)
+Tres capas de contenido por vinilo:
+1. **Notas editoriales** (`notes`): textarea en AdminForm, se muestra en Modal con fuente Fraunces itálica y borde rojo izquierdo.
+2. **Tracklist Discogs**: sección colapsable en Modal — fetchea tracklist + créditos (extraartists) en tiempo real desde la API de Discogs. Requiere token y URL de release.
+3. **Créditos manuales** (`credits JSONB`): editor de filas nombre+rol en AdminForm, visible en el mismo colapsable del Modal con separador visual.
 
 ### Sesiones digitales
 Módulo completo: registro de usuario con email + token, creación de sesiones (tipo de noche, personas, nota), picker de tracks desde playlists Spotify, picker de espíritus de la colección. Hasta 5 sesiones activas por usuario.
@@ -368,7 +378,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 
 ## Historial de fases
 
-> **Última actualización:** 2026-04-29 · commit `03a9e9c`
+> **Última actualización:** 2026-04-29 · v2.1.0
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -383,6 +393,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 9 | Sesiones digitales: schema, 13 endpoints FastAPI, SessionesView completa, plantillas, tracks, espíritus |
 | 10 | Atlas con bandera + nota por país, WelcomeModal editorial, Sesiones como 5ª feature |
 | 11 | Stats redesign (grilla KPI equitativa), DynamicSelect + normalización de opciones, Auditor edit-flow, MiniPlayer flotante, idioma persistente en localStorage, CSV en Auditor |
+| 12 | **Voz editorial**: campo `notes` (liner notes), tracklist Discogs en modal colapsable, créditos manuales `credits JSONB` con editor fila-por-fila en AdminForm |
 
 ---
 

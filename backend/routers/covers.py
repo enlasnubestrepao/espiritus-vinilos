@@ -107,6 +107,57 @@ def bulk_fetch_discogs(x_discogs_token: Optional[str] = Header(None)):
     return {"updated": updated, "skipped": skipped}
 
 
+# ── GET /api/covers/discogs-release?url=... ──────────────────────────────────
+# Devuelve tracklist + créditos de un release de Discogs
+@router.get("/discogs-release")
+def get_discogs_release(
+    url: str = Query(...),
+    x_discogs_token: Optional[str] = Header(None),
+):
+    if not x_discogs_token:
+        return {"error": "no token", "tracklist": [], "credits": []}
+
+    m = re.search(r"/release/(\d+)", url)
+    if not m:
+        return {"error": "URL de release inválida", "tracklist": [], "credits": []}
+
+    release_id = m.group(1)
+    api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
+
+    try:
+        req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+
+        tracklist = [
+            {
+                "position": t.get("position", ""),
+                "title":    t.get("title", ""),
+                "duration": t.get("duration", ""),
+                "type":     t.get("type_", "track"),
+            }
+            for t in data.get("tracklist", [])
+        ]
+
+        credits = [
+            {
+                "name": c.get("anv") or c.get("name", ""),
+                "role": c.get("role", ""),
+            }
+            for c in data.get("extraartists", [])
+            if c.get("role")
+        ]
+
+        return {
+            "tracklist": tracklist,
+            "credits":   credits,
+            "country":   data.get("country", ""),
+            "year":      data.get("year", ""),
+        }
+    except Exception as e:
+        return {"error": str(e), "tracklist": [], "credits": []}
+
+
 # ── POST /api/covers/fetch-purchase ──────────────────────────────────────────
 # Scrapea precio, moneda y disponibilidad de la URL del producto
 # Body: { "url": "https://..." }

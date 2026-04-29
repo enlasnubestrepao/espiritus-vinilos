@@ -164,6 +164,20 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
     setForm(prev => ({ ...prev, [key]: value }))
   }
 
+  function addCredit() {
+    setForm(prev => ({ ...prev, credits: [...(prev.credits || []), { name: '', role: '' }] }))
+  }
+  function removeCredit(i) {
+    setForm(prev => ({ ...prev, credits: (prev.credits || []).filter((_, idx) => idx !== i) }))
+  }
+  function updateCredit(i, key, value) {
+    setForm(prev => {
+      const updated = [...(prev.credits || [])]
+      updated[i] = { ...updated[i], [key]: value }
+      return { ...prev, credits: updated }
+    })
+  }
+
   async function handleSave() {
     setSaveError('')
     try {
@@ -286,7 +300,7 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
         <div className={styles.body}>
           <div className={styles.formGrid}>
             {fields.map(({ key, label, type, options, suggestions }) => (
-              <div className={styles.fgroup} key={key}>
+              <div className={`${styles.fgroup} ${type === 'textarea' ? styles.fgroupFull : ''}`} key={key}>
                 <label>{label}</label>
                 {options
                   ? <DynamicSelect
@@ -309,11 +323,19 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
                           {suggestions.map(s => <option key={s} value={s} />)}
                         </datalist>
                       </>
-                    : <input
-                        type={type || 'text'}
-                        value={form[key] ?? ''}
-                        onChange={e => setField(key, e.target.value)}
-                      />
+                    : type === 'textarea'
+                      ? <textarea
+                          value={form[key] ?? ''}
+                          onChange={e => setField(key, e.target.value)}
+                          placeholder={key === 'notes' ? t('notesPlaceholder') : ''}
+                          className={styles.notesTextarea}
+                          rows={4}
+                        />
+                      : <input
+                          type={type || 'text'}
+                          value={form[key] ?? ''}
+                          onChange={e => setField(key, e.target.value)}
+                        />
                 }
               </div>
             ))}
@@ -357,6 +379,33 @@ export default function AdminForm({ coll, item, index, data, onClose, onRequestP
                   <input type="text" value={form.buy_availability ?? ''} onChange={e => setField('buy_availability', e.target.value)} placeholder="En stock..." />
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Sección de créditos manuales — solo vinilos */}
+          {coll === 'vinyl' && (
+            <div className={styles.creditsSection}>
+              <div className={styles.creditsSectionLabel}>{t('manualCredits')}</div>
+              {(form.credits || []).map((c, i) => (
+                <div key={i} className={styles.creditRow}>
+                  <input
+                    type="text"
+                    value={c.name || ''}
+                    onChange={e => updateCredit(i, 'name', e.target.value)}
+                    placeholder={t('creditName')}
+                    className={styles.creditInput}
+                  />
+                  <input
+                    type="text"
+                    value={c.role || ''}
+                    onChange={e => updateCredit(i, 'role', e.target.value)}
+                    placeholder={t('creditRole')}
+                    className={styles.creditInput}
+                  />
+                  <button className={styles.creditRemoveBtn} onClick={() => removeCredit(i)} title="Quitar">✕</button>
+                </div>
+              ))}
+              <button className={styles.creditAddBtn} onClick={addCredit}>+ {t('addCredit')}</button>
             </div>
           )}
 
@@ -462,6 +511,7 @@ function getFields(coll, data, t) {
     { key: 'spotify_id',       label: '🎵 Spotify Album ID' },
     { key: 'tiktok_url',      label: t('tiktokField') },
     { key: 'ig_url',          label: t('igField') },
+    { key: 'notes',           label: t('vinylNotes'), type: 'textarea' },
   ]
   if (coll === 'rum') return [
     { key: 'brand',      label: t('brand') },
@@ -498,6 +548,7 @@ function parseForm(form, coll) {
     f.anio   = f.anio   ? parseInt(f.anio)   : null
     f.fuera  = f.fuera  === 'Sí' || f.fuera === true
     f.discogs= f.discogs === 'true'
+    f.credits = (f.credits || []).filter(c => c.name || c.role)
   }
   if (coll === 'rum') {
     f.abv       = f.abv     ? parseFloat(f.abv)   : null
@@ -524,6 +575,7 @@ function buildInitial(item, coll) {
   if (coll === 'vinyl') {
     f.fuera   = f.fuera ? 'Sí' : 'No'
     f.discogs = String(f.discogs ?? false)
+    f.credits = Array.isArray(f.credits) ? f.credits : []
   }
   if (coll === 'rum' || coll === 'whisky') {
     f.terminado = f.terminado ? 'Sí' : 'No'

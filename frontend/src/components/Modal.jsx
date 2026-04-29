@@ -1,5 +1,5 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
-import { fetchSpotifyId } from '../services/api'
+import { fetchSpotifyId, fetchDiscogsRelease } from '../services/api'
 import SocialDrawer from './SocialDrawer'
 import { useLang } from '../LangContext'
 import styles from './Modal.module.css'
@@ -15,6 +15,10 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
   const [copied,       setCopied]       = useState(false)
   const [socialDrawer, setSocialDrawer] = useState(null) // { type, url }
   const [igCopied,     setIgCopied]     = useState(false)
+  const [tlOpen,       setTlOpen]       = useState(false)
+  const [tlData,       setTlData]       = useState(null)   // { tracklist, credits } o null
+  const [tlLoading,    setTlLoading]    = useState(false)
+  const [tlError,      setTlError]      = useState('')
 
   useEffect(() => {
     const handler = e => { if (e.key === 'Escape') onClose() }
@@ -26,6 +30,9 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
     setSpotifyId(item?.spotify_id || null)
     setShowPlayer(false)
     setSpotifyMsg('')
+    setTlOpen(false)
+    setTlData(null)
+    setTlError('')
   }, [item])
 
   async function handleSpotify() {
@@ -45,6 +52,32 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
       setSpotifyMsg(t('errorSpotify'))
     } finally {
       setFetchingSpot(false)
+    }
+  }
+
+  async function handleTracklist() {
+    if (tlOpen) { setTlOpen(false); return }
+    setTlOpen(true)
+    // Si no hay URL de Discogs, solo mostrar créditos manuales (sin fetch)
+    if (!item.url || !/discogs\.com\/release\/\d+/.test(item.url)) return
+    if (tlData) return  // ya cargado
+    if (!localStorage.getItem('discogs_token')) {
+      setTlError('no_token')
+      return
+    }
+    setTlLoading(true)
+    setTlError('')
+    try {
+      const result = await fetchDiscogsRelease(item.url)
+      if (result.error) {
+        setTlError(result.error === 'no token' ? 'no_token' : 'fetch_error')
+      } else {
+        setTlData(result)
+      }
+    } catch {
+      setTlError('fetch_error')
+    } finally {
+      setTlLoading(false)
     }
   }
 
@@ -181,6 +214,14 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             </div>
           )}
 
+          {/* ── Notas editoriales ── */}
+          {coll === 'vinyl' && item.notes && (
+            <div className={styles.notesSection}>
+              <div className={styles.notesLabel}>{t('vinylNotes')}</div>
+              <p className={styles.notesBody}>{item.notes}</p>
+            </div>
+          )}
+
           {/* ── ENLT lo posteó ── */}
           {coll === 'vinyl' && (item.tiktok_url || item.ig_url) && (
             <div className={styles.enltSection}>
@@ -217,6 +258,88 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
               url={socialDrawer.url}
               onClose={() => setSocialDrawer(null)}
             />
+          )}
+
+          {/* ── Tracklist Discogs + Créditos manuales ── */}
+          {coll === 'vinyl' && (
+            (item.url && /discogs\.com\/release\/\d+/.test(item.url)) ||
+            (item.credits?.length > 0)
+          ) && (
+            <div className={styles.tlSection}>
+              <button className={styles.tlToggle} onClick={handleTracklist}>
+                <span className={styles.tlToggleIcon}>{tlOpen ? '▲' : '▼'}</span>
+                {tlOpen
+                  ? t('tracklistHide')
+                  : (item.url && /discogs\.com\/release\/\d+/.test(item.url))
+                    ? t('tracklistLoad')
+                    : t('viewCredits')}
+              </button>
+              {tlOpen && (
+                <div className={styles.tlBody}>
+                  {tlLoading && (
+                    <div className={styles.tlMsg}>{t('tracklistLoading')}</div>
+                  )}
+                  {!tlLoading && tlError === 'no_token' && (
+                    <div className={styles.tlMsg}>{t('tracklistNoToken')}</div>
+                  )}
+                  {!tlLoading && tlError && tlError !== 'no_token' && (
+                    <div className={styles.tlMsg}>{t('tracklistError')}</div>
+                  )}
+                  {!tlLoading && tlData && (
+                    <>
+                      {tlData.tracklist.length === 0 && (
+                        <div className={styles.tlMsg}>{t('tracklistEmpty')}</div>
+                      )}
+                      {tlData.tracklist.length > 0 && (
+                        <>
+                          <div className={styles.tlLabel}>{t('tracklist')}</div>
+                          <ol className={styles.tlList}>
+                            {tlData.tracklist.filter(tr => tr.type !== 'heading').map((tr, i) => (
+                              <li key={i} className={styles.tlTrack}>
+                                {tr.position && <span className={styles.tlPos}>{tr.position}</span>}
+                                <span className={styles.tlTitle}>{tr.title}</span>
+                                {tr.duration && <span className={styles.tlDur}>{tr.duration}</span>}
+                              </li>
+                            ))}
+                          </ol>
+                        </>
+                      )}
+                      {tlData.credits.length > 0 && (
+                        <>
+                          <div className={styles.tlLabel}>{t('tracklistCredits')}</div>
+                          <div className={styles.tlCredits}>
+                            {tlData.credits.map((c, i) => (
+                              <div key={i} className={styles.tlCredit}>
+                                <span className={styles.tlCreditName}>{c.name}</span>
+                                <span className={styles.tlCreditRole}>{c.role}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </>
+                  )}
+                  {/* Créditos manuales — siempre visibles si existen */}
+                  {!tlLoading && item.credits?.length > 0 && (
+                    <>
+                      <div className={`${styles.tlLabel} ${styles.tlLabelManual}`}>{t('manualCredits')}</div>
+                      <div className={styles.tlCredits}>
+                        {item.credits.map((c, i) => (
+                          <div key={i} className={styles.tlCredit}>
+                            <span className={styles.tlCreditName}>{c.name}</span>
+                            <span className={styles.tlCreditRole}>{c.role}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                  {/* Sin Discogs y sin créditos manuales */}
+                  {!tlLoading && !tlData && !tlError && item.credits?.length === 0 && (
+                    <div className={styles.tlMsg}>{t('tracklistEmpty')}</div>
+                  )}
+                </div>
+              )}
+            </div>
           )}
 
           {/* ── Player Spotify ── */}

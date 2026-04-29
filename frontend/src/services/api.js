@@ -92,6 +92,15 @@ export const removeSessionSpirit = (token, sid, spiritId)    => api.delete(`/api
 export const getSessionPreview   = (token, sid)              => api.get(`/api/sessions/${sid}/preview`, { headers: seHeader(token) }).then(r => r.data)
 export const getVinylSessionTracks = (vinylId)               => api.get(`/api/sessions/vinyls/${vinylId}/tracks`).then(r => r.data)
 
+// Fetchea tracklist + créditos de un release de Discogs
+export const fetchDiscogsRelease = (url) => {
+  const token = localStorage.getItem('discogs_token')
+  return api.get('/api/covers/discogs-release', {
+    params: { url },
+    headers: token ? { 'x-discogs-token': token } : {},
+  }).then(r => r.data)
+}
+
 // Busca portada en Discogs y la persiste en el vinilo
 export const fetchAndSaveDiscogsCover = (index, q) => {
   const token = localStorage.getItem('discogs_token')

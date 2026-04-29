@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-29 · commit `03a9e9c`
+> **Última actualización:** 2026-04-29 · v2.1.0
 
 ---
 
@@ -8,24 +8,23 @@
 
 | ID | Feature | Prioridad | Esfuerzo | Estado |
 |---|---|---|---|---|
-| QA-01 | Triage responsive end-to-end v2.0 | 🔴 Alta | Medio | ⏳ Pendiente |
+| QA-01 | Triage responsive end-to-end v2.1 | 🔴 Alta | Medio | ⏳ Pendiente |
 | ARCH-01 | Migrar SPA a SSG (Astro) | 🔴 Alta | Grande | ⏳ Pendiente decisión |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Pendiente decisión |
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Pendiente decisión |
 | EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Pendiente |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Pendiente |
-| EDIT-03 | Voz editorial / reseñas | 🔴 Alta | Grande | ⏳ Pendiente contenido |
-| EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | ⏳ Pendiente |
+| EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | 🔶 Parcial — tracklist/créditos en modal, falta ARCH-01 para páginas indexables |
 
 ---
 
-## QA-01 — Triage responsive end-to-end v2.0
+## QA-01 — Triage responsive end-to-end v2.1
 
 **Status:** ⏳ Pendiente
-**Priority:** 🔴 Alta — la v2.0 está en producción sin QA mobile formal
+**Priority:** 🔴 Alta — la v2.1 está en producción sin QA mobile formal
 **Effort:** Medio (1 sesión)
 
-Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos, modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form, welcome modal, mini-player. Documentar issues y resolverlos en la misma sesión.
+Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos (notas + tracklist colapsable + créditos), modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form (incluyendo sección de créditos manuales), welcome modal, mini-player. Documentar issues y resolverlos en la misma sesión.
 
 ---
 
@@ -96,21 +95,17 @@ El núcleo del concepto editorial: el framework *Booze & Vinyl* digitalizado. Un
 
 ---
 
-### EDIT-03 — Voz editorial: reseñas y notas de cata
-
-**Status:** ⏳ Pendiente — bloqueado por contenido
-**Effort:** Grande (arquitectura + contenido)
-
-Primer contenido escrito del sitio: liner notes de discos seleccionados, notas de cata de espíritus clave. Define la voz de ENLT como curador, no solo como coleccionista. Prerequisito para ARCH-01 (cada reseña sería una página indexable).
-
----
-
 ### EDIT-05 — Profundidad progresiva
 
-**Status:** ⏳ Pendiente
-**Effort:** Grande
+**Status:** 🔶 Parcialmente cubierto por Fase 12
+**Effort:** Grande (el resto requiere ARCH-01)
 
-Dos capas de contenido para cada ítem: la tarjeta/modal actual (curioso) + un artículo largo accesible desde el modal (experto). Requiere ARCH-01 para que los artículos sean páginas indexables.
+Dos capas de contenido por ítem. La capa 1 (tarjeta/modal) ya existía. La capa 2 está ahora implementada para vinilos via:
+- **Notas editoriales** (`notes`): liner notes con voz propia
+- **Tracklist Discogs**: tracklist + créditos desde la API en tiempo real
+- **Créditos manuales** (`credits`): créditos adicionales editables en AdminForm
+
+Lo que falta para completar EDIT-05: páginas individuales indexables por disco (requiere ARCH-01 — SSG).
 
 ---
 

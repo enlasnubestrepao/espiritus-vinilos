@@ -219,6 +219,105 @@
   text-overflow: ellipsis;
 }
 
+/* ── Tracklist Discogs ── */
+.tlSection {
+  margin-bottom: 14px;
+}
+.tlToggle {
+  width: 100%;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-size: .78rem; font-weight: 500;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  text-align: left;
+}
+.tlToggle:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.15); }
+.tlToggleIcon { font-size: .65rem; opacity: .5; }
+.tlBody {
+  margin-top: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0,0,0,.2);
+}
+.tlMsg {
+  padding: 14px 16px;
+  font-size: .8rem; color: var(--text3);
+  font-style: italic;
+}
+.tlLabel {
+  padding: 8px 14px 4px;
+  font-size: .58rem; text-transform: uppercase;
+  letter-spacing: 1.2px; color: var(--text3);
+  font-weight: 700;
+}
+.tlLabelManual { color: var(--v-acc2); border-top: 1px solid var(--border); padding-top: 10px; margin-top: 4px; }
+
+.tlList {
+  list-style: none;
+  padding: 0 0 8px;
+}
+.tlTrack {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 5px 14px;
+  font-size: .8rem;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.tlTrack:last-child { border-bottom: none; }
+.tlPos {
+  color: var(--text3);
+  min-width: 22px; font-size: .7rem;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.tlTitle { flex: 1; color: var(--text); }
+.tlDur {
+  color: var(--text3); font-size: .72rem;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.tlCredits {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 0 14px 10px;
+}
+.tlCredit {
+  display: flex; align-items: baseline; gap: 8px;
+  font-size: .78rem;
+}
+.tlCreditName { color: var(--text); font-weight: 500; }
+.tlCreditRole { color: var(--text3); font-size: .72rem; }
+
+/* ── Notas editoriales ── */
+.notesSection {
+  margin-bottom: 14px;
+  border-left: 3px solid var(--v-acc);
+  padding: 12px 16px;
+  background: rgba(192, 57, 43, .06);
+  border-radius: 0 8px 8px 0;
+}
+.notesLabel {
+  font-size: .58rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--v-acc2);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.notesBody {
+  font-family: var(--font-display);
+  font-size: .92rem;
+  font-style: italic;
+  color: var(--text2);
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
 /* ── ENLT lo posteó ── */
 .enltSection {
   margin-bottom: 14px;
