@@ -169,20 +169,24 @@
   max-width: 900px;
 }
 
-.contentGrid {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+/* body se convierte en grid de 2 columnas cuando hay notas */
+.bodyWide {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: auto;
+  align-items: start;
+  padding: 0 !important; /* padding va en cada columna */
+  gap: 0;
 }
 
-/* ── Panel editorial derecho — sticky mientras el usuario scrollea los datos ── */
+/* columna izquierda — datos duros */
+.dataCol {
+  padding: 16px 20px 20px;
+  min-width: 0;
+}
+
+/* ── Panel editorial derecho ── */
 .notesPanel {
-  width: 300px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  max-height: calc(90vh - 112px);
-  overflow-y: auto;
   border-left: 1px solid rgba(192,57,43,.2);
   background: linear-gradient(160deg, rgba(192,57,43,.07) 0%, rgba(0,0,0,0) 65%);
   padding: 20px 18px 24px 20px;
@@ -219,7 +223,7 @@
 }
 
 /* ── Body ── */
-.body { padding: 16px 20px 20px; flex: 1; min-width: 0; }
+.body { padding: 16px 20px 20px; }
 
 /* ── Grupos de campos ── */
 .group {
@@ -660,15 +664,15 @@
     border-radius: 14px;
   }
 
-  .contentGrid {
-    flex-direction: column;
+  .bodyWide {
+    grid-template-columns: 1fr;
+  }
+
+  .dataCol {
+    padding: 12px 14px 16px;
   }
 
   .notesPanel {
-    width: 100%;
-    position: static;
-    max-height: none;
-    overflow-y: visible;
     border-left: none;
     border-top: 1px solid rgba(192,57,43,.2);
     padding: 16px 14px 20px;

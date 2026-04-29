@@ -165,10 +165,10 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           </div>
         )}
 
-        {/* ── Content grid — 2 columnas cuando hay notas ── */}
-        <div className={hasNotes ? styles.contentGrid : undefined}>
+        <div className={`${styles.body} ${hasNotes ? styles.bodyWide : ''}`}>
 
-        <div className={styles.body}>
+        {/* ── Columna izquierda: datos duros ── */}
+        <div className={styles.dataCol}>
 
           {/* ── Grupos de campos ── */}
           {groups.map(({ label, rows }) => (
@@ -408,7 +408,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             </div>
 
           </div>
-        </div>
+        </div>{/* end dataCol */}
 
         {/* ── Panel editorial derecho ── */}
         {hasNotes && (
@@ -419,7 +419,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           </div>
         )}
 
-        </div>{/* end contentGrid */}
+        </div>{/* end body */}
       </div>
     </div>
   )
