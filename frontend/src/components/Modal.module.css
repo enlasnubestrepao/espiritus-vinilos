@@ -167,25 +167,25 @@
 /* ── Wide modal — 2 columnas cuando hay notas ── */
 .boxWide {
   max-width: 900px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* cada columna scrollea por separado */
 }
 
 .contentGrid {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
 }
 
-/* ── Panel editorial derecho ── */
+/* ── Panel editorial derecho — sticky mientras el usuario scrollea los datos ── */
 .notesPanel {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  max-height: calc(90vh - 112px);
+  overflow-y: auto;
   border-left: 1px solid rgba(192,57,43,.2);
   background: linear-gradient(160deg, rgba(192,57,43,.07) 0%, rgba(0,0,0,0) 65%);
-  overflow-y: auto;
-  padding: 20px 20px 24px 22px;
+  padding: 20px 18px 24px 20px;
   display: flex;
   flex-direction: column;
   scrollbar-width: thin;
@@ -219,7 +219,7 @@
 }
 
 /* ── Body ── */
-.body { padding: 16px 20px 20px; overflow-y: auto; }
+.body { padding: 16px 20px 20px; flex: 1; min-width: 0; }
 
 /* ── Grupos de campos ── */
 .group {
@@ -660,19 +660,17 @@
     border-radius: 14px;
   }
 
-  .boxWide {
-    overflow-y: auto; /* en mobile la caja vuelve a scrollear entera */
-  }
-
   .contentGrid {
-    grid-template-columns: 1fr;
-    overflow: visible;
+    flex-direction: column;
   }
 
   .notesPanel {
+    width: 100%;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
     border-left: none;
     border-top: 1px solid rgba(192,57,43,.2);
-    overflow-y: visible;
     padding: 16px 14px 20px;
   }
 
