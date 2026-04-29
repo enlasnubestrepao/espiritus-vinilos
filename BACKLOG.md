@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-29 · v2.1.0
+> **Última actualización:** 2026-04-29 · v2.2.0
 
 ---
 
@@ -8,7 +8,7 @@
 
 | ID | Feature | Prioridad | Esfuerzo | Estado |
 |---|---|---|---|---|
-| QA-01 | Triage responsive end-to-end v2.1 | 🔴 Alta | Medio | ⏳ Pendiente |
+| QA-01 | Triage responsive end-to-end v2.2 | 🔴 Alta | Medio | ⏳ Pendiente |
 | ARCH-01 | Migrar SPA a SSG (Astro) | 🔴 Alta | Grande | ⏳ Pendiente decisión |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Pendiente decisión |
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Pendiente decisión |
@@ -18,13 +18,13 @@
 
 ---
 
-## QA-01 — Triage responsive end-to-end v2.1
+## QA-01 — Triage responsive end-to-end v2.2
 
 **Status:** ⏳ Pendiente
-**Priority:** 🔴 Alta — la v2.1 está en producción sin QA mobile formal
+**Priority:** 🔴 Alta — la v2.2 está en producción sin QA mobile formal
 **Effort:** Medio (1 sesión)
 
-Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos (notas + tracklist colapsable + créditos), modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form (incluyendo sección de créditos manuales), welcome modal, mini-player. Documentar issues y resolverlos en la misma sesión.
+Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid (badge ❝ en cards), hover overlay con snippet (desktop), modal vinilos (epígrafe editorial + tracklist colapsable + créditos grid), modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form (notas + editor créditos + botón import Discogs), welcome modal, mini-player. Documentar issues y resolverlos en la misma sesión.
 
 ---
 

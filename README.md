@@ -1,6 +1,6 @@
 # Espíritus & Vinilos — En Las Nubes Trepao
 
-![Version](https://img.shields.io/badge/version-v2.1.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
+![Version](https://img.shields.io/badge/version-v2.2.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
 
 Dashboard personal para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
 
@@ -378,7 +378,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 
 ## Historial de fases
 
-> **Última actualización:** 2026-04-29 · v2.1.0
+> **Última actualización:** 2026-04-29 · v2.2.0
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -393,7 +393,8 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 9 | Sesiones digitales: schema, 13 endpoints FastAPI, SessionesView completa, plantillas, tracks, espíritus |
 | 10 | Atlas con bandera + nota por país, WelcomeModal editorial, Sesiones como 5ª feature |
 | 11 | Stats redesign (grilla KPI equitativa), DynamicSelect + normalización de opciones, Auditor edit-flow, MiniPlayer flotante, idioma persistente en localStorage, CSV en Auditor |
-| 12 | **Voz editorial**: campo `notes` (liner notes), tracklist Discogs en modal colapsable, créditos manuales `credits JSONB` con editor fila-por-fila en AdminForm |
+| 12 | **Voz editorial v2.1**: campo `notes` (liner notes), tracklist Discogs colapsable en modal, créditos manuales `credits JSONB`, editor fila-por-fila en AdminForm, endpoint `/api/covers/discogs-release` |
+| 12b | **Voz editorial v2.2**: importar créditos desde Discogs en AdminForm (merge inteligente), grid 2 columnas para créditos en modal, 3 capas de descubribilidad — badge `❝` en card, snippet hover en overlay, epígrafe editorial al tope del modal |
 
 ---
 
