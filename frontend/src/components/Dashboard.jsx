@@ -485,10 +485,18 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok, on
         )}
         {item.fuera     && <span className={styles.lentBadge} title={t('lent')}>📤</span>}
         {item.terminado && <span className={styles.lentBadge} title={t('finished')}>🫗</span>}
+        {coll === 'vinyl' && item.notes && (
+          <span className={styles.notesBadge} title={item.notes}>❝</span>
+        )}
 
         {/* ── Hover/tap overlay con acciones rápidas ── */}
         {(onSpotify || onShare || onIgStory || onTikTok || onBuy || onDistillery) && (
           <div className={styles.hoverActions}>
+            {coll === 'vinyl' && item.notes && (
+              <p className={styles.notesSnippet}>
+                {item.notes.length > 100 ? item.notes.slice(0, 100) + '…' : item.notes}
+              </p>
+            )}
             {onSpotify && (
               <button
                 className={`${styles.haBtn} ${styles.haBtnSpotify}`}

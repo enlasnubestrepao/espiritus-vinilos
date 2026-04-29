@@ -154,6 +154,38 @@
   50%       { opacity: .65; box-shadow: 0 0 10px rgba(225,48,108,.4); }
 }
 
+/* Badge de notas editoriales en la card */
+.notesBadge {
+  position: absolute;
+  top: 7px; left: 22px;  /* desplazado para no solapar con dotEnlt (9px en left:7px) */
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: rgba(192,57,43,.85);
+  color: #fff;
+  font-size: .7rem;
+  font-family: Georgia, serif;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 3;
+  box-shadow: 0 1px 4px rgba(0,0,0,.5);
+  pointer-events: none;
+}
+
+/* Snippet de nota en hover overlay */
+.notesSnippet {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: .72rem;
+  color: rgba(255,255,255,.85);
+  line-height: 1.4;
+  padding: 8px 10px 4px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .lentBadge {
   position: absolute;
   bottom: 6px; right: 6px;

@@ -164,6 +164,14 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           </div>
         )}
 
+        {/* ── Epígrafe editorial — tope del modal, visible de entrada ── */}
+        {coll === 'vinyl' && item.notes && (
+          <div className={styles.epigraph}>
+            <span className={styles.epigraphMark}>❝</span>
+            <p className={styles.epigraphText}>{item.notes}</p>
+          </div>
+        )}
+
         <div className={styles.body}>
 
           {/* ── Grupos de campos ── */}
@@ -211,14 +219,6 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                   {t('viewStore')}
                 </a>
               </div>
-            </div>
-          )}
-
-          {/* ── Notas editoriales ── */}
-          {coll === 'vinyl' && item.notes && (
-            <div className={styles.notesSection}>
-              <div className={styles.notesLabel}>{t('vinylNotes')}</div>
-              <p className={styles.notesBody}>{item.notes}</p>
             </div>
           )}
 
