@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-04-25 · commit `c3a8896`
+> **Última actualización:** 2026-04-29 · commit `03a9e9c`
 
 ---
 
@@ -26,7 +26,7 @@
 **Priority:** 🔴 Alta — la v2.0 está en producción sin QA mobile formal
 **Effort:** Medio (1 sesión)
 
-Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos, modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form, welcome modal. Documentar issues encontrados y resolverlos en la misma sesión.
+Revisión sistemática de todas las vistas en viewport mobile (375px / 390px). Vistas a cubrir: collection grid, modal vinilos, modal espíritus, stats, crate, atlas, sesiones (register / list / create / detail), admin form, welcome modal, mini-player. Documentar issues y resolverlos en la misma sesión.
 
 ---
 
@@ -70,7 +70,7 @@ Cuando GitHub Pages cae, los usuarios ven pantalla blanca. Solución: Cloudflare
 2. **Buttondown** — más simple, gratis hasta 100.
 3. **Substack — evitar.** Crea dependencia de plataforma.
 
-Copy correcto: *"Si querés saber cuándo llega un disco nuevo, dejá tu correo acá."*
+Copy sugerido: *"Si querés saber cuándo llega un disco nuevo, dejá tu correo acá."*
 Se vuelve más valioso después de ARCH-01 (cada disco tendría su propia landing page).
 
 ---
@@ -120,8 +120,8 @@ Dos capas de contenido para cada ítem: la tarjeta/modal actual (curioso) + un a
 **Status:** ⏳ Pendiente
 **Effort:** Medio
 
-Fotografía propia o editorial para artículos, páginas de pairing y sesiones. Los heroes actuales son placeholders generados por AI — el siguiente nivel es fotografía real del dueño de la colección en contexto.
+Fotografía propia o editorial para artículos, páginas de pairing y sesiones. Los heroes actuales son placeholders — el siguiente nivel es fotografía real del dueño de la colección en contexto.
 
 ---
 
-*Actualizado automáticamente en cada commit a main.*
+*Actualizado manualmente en cada sesión de trabajo.*

@@ -12,11 +12,11 @@ Dashboard personal para gestionar y compartir colecciones de vinilos, rones y wh
 
 Una aplicación web full-stack que funciona como archivo digital de tres colecciones físicas:
 
-- **Vinilos**: álbumes con portadas automáticas vía Discogs, player Spotify inline, estadísticas por género/década/país
+- **Vinilos**: álbumes con portadas automáticas vía Discogs, player Spotify, estadísticas por género/década/país
 - **Rones**: botella por botella con ABV, región, blend, escala personal
 - **Whiskies**: expresiones por destilería, tipo, años de maduración, origen
 
-Incluye búsqueda, filtros, KPIs automáticos, modal de detalle, formulario de alta/edición/borrado, autenticación por PIN cifrado en backend, soporte bilingüe ES/EN, y drawer para contenido social (TikTok/Instagram).
+Incluye búsqueda, filtros, KPIs automáticos, modal de detalle, formulario de alta/edición/borrado, autenticación por PIN cifrado en backend, soporte bilingüe ES/EN persistente, Auditor de completitud, MiniPlayer Spotify flotante, y sesiones digitales.
 
 ---
 
@@ -39,8 +39,8 @@ Esta app es el archivo digital de esas colecciones físicas.
 │  React 19 (Vite) — enlasnubestrepao.com                        │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
 │  │   Header    │  │   KpiBar     │  │    FeaturedBanner      │ │
-│  │ (SVG icons, │  │              │  │  (playlist ENLT +      │ │
-│  │  ES/EN, ⚙) │  │              │  │   Spotify inline)      │ │
+│  │ (logo ENLT, │  │              │  │  (disco del mes)       │ │
+│  │  ES/EN, ⚙) │  │              │  │                        │ │
 │  └─────────────┘  └──────────────┘  └────────────────────────┘ │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │                     Dashboard                           │   │
@@ -51,29 +51,35 @@ Esta app es el archivo digital de esas colecciones físicas.
 │  ┌──────────┐  ┌───────────┐  ┌──────────────┐  ┌──────────┐  │
 │  │  Modal   │  │ AdminForm │  │ SocialDrawer │  │Settings  │  │
 │  └──────────┘  └───────────┘  └──────────────┘  └──────────┘  │
+│  ┌──────────────────┐  ┌─────────────────────────────────────┐ │
+│  │   MiniPlayer     │  │         SessionesView               │ │
+│  │ (Spotify flotante│  │  (registro, sesiones, tracks,       │ │
+│  │  bottom-right)   │  │   espíritus, plantillas)            │ │
+│  └──────────────────┘  └─────────────────────────────────────┘ │
 │                                                                 │
-│  LangContext (i18n ES/EN) · axios → VITE_API_URL               │
-└────────────────────────────────┬────────────────────────────────┘
-                                 │ HTTP / JSON (CORS)
-┌────────────────────────────────▼────────────────────────────────┐
+│  LangContext (i18n ES/EN, persiste en localStorage)            │
+│  axios → VITE_API_URL                                          │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ HTTP / JSON (CORS)
+┌────────────────────────▼────────────────────────────────────────┐
 │                     FastAPI Backend                             │
 │                     (Render.com — free tier)                    │
 │                                                                 │
 │  /api/vinyls · /api/rums · /api/whiskies                        │
-│  /api/covers · /api/spotify · /api/config                       │
+│  /api/covers · /api/spotify · /api/config · /api/sessions       │
 │                                                                 │
 │  data_store.py → psycopg2 → Supabase PostgreSQL                 │
-└────────────────────────────────┬────────────────────────────────┘
-                                 │ psycopg2 / Session Pooler
-┌────────────────────────────────▼────────────────────────────────┐
+└────────────────────────┬────────────────────────────────────────┘
+                         │ psycopg2 / Session Pooler
+┌────────────────────────▼────────────────────────────────────────┐
 │                  Supabase PostgreSQL                            │
 │                                                                 │
-│   vinyls · rums · whiskies · app_config                        │
+│   vinyls · rums · whiskies · app_config · sessions · ...       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 **Deploy:**
-- Frontend: `cd frontend && npm run build && npx gh-pages -d dist --no-history`
+- Frontend: `cd frontend && npm run deploy` (= `npm run build && npx gh-pages -d dist`)
 - Backend: push a `main` → auto-deploy en Render.com
 
 ---
@@ -87,12 +93,11 @@ Esta app es el archivo digital de esas colecciones físicas.
 | **React 19 + Vite** | Librería de UI. Cada componente es una pieza independiente que renderiza HTML según su estado |
 | **@tanstack/react-query v5** | Maneja el fetching de datos: los cachea, los refresca automáticamente, e invalida el cache después de mutaciones |
 | **CSS Modules** | Cada componente tiene su propio archivo `.module.css`. Los nombres de clase son únicos por componente, sin colisiones |
-| **LangContext + i18n.js** | Sistema de internacionalización propio: 150+ claves de texto en ES y EN, distribuido por Context API |
+| **LangContext + i18n.js** | Sistema de internacionalización propio: 200+ claves de texto en ES y EN, persiste preferencia en `localStorage` |
 | **axios** | Cliente HTTP configurado con la URL base del backend. Todas las llamadas pasan por `services/api.js` |
 | **`useQuery`** | Fetcha datos del backend, los guarda en memoria, y los refresca automáticamente según el `staleTime` |
-| **`useMutation`** | Ejecuta operaciones de escritura (POST/PUT/DELETE) e invalida el cache al terminar para mostrar los datos actualizados |
-| **`useMemo`** | Recalcula la lista filtrada solo cuando cambian los datos, filtros, o la búsqueda. Evita procesamiento innecesario |
-| **`useState` / `useEffect`** | Estado local del componente y efectos secundarios (fetch al montar, suscripciones a eventos, cleanup) |
+| **`useMutation`** | Ejecuta operaciones de escritura (POST/PUT/DELETE) e invalida el cache al terminar |
+| **`useMemo`** | Recalcula la lista filtrada solo cuando cambian los datos, filtros, o la búsqueda |
 
 ### Backend
 
@@ -115,41 +120,48 @@ frontend/
 ├── public/
 │   ├── CNAME            # Dominio custom para GitHub Pages
 │   ├── logo-enlt.jpeg   # Logo del proyecto
+│   ├── hero-1.png       # Hero rones
+│   ├── hero-2.png       # Hero whiskies
+│   ├── hero-3.png       # Franja surco vinilo
 │   ├── favicon.svg
-│   ├── robots.txt       # Directivas para crawlers de búsqueda
-│   ├── sitemap.xml      # Mapa del sitio para Google Search Console
-│   └── 404.html         # Página de error personalizada
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   └── 404.html
 ├── src/
-│   ├── i18n.js          # Objeto plano con 150+ claves ES/EN
-│   ├── LangContext.jsx  # Context + hook useLang() para internacionalización
-│   ├── App.jsx          # Root: LangProvider + estado global de PIN
-│   ├── main.jsx         # Entry point: monta React + QueryClientProvider
-│   ├── index.css        # Variables CSS globales (--bg, --text, --v-acc, etc.)
+│   ├── i18n.js          # 200+ claves ES/EN
+│   ├── LangContext.jsx  # Context + hook useLang(), persiste en localStorage
+│   ├── App.jsx          # Root: LangProvider, MiniPlayer, estado global
+│   ├── main.jsx         # Entry point: React + QueryClientProvider
+│   ├── index.css        # Variables CSS globales
 │   ├── components/
-│   │   ├── Header.jsx          # Nav SVG icons, toggle ES/EN, social, ⚙ settings
-│   │   ├── Dashboard.jsx       # Orquestador: useQuery, filtros, grid, requirePin
-│   │   ├── Sidebar.jsx         # Filtros por categoría/género/origen
+│   │   ├── Header.jsx          # Logo ENLT (mix-blend-mode), nav, ES/EN, social, ⚙
+│   │   ├── Dashboard.jsx       # Orquestador: useQuery, filtros, vistas, requirePin
+│   │   ├── Sidebar.jsx         # Filtros por categoría/género/origen/década
 │   │   ├── KpiBar.jsx          # Métricas automáticas por colección
 │   │   ├── SearchBar.jsx       # Búsqueda full-text en memoria
-│   │   ├── FeaturedBanner.jsx  # Vinilo del mes + playlist ENLT + Spotify inline
-│   │   ├── Modal.jsx           # Detalle de item (solo lectura)
-│   │   ├── AdminForm.jsx       # Alta/edición/borrado + Discogs + Spotify
+│   │   ├── FeaturedBanner.jsx  # Vinilo del mes — dispara MiniPlayer vía evento
+│   │   ├── MiniPlayer.jsx      # Player Spotify flotante (bottom-right), playlist ENLT
+│   │   ├── Modal.jsx           # Detalle de ítem (solo lectura)
+│   │   ├── AdminForm.jsx       # Alta/edición/borrado + Discogs + DynamicSelect
 │   │   ├── SpotifyModal.jsx    # Player Spotify con corrección manual de ID
 │   │   ├── SocialDrawer.jsx    # Drawer para embeds TikTok/Instagram
-│   │   ├── SettingsPanel.jsx   # Panel PIN + toggle idioma
+│   │   ├── SettingsPanel.jsx   # PIN + Auditor de completitud + CSV export + Docs
 │   │   ├── PinModal.jsx        # Verificación PIN contra backend (bcrypt)
-│   │   ├── StatsView.jsx       # Gráficas CSS por género, década, país
+│   │   ├── StatsView.jsx       # Stats: grilla de tarjetas KPI + barras por campo
 │   │   ├── ShareView.jsx       # Vista compartible por URL (?v=INDEX)
-│   │   ├── CrateView.jsx       # Vista de exploración de crate
+│   │   ├── CrateView.jsx       # Vista de exploración de crate (vinilos)
+│   │   ├── AtlasView.jsx       # Mapa por país con bandera + nota editorial
+│   │   ├── SessionesView.jsx   # Sesiones digitales: registro, tracks, espíritus
+│   │   ├── HeroSection.jsx     # Hero fotográfico por colección
 │   │   ├── WelcomeModal.jsx    # Modal de bienvenida — primera visita
-│   │   └── About.jsx           # Documentación técnica en modal
+│   │   └── CountryMiniMap.jsx  # Mini mapa SVG por país (Atlas)
 │   ├── hooks/
 │   │   └── useCrud.js          # Hook reutilizable: add/update/remove
 │   └── services/
 │       └── api.js              # Todas las funciones axios por colección
-├── index.html           # OG tags, meta description, canonical, loader, noscript
+├── index.html           # OG tags, meta description, canonical, loader
 ├── package.json
-└── vite.config.js       # base: '/' (dominio custom, no subpath)
+└── vite.config.js
 ```
 
 ---
@@ -167,7 +179,8 @@ backend/
 │   ├── whiskies.py      # GET/POST/PUT/DELETE /api/whiskies/
 │   ├── covers.py        # Portadas Discogs + og:image scraping
 │   ├── spotify.py       # Búsqueda y guardado de Spotify ID
-│   └── config.py        # PIN admin (bcrypt) + settings en app_config
+│   ├── config.py        # PIN admin (bcrypt) + settings en app_config
+│   └── sessions.py      # Sesiones digitales: registro, CRUD, tracks, espíritus
 ```
 
 ---
@@ -186,13 +199,19 @@ discogs TEXT, cover_url TEXT, spotify_id TEXT, ig_url TEXT, tiktok_url TEXT
 **rums / whiskies**
 ```sql
 id SERIAL PRIMARY KEY, brand TEXT, name TEXT, type TEXT, country TEXT,
-abv REAL, region TEXT, url TEXT, cover_url TEXT, ...
+abv REAL, region TEXT, url TEXT, cover_url TEXT, terminado BOOLEAN, ...
 ```
 
 **app_config**
 ```sql
 key TEXT PRIMARY KEY, value TEXT
--- Uso actual: key='admin_pin' → bcrypt hash del PIN
+-- Uso: key='admin_pin' → bcrypt hash del PIN
+```
+
+**sessions** (schema Sesiones)
+```sql
+id UUID PRIMARY KEY, user_id UUID, name TEXT, night_type TEXT,
+note TEXT, created_at TIMESTAMPTZ, ...
 ```
 
 ### Conexión
@@ -208,7 +227,7 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| `GET` | `/api/vinyls/` | Lista con filtros opcionales |
+| `GET` | `/api/vinyls/` | Lista completa |
 | `POST` | `/api/vinyls/` | Agregar registro |
 | `PUT` | `/api/vinyls/{index}` | Actualizar registro |
 | `DELETE` | `/api/vinyls/{index}` | Eliminar registro |
@@ -219,7 +238,6 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| `GET` | `/api/covers/` | Buscar portada en Discogs (sin guardar) |
 | `POST` | `/api/covers/fetch` | Raspar og:image y guardar en licor |
 | `POST` | `/api/covers/fetch-discogs` | Buscar en Discogs y guardar en vinilo |
 | `POST` | `/api/covers/bulk-discogs` | Portadas Discogs para todos los vinilos sin cover_url |
@@ -237,8 +255,8 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/config/pin` | Estado del PIN `{ set: bool }` |
-| `POST` | `/api/config/pin` | Guardar nuevo PIN (se hashea con bcrypt) |
-| `POST` | `/api/config/pin/verify` | Verificar PIN → `{ valid: bool }`. `false` si no hay PIN |
+| `POST` | `/api/config/pin` | Guardar nuevo PIN (bcrypt) |
+| `POST` | `/api/config/pin/verify` | Verificar PIN → `{ valid: bool }` |
 | `DELETE` | `/api/config/pin` | Eliminar PIN |
 
 ---
@@ -246,19 +264,28 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 ## Funcionalidades clave
 
 ### PIN cifrado en backend
-El PIN no vive en `localStorage` — vive como hash bcrypt en la tabla `app_config` de Supabase. Toda verificación pasa por el backend. Si no hay PIN configurado, el acceso está bloqueado (no hay "acceso libre por defecto").
+El PIN no vive en `localStorage` — vive como hash bcrypt en `app_config` de Supabase. Toda verificación pasa por el backend.
 
 ### Internacionalización ES/EN
-`LangContext` provee el hook `useLang()` a todos los componentes. `i18n.js` tiene 150+ claves con variante `es` y `en`. El toggle vive en el Header y persiste en `localStorage`.
+`LangContext` provee `useLang()` a todos los componentes. `i18n.js` tiene 200+ claves. La preferencia persiste en `localStorage` entre sesiones.
 
-### FeaturedBanner + playlist ENLT
-La playlist de ENLT carga automáticamente al abrir la app en un Spotify embed inline. El botón ▶ en cualquier vinilo reemplaza la playlist por el embed del álbum. El botón Compartir copia la URL y abre en nueva pestaña.
+### MiniPlayer Spotify flotante
+`MiniPlayer` vive en `App.jsx` — persiste mientras el usuario navega entre colecciones. Por defecto muestra la playlist ENLT. Al hacer click en "Escuchar" desde el FeaturedBanner, cambia al álbum del disco destacado vía evento global `enlt-play`. Se puede colapsar a un botón redondo de 42px.
+
+### Auditor de completitud
+Tab en SettingsPanel (⚙). Muestra una tabla de todos los vinilos con semáforo de campos completos. Click en una fila cierra el panel y abre AdminForm para ese vinilo — al cerrar AdminForm vuelve al Auditor. Incluye botón de export CSV.
+
+### AdminForm con DynamicSelect
+Todos los campos de opciones usan `DynamicSelect`: dropdown estándar + botón "+" para agregar opciones nuevas que se persisten en `localStorage`. Los valores de país/origen se normalizan automáticamente (UK, USA, Europa, Japón, etc.) para eliminar duplicados.
+
+### Sesiones digitales
+Módulo completo: registro de usuario con email + token, creación de sesiones (tipo de noche, personas, nota), picker de tracks desde playlists Spotify, picker de espíritus de la colección. Hasta 5 sesiones activas por usuario.
 
 ### SocialDrawer
-Los botones de TikTok e Instagram en cards y modales abren un drawer lateral (desktop) o bottom sheet (mobile). El embed carga solo cuando el usuario lo abre. Extracción de ID por regex desde la URL completa.
+Botones TikTok e Instagram en cards y modales abren un drawer lateral (desktop) o bottom sheet (mobile). El embed carga solo cuando el usuario lo abre.
 
 ### SEO y social sharing
-`index.html` incluye OG tags, Twitter Card, meta description, canonical, `<noscript>` fallback, y un pre-loader spinning disc. `robots.txt` y `sitemap.xml` están en `/public`. `404.html` personalizado para URLs inválidas.
+`index.html` incluye OG tags, Twitter Card, meta description, canonical, `<noscript>` fallback y pre-loader. `robots.txt` y `sitemap.xml` en `/public`. `404.html` personalizado.
 
 ---
 
@@ -290,13 +317,9 @@ cd espiritus-vinilos/backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-
-# Variables requeridas en .env o en el entorno:
-# DATABASE_URL, DISCOGS_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
-
+# Variables en .env: DATABASE_URL, DISCOGS_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 uvicorn main:app --reload
-# → http://localhost:8000
-# → Docs interactivas: http://localhost:8000/docs
+# → http://localhost:8000/docs
 ```
 
 ### Frontend
@@ -304,10 +327,7 @@ uvicorn main:app --reload
 ```bash
 cd espiritus-vinilos/frontend
 npm install
-
-# Crear frontend/.env.local:
-# VITE_API_URL=http://localhost:8000
-
+# Crear frontend/.env.local con: VITE_API_URL=http://localhost:8000
 npm run dev
 # → http://localhost:5173
 ```
@@ -320,14 +340,14 @@ npm run dev
 
 ```bash
 cd espiritus-vinilos/frontend
-npm run build
-npx gh-pages -d dist --no-history
+npm run deploy
+# = npm run build && npx gh-pages -d dist
 ```
 
 ### Backend → Render
 
 Push a `main` → Render detecta cambios en `/backend` y hace redeploy automático.
-El free tier duerme el servicio tras 15 minutos de inactividad. El primer request después tiene ~30 segundos de cold start.
+Free tier: cold start de ~30s tras 15 min de inactividad.
 
 ---
 
@@ -348,7 +368,7 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 
 ## Historial de fases
 
-> **Última actualización:** 2026-04-25 · commit `a0c8cb0`
+> **Última actualización:** 2026-04-29 · commit `03a9e9c`
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -356,12 +376,13 @@ El free tier duerme el servicio tras 15 minutos de inactividad. El primer reques
 | 2 | Header, Sidebar, KpiBar, SearchBar, Modal, CSS Modules |
 | 3 | AdminForm, useCrud hook, CRUD completo en backend |
 | 4 | Portadas Discogs, og:image scraping, bulk cover fetch |
-| 5 | Deploy GitHub Pages + Render, About modal, README |
+| 5 | Deploy GitHub Pages + Render, README |
 | 6 | SpotifyModal, FeaturedBanner, ShareView, StatsView, PinModal, WelcomeModal, responsive mobile |
-| 7 | Migración a Supabase PostgreSQL, PIN bcrypt en backend, i18n ES/EN (LangContext), SocialDrawer, SettingsPanel, Header SVG icons, dominio custom `enlasnubestrepao.com`, OG tags + SEO baseline, BACKLOG.md |
-| 8 | Track A gráfico completo: hero fotográfico por colección, tipografía Fraunces, cards con overlay editorial, hover actions, scroll-progress bar, WelcomeModal con foto, franja surco vinilo, exportar CSV, breadcrumb de navegación, modal licores cinemático, compartir vinilo abre nueva pestaña |
-| 9 | EDIT-04 Sesiones: schema Supabase, 13 endpoints FastAPI, SessionesView con registro email+token, 8 plantillas, picker de tracks Spotify, picker de espíritus, vista previa; `spotify_album_id` en AdminForm; fix reset de vista al cambiar colección |
-| 10 | UX/editorial: filtro Década reemplaza Sello en vinilos; Atlas enriquecido con bandera + nota editorial por país; modal espíritus con hero image contextual (hero-1/hero-2) + botella flotante; WelcomeModal con copy editorial de Federico, photo cards y Sesiones como 5ª feature; git tags v1.0.0 y v2.0.0 |
+| 7 | Migración Supabase, PIN bcrypt, i18n ES/EN, SocialDrawer, SettingsPanel, dominio custom, OG tags + SEO |
+| 8 | Hero fotográfico, tipografía Fraunces, cards editorial, scroll-progress, modal licores, breadcrumb |
+| 9 | Sesiones digitales: schema, 13 endpoints FastAPI, SessionesView completa, plantillas, tracks, espíritus |
+| 10 | Atlas con bandera + nota por país, WelcomeModal editorial, Sesiones como 5ª feature |
+| 11 | Stats redesign (grilla KPI equitativa), DynamicSelect + normalización de opciones, Auditor edit-flow, MiniPlayer flotante, idioma persistente en localStorage, CSV en Auditor |
 
 ---
 
