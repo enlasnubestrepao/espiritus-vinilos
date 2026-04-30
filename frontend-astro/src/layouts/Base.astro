@@ -1,0 +1,83 @@
+---
+export interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  ogType?: string
+}
+
+const {
+  title = 'En Las Nubes Trepao — Espíritus Vinilos',
+  description = 'Curaduría de vinilos, rones y whiskies. Música no mainstream, cultura análoga y recomendaciones de algunos viajes realizados en las nubes.',
+  ogImage = 'https://enlasnubestrepao.com/og-image.jpg',
+  ogType = 'website',
+} = Astro.props
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/jpeg" href="/logo-enlt.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+
+    <!-- Primary Meta -->
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_419" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Pre-JS loader -->
+    <style>
+      #pre-loader {
+        position: fixed; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        background-color: #0a0a0a;
+        z-index: 9999;
+      }
+      #pre-loader .disc {
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        border: 2px solid #f0f0f0;
+        border-top-color: transparent;
+        animation: spin 1.2s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <noscript>
+      <div style="font-family: Georgia, serif; max-width: 600px; margin: 60px auto; padding: 0 24px; line-height: 1.7;">
+        <h1>En Las Nubes Trepao</h1>
+        <p>Este sitio requiere JavaScript para funcionar. Activá JavaScript en tu navegador y recargá la página.</p>
+        <p>Si seguís viendo esto, encontranos en <a href="https://www.instagram.com/enlasnubestrepao">Instagram @enlasnubestrepao</a></p>
+      </div>
+    </noscript>
+
+    <div id="pre-loader" aria-hidden="true">
+      <div class="disc"></div>
+    </div>
+
+    <slot />
+  </body>
+</html>

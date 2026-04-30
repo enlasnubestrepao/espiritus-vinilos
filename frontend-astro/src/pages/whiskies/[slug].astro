@@ -1,0 +1,199 @@
+---
+import Base from '../../layouts/Base.astro'
+import { whiskeySlug } from '../../utils/slugify.js'
+
+export async function getStaticPaths() {
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://espiritus-vinilos.onrender.com'
+  const res = await fetch(`${apiUrl}/api/whiskies/`)
+  if (!res.ok) return []
+  const whiskies = await res.json()
+
+  return whiskies.map((whisky, index) => ({
+    params: { slug: whiskeySlug(whisky) },
+    props: { whisky, index },
+  }))
+}
+
+const { whisky } = Astro.props
+
+const title = `${whisky.brand} ${whisky.version} | En Las Nubes Trepao`
+const description = [
+  whisky.type,
+  whisky.origin,
+  whisky.abv ? `${whisky.abv}% ABV` : null,
+  whisky.country,
+  whisky.distillery,
+].filter(Boolean).join(' · ')
+
+const ogImage = whisky.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
+
+function formatPrice(price, currency) {
+  if (!price) return null
+  const num = parseFloat(price)
+  if (currency === 'COP') return `$${num.toLocaleString('es-CO')} COP`
+  if (currency === 'USD') return `$${num.toLocaleString('en-US')} USD`
+  return `${num} ${currency}`
+}
+---
+
+<Base
+  title={title}
+  description={description || undefined}
+  ogImage={ogImage}
+>
+  <main class="page">
+    <a class="back" href="/">&larr; Volver al catálogo</a>
+
+    <article class="spirit">
+      <div class="cover-wrap">
+        {whisky.cover_url && (
+          <img
+            class="cover"
+            src={whisky.cover_url}
+            alt={`${whisky.brand} ${whisky.version}`}
+            width="220"
+            height="400"
+            loading="eager"
+          />
+        )}
+      </div>
+
+      <div class="info">
+        <p class="type">{whisky.type}{whisky.origin ? ` · ${whisky.origin}` : ''}</p>
+        <h1 class="name">{whisky.brand} <span class="version">{whisky.version}</span></h1>
+
+        <dl class="meta">
+          {whisky.abv && <><dt>ABV</dt><dd>{whisky.abv}%</dd></>}
+          {whisky.years && <><dt>Años</dt><dd>{whisky.years}</dd></>}
+          {whisky.country && <><dt>País</dt><dd>{whisky.country}</dd></>}
+          {whisky.region && <><dt>Región</dt><dd>{whisky.region}</dd></>}
+          {whisky.distillery && <><dt>Destilería</dt><dd>{whisky.distillery}</dd></>}
+          {whisky.terminado && <><dt>Estado</dt><dd class="terminado">Terminado</dd></>}
+        </dl>
+
+        {whisky.buy_url && (
+          <div class="buy-box">
+            {whisky.buy_price && (
+              <span class="buy-price">{formatPrice(whisky.buy_price, whisky.buy_currency)}</span>
+            )}
+            {whisky.buy_availability && (
+              <span class="buy-availability">{whisky.buy_availability}</span>
+            )}
+            <a class="btn btn-buy" href={whisky.buy_url} target="_blank" rel="noopener">
+              Ver precio
+            </a>
+          </div>
+        )}
+
+        <div class="links">
+          {whisky.url && (
+            <a class="btn btn-ref" href={whisky.url} target="_blank" rel="noopener">
+              Más info
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  </main>
+</Base>
+
+<style>
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    color: var(--text);
+  }
+
+  .back {
+    display: inline-block;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-bottom: 32px;
+    transition: color .15s;
+  }
+  .back:hover { color: var(--text); }
+
+  .spirit {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+
+  @media (max-width: 600px) {
+    .spirit { grid-template-columns: 1fr; }
+    .cover-wrap { max-width: 160px; }
+  }
+
+  .cover-wrap {
+    position: sticky;
+    top: 24px;
+  }
+
+  .cover {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  }
+
+  .type {
+    font-size: 0.75rem;
+    color: var(--wh-acc2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 8px;
+  }
+
+  h1.name {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+  .version { color: var(--text2); font-weight: 400; }
+
+  .meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+  }
+  .meta dt { color: var(--text3); }
+  .meta dd { color: var(--text); }
+  .terminado { color: var(--wh-acc2); }
+
+  .buy-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .buy-price { font-size: 1.1rem; font-weight: 700; color: var(--wh-acc2); }
+  .buy-availability { font-size: 0.78rem; color: var(--text2); flex: 1; }
+
+  .links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity .15s;
+    display: inline-block;
+  }
+  .btn:hover { opacity: .8; }
+  .btn-buy { background: var(--wh-acc2); color: #fff; }
+  .btn-ref { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+</style>

@@ -1,0 +1,42 @@
+name: Deploy Astro to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # permite lanzar el deploy manualmente desde GitHub UI
+
+permissions:
+  contents: write      # gh-pages necesita escribir en el repo
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend-astro/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend-astro
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend-astro
+        env:
+          VITE_API_URL: https://espiritus-vinilos.onrender.com
+        run: npm run build
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend-astro/dist
+          publish_branch: gh-pages
+          cname: enlasnubestrepao.com
