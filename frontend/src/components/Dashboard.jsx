@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getVinyls, getRums, getWhiskies } from '../services/api'
+import { vinylSlug, rumSlug, whiskeySlug } from '../utils/slugify.js'
 import SearchBar from './SearchBar'
 import Sidebar   from './Sidebar'
 import Modal     from './Modal'
@@ -396,12 +397,14 @@ export default function Dashboard({ coll, pinIsSet, auditEdit, onAuditEditClose 
                           onSpotify={coll === 'vinyl' ? (e) => { e.stopPropagation(); setSpotifyItem({ item, index: findIndex(item) }) } : null}
                           onShare={(e) => {
                             e.stopPropagation()
-                            const idx = findIndex(item)
+                            const origin = window.location.origin
                             const url = coll === 'vinyl'
-                              ? `${window.location.origin}${window.location.pathname}?v=${idx}`
-                              : window.location.href
+                              ? `${origin}/vinilos/${vinylSlug(item)}/`
+                              : coll === 'rum'
+                              ? `${origin}/rones/${rumSlug(item)}/`
+                              : `${origin}/whiskies/${whiskeySlug(item)}/`
                             navigator.clipboard.writeText(url).catch(() => {})
-                            if (coll === 'vinyl') window.open(url, '_blank', 'noopener')
+                            window.open(url, '_blank', 'noopener')
                           }}
                           onIgStory={(coll === 'vinyl' && item.ig_url) ? (e) => {
                             e.stopPropagation()
@@ -453,19 +456,31 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok, on
     setTimeout(() => setCopied(false), 1800)
   }
 
+  const staticUrl = coll === 'vinyl'
+    ? `/vinilos/${vinylSlug(item)}/`
+    : coll === 'rum'
+    ? `/rones/${rumSlug(item)}/`
+    : `/whiskies/${whiskeySlug(item)}/`
+
   function handleCardClick(e) {
     // En mobile: primer tap muestra acciones, segundo tap abre modal
     if (window.matchMedia('(hover: none)').matches && !touched) {
+      e.preventDefault()
       e.stopPropagation()
       setTouched(true)
       return
     }
+    // Cmd/Ctrl+click o middle-click → navegar a URL estática (comportamiento <a> normal)
+    if (e.metaKey || e.ctrlKey || e.button === 1) return
+    // Click normal → modal
+    e.preventDefault()
     setTouched(false)
     onClick(e)
   }
 
   return (
-    <div
+    <a
+      href={staticUrl}
       className={`${styles.card} ${styles[coll]} ${touched ? styles.cardTouched : ''}`}
       onClick={handleCardClick}
       onMouseLeave={() => setTouched(false)}
@@ -574,7 +589,7 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok, on
           </div>
         </div>
       </div>
-    </div>
+    </a>
   )
 }
 

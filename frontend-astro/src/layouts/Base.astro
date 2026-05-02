@@ -4,6 +4,7 @@ export interface Props {
   description?: string
   ogImage?: string
   ogType?: string
+  showLoader?: boolean
 }
 
 const {
@@ -11,6 +12,7 @@ const {
   description = 'Curaduría de vinilos, rones y whiskies. Música no mainstream, cultura análoga y recomendaciones de algunos viajes realizados en las nubes.',
   ogImage = 'https://enlasnubestrepao.com/og-image.jpg',
   ogType = 'website',
+  showLoader = false,
 } = Astro.props
 ---
 <!doctype html>
@@ -47,23 +49,24 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Pre-JS loader -->
-    <style>
-      #pre-loader {
-        position: fixed; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-        background-color: #0a0a0a;
-        z-index: 9999;
-      }
-      #pre-loader .disc {
-        width: 56px; height: 56px;
-        border-radius: 50%;
-        border: 2px solid #f0f0f0;
-        border-top-color: transparent;
-        animation: spin 1.2s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+    {showLoader && (
+      <style>
+        #pre-loader {
+          position: fixed; inset: 0;
+          display: flex; align-items: center; justify-content: center;
+          background-color: #0a0a0a;
+          z-index: 9999;
+        }
+        #pre-loader .disc {
+          width: 56px; height: 56px;
+          border-radius: 50%;
+          border: 2px solid #f0f0f0;
+          border-top-color: transparent;
+          animation: spin 1.2s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      </style>
+    )}
   </head>
   <body>
     <noscript>
@@ -74,9 +77,11 @@ const {
       </div>
     </noscript>
 
-    <div id="pre-loader" aria-hidden="true">
-      <div class="disc"></div>
-    </div>
+    {showLoader && (
+      <div id="pre-loader" aria-hidden="true">
+        <div class="disc"></div>
+      </div>
+    )}
 
     <slot />
   </body>

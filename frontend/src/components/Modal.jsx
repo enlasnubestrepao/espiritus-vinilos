@@ -1,5 +1,6 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
 import { fetchSpotifyId, fetchDiscogsRelease } from '../services/api'
+import { vinylSlug, rumSlug, whiskeySlug } from '../utils/slugify.js'
 import SocialDrawer from './SocialDrawer'
 import { useLang } from '../LangContext'
 import styles from './Modal.module.css'
@@ -387,6 +388,24 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                   target="_blank" rel="noreferrer"
                   className={`${styles.btn} ${styles.btnSecondary}`}
                 >🔗 {t('discogs')}</a>
+
+                <a
+                  href={`/vinilos/${vinylSlug(item)}/`}
+                  target="_blank" rel="noreferrer"
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                  style={{ gridColumn: '1 / -1' }}
+                >↗ Ver página del álbum</a>
+              </div>
+            )}
+
+            {coll !== 'vinyl' && index >= 0 && (
+              <div className={styles.actionsGrid}>
+                <a
+                  href={coll === 'rum' ? `/rones/${rumSlug(item)}/` : `/whiskies/${whiskeySlug(item)}/`}
+                  target="_blank" rel="noreferrer"
+                  className={`${styles.btn} ${styles.btnSecondary}`}
+                  style={{ gridColumn: '1 / -1' }}
+                >↗ Ver página</a>
               </div>
             )}
 

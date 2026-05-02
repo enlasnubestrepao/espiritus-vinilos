@@ -3,6 +3,6 @@ import Base from '../layouts/Base.astro'
 import AppIsland from '../components/AppIsland.jsx'
 import '../styles/global.css'
 ---
-<Base>
+<Base showLoader={true}>
   <AppIsland client:only="react" />
 </Base>
