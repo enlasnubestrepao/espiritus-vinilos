@@ -426,33 +426,59 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             </button>
           )}
 
-          {/* Referencias — links secundarios, menos énfasis */}
-          <div className={styles.refsRow}>
+          {/* Referencias — CTAs con descripción */}
+          <div className={styles.ctaLinks}>
             {coll === 'vinyl' && (
               <a
                 href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
                 target="_blank" rel="noreferrer"
-                className={styles.refLink}
-              >Discogs ↗</a>
+                className={styles.ctaCard}
+              >
+                <span className={styles.ctaIcon}>🔗</span>
+                <span className={styles.ctaText}>
+                  <span className={styles.ctaTitle}>Discogs</span>
+                  <span className={styles.ctaDesc}>Ficha técnica, prensajes y comunidad</span>
+                </span>
+                <span className={styles.ctaArrow}>↗</span>
+              </a>
             )}
             {coll === 'vinyl' && (
               <a
                 href={`/vinilos/${vinylSlug(item)}/`}
                 target="_blank" rel="noreferrer"
-                className={styles.refLink}
-              >Página del álbum ↗</a>
+                className={styles.ctaCard}
+              >
+                <span className={styles.ctaIcon}>📄</span>
+                <span className={styles.ctaText}>
+                  <span className={styles.ctaTitle}>Página del álbum</span>
+                  <span className={styles.ctaDesc}>Notas editoriales y recomendaciones</span>
+                </span>
+                <span className={styles.ctaArrow}>↗</span>
+              </a>
             )}
             {coll !== 'vinyl' && url && (
-              <a href={url} target="_blank" rel="noreferrer" className={styles.refLink}>
-                {coll === 'rum' ? 'Más info ↗' : 'Más info ↗'}
+              <a href={url} target="_blank" rel="noreferrer" className={styles.ctaCard}>
+                <span className={styles.ctaIcon}>🔗</span>
+                <span className={styles.ctaText}>
+                  <span className={styles.ctaTitle}>Más información</span>
+                  <span className={styles.ctaDesc}>Ficha técnica y detalles del producto</span>
+                </span>
+                <span className={styles.ctaArrow}>↗</span>
               </a>
             )}
             {coll !== 'vinyl' && (
               <a
                 href={coll === 'rum' ? `/rones/${rumSlug(item)}/` : `/whiskies/${whiskeySlug(item)}/`}
                 target="_blank" rel="noreferrer"
-                className={styles.refLink}
-              >Página del spirit ↗</a>
+                className={styles.ctaCard}
+              >
+                <span className={styles.ctaIcon}>📄</span>
+                <span className={styles.ctaText}>
+                  <span className={styles.ctaTitle}>Página del spirit</span>
+                  <span className={styles.ctaDesc}>Notas editoriales y maridajes</span>
+                </span>
+                <span className={styles.ctaArrow}>↗</span>
+              </a>
             )}
           </div>
 

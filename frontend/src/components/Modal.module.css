@@ -584,22 +584,61 @@
   border-color: rgba(255,255,255,.35);
 }
 
-/* Referencias secundarias — texto plano, sin border */
-.refsRow {
+/* Referencias — CTA cards con descripción */
+.ctaLinks {
   display: flex;
-  gap: 4px 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 2px 0;
+  flex-direction: column;
+  gap: 6px;
 }
-.refLink {
-  font-size: .72rem;
-  color: var(--text3);
+.ctaCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
   text-decoration: none;
-  transition: color .15s;
-  white-space: nowrap;
+  transition: background .15s, border-color .15s;
+  cursor: pointer;
 }
-.refLink:hover { color: var(--text2); }
+.ctaCard:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+}
+.ctaIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.ctaText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.ctaTitle {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+.ctaDesc {
+  font-size: .65rem;
+  color: var(--text3);
+  line-height: 1.3;
+}
+.ctaArrow {
+  font-size: .78rem;
+  color: var(--text3);
+  flex-shrink: 0;
+  transition: color .15s, transform .15s;
+}
+.ctaCard:hover .ctaArrow {
+  color: var(--text2);
+  transform: translate(2px, -2px);
+}
 
 /* Row admin — menos énfasis, separado visualmente */
 .actionsAdmin {
