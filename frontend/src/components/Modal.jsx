@@ -184,7 +184,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 <div className={styles.buyContent}>
                   {(item.buy_price || item.buy_currency) && (
                     <span className={styles.buyPrice}>
-                      {[item.buy_price, item.buy_currency].filter(Boolean).join(' ')}
+                      {formatPrice(item.buy_price, item.buy_currency)}
                     </span>
                   )}
                   {item.buy_availability && (
@@ -432,6 +432,17 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
       </div>
     </div>
   )
+}
+
+// ── Formato de precio ────────────────────────────────────────────────────────
+function formatPrice(price, currency) {
+  if (!price) return null
+  const num = parseFloat(price)
+  if (isNaN(num)) return `${price}${currency ? ' ' + currency : ''}`
+  if (currency === 'COP') return `$${num.toLocaleString('es-CO')} COP`
+  if (currency === 'USD') return `$${num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`
+  if (currency === 'EUR') return `€${num.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} EUR`
+  return `${num.toLocaleString()} ${currency || ''}`.trim()
 }
 
 // ── Grupos de campos por colección ───────────────────────────────────────────
