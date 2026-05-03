@@ -10,12 +10,12 @@
 }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
-/* ── Box ── */
+/* ── Box — siempre ancho, siempre 2 columnas ── */
 .box {
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 18px;
-  width: 100%; max-width: 560px;
+  width: 100%; max-width: 820px;
   max-height: 90vh;
   overflow: hidden;
   display: flex;
@@ -218,41 +218,23 @@
   margin: 0;
 }
 
-/* ── Wide modal — 2 columnas cuando hay notas ── */
-.boxWide {
-  max-width: 900px;
-}
-
-/* body se convierte en grid de 2 columnas cuando hay notas */
-.bodyWide {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  grid-template-rows: auto;
-  align-items: start;
-  padding: 0 !important;
-  gap: 0;
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-/* columna izquierda — datos duros */
+/* columna izquierda — exploración, scrollable */
 .dataCol {
   padding: 16px 20px 20px;
   min-width: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  border-right: 1px solid var(--border);
 }
 
-/* ── Panel editorial derecho ── */
-.notesPanel {
-  border-left: 1px solid rgba(192,57,43,.2);
-  background: linear-gradient(160deg, rgba(192,57,43,.07) 0%, rgba(0,0,0,0) 65%);
-  padding: 20px 18px 24px 20px;
+/* ── Notas editoriales — inline en dataCol ── */
+.notesInline {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(192,57,43,.2);
   display: flex;
   flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(192,57,43,.3) transparent;
 }
 .notesPanelLabel {
   font-size: .54rem;
@@ -281,14 +263,32 @@
   margin: 10px 0 0;
 }
 
-/* ── Body — scrollable middle ── */
+/* ── Body — siempre grid 2 columnas ── */
 .body {
-  padding: 16px 20px 20px;
+  display: grid;
+  grid-template-columns: 1fr 260px;
   flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Panel derecho — acciones ── */
+.actionsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 12px 14px;
   overflow-y: auto;
-  overflow-x: hidden;
+  min-height: 0;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  background: var(--bg);
+}
+
+/* empuja admin al fondo del panel */
+.actionsSpacer {
+  flex: 1;
+  min-height: 12px;
 }
 
 /* ── Grupos de campos ── */
@@ -649,20 +649,20 @@
   transform: translate(2px, -2px);
 }
 
-/* Row admin — menos énfasis, separado visualmente */
+/* Row admin — al fondo del panel derecho */
 .actionsAdmin {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  padding-top: 6px;
+  padding-top: 8px;
   border-top: 1px solid rgba(255,255,255,.05);
-  opacity: .7;
+  opacity: .65;
   transition: opacity .2s;
 }
 .actionsAdmin:hover { opacity: 1; }
 .actionsAdmin .btn {
-  font-size: .72rem;
-  padding: 6px 8px;
+  font-size: .7rem;
+  padding: 6px 6px;
 }
 
 /* Botón ancho completo */
@@ -855,28 +855,29 @@
     flex-shrink: 0;
   }
 
-  .boxWide {
-    max-width: 100%;
-  }
-
-  .bodyWide {
+  /* En mobile: columna única, scroll único */
+  .body {
     grid-template-columns: 1fr;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .dataCol {
+    overflow-y: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
     padding: 12px 14px 16px;
   }
 
-  .notesPanel {
-    border-left: none;
-    border-top: 1px solid rgba(192,57,43,.2);
-    padding: 16px 14px 20px;
+  .actionsPanel {
+    overflow-y: visible;
+    padding: 12px 14px 20px;
+    background: var(--bg2);
   }
 
-  .hdr { padding: 14px 16px; gap: 12px; }
-  .icon { width: 60px; height: 60px; border-radius: 8px; }
-  .hdrText h2 { font-size: .95rem; }
-  .hdrText p  { font-size: .72rem; }
+  .actionsSpacer { display: none; }
+
+  .actionsAdmin { grid-template-columns: repeat(3, 1fr); gap: 6px; }
 
   .spiritHdr { min-height: 195px; }
   .spiritHdrContent { padding: 14px 44px 16px 16px; }
@@ -885,19 +886,11 @@
   .vinylHdrContent { padding: 16px 44px 18px 16px; gap: 14px; }
   .vinylHdrCoverWrap { width: 110px; height: 110px; }
 
-  .body { padding: 12px 14px 16px; }
-  .actionsWrap { padding: 10px 14px 20px; }
-
-  .actionsGrid  { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-  .actionsAdmin { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .btn {
-    font-size: .72rem;
-    padding: 8px 8px;
-  }
+  .btn { font-size: .72rem; padding: 8px 8px; }
 }
 
-/* ── 1 columna en mobile ── */
-@media (max-width: 560px) {
+/* ── Campos a 1 col en pantallas pequeñas ── */
+@media (max-width: 480px) {
   .row {
     flex-direction: column;
     gap: 6px;
