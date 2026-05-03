@@ -9,208 +9,448 @@ export async function getStaticPaths() {
   if (!res.ok) return []
   const whiskies = await res.json()
 
-  return whiskies.map((whisky, index) => ({
+  return whiskies.map((whisky) => ({
     params: { slug: whiskeySlug(whisky) },
-    props: { whisky, index },
+    props: { whisky, allWhiskies: whiskies },
   }))
 }
 
-const { whisky } = Astro.props
+const { whisky, allWhiskies } = Astro.props
 
-const title = `${whisky.brand} ${whisky.version} | En Las Nubes Trepao`
-const description = [
-  whisky.type,
-  whisky.origin,
-  whisky.abv ? `${whisky.abv}% ABV` : null,
-  whisky.country,
-  whisky.distillery,
-].filter(Boolean).join(' · ')
+// Recommendations: same type or country, excluding current, max 4
+const related = allWhiskies
+  .filter(w => !(w.brand === whisky.brand && w.version === whisky.version))
+  .filter(w => w.type === whisky.type || w.country === whisky.country)
+  .slice(0, 4)
 
-const ogImage = whisky.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
-
-function formatPrice(price, currency) {
+function formatPrice(price: string, currency: string) {
   if (!price) return null
   const num = parseFloat(price)
   if (currency === 'COP') return `$${num.toLocaleString('es-CO')} COP`
   if (currency === 'USD') return `$${num.toLocaleString('en-US')} USD`
   return `${num} ${currency}`
 }
+
+const title = `${whisky.brand} ${whisky.version} | En Las Nubes Trepao`
+const description = [whisky.type, whisky.origin, whisky.abv ? `${whisky.abv}% ABV` : null, whisky.country, whisky.distillery].filter(Boolean).join(' · ')
+const ogImage = whisky.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
 ---
 
-<Base
-  title={title}
-  description={description || undefined}
-  ogImage={ogImage}
->
-  <header class="site-header">
-    <a href="/" class="site-logo">En Las Nubes Trepao</a>
-    <a href="/" class="site-back">← Volver al catálogo</a>
-  </header>
+<Base title={title} description={description} ogImage={ogImage}>
 
-  <main class="page">
-    <article class="spirit">
-      <div class="cover-wrap">
-        {whisky.cover_url && (
+  <!-- ── HERO ─────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-bg" style="background-image: url('/hero-2.png')"></div>
+    {whisky.cover_url && (
+      <div
+        class="hero-bg-cover"
+        style={`background-image: url('${whisky.cover_url}')`}
+      ></div>
+    )}
+    <div class="hero-gradient"></div>
+
+    <header class="site-header">
+      <a href="/" class="site-logo">En Las Nubes Trepao</a>
+      <a href="/" class="site-back">← Volver al catálogo</a>
+    </header>
+
+    <div class="hero-content">
+      <!-- Botella flotante -->
+      {whisky.cover_url && (
+        <div class="hero-bottle-wrap">
           <img
-            class="cover"
+            class="hero-bottle"
             src={whisky.cover_url}
             alt={`${whisky.brand} ${whisky.version}`}
-            width="220"
-            height="400"
+            width="140" height="300"
             loading="eager"
           />
-        )}
-      </div>
+        </div>
+      )}
 
-      <div class="info">
-        <p class="type">{whisky.type}{whisky.origin ? ` · ${whisky.origin}` : ''}</p>
-        <h1 class="name">{whisky.brand} <span class="version">{whisky.version}</span></h1>
+      <div class="hero-info">
+        <p class="type">
+          {whisky.type}{whisky.origin ? ` · ${whisky.origin}` : ''}{whisky.country ? ` · ${whisky.country}` : ''}
+        </p>
+        <h1 class="name">
+          <span class="brand">{whisky.brand}</span>
+          {whisky.version && <span class="version">{whisky.version}</span>}
+        </h1>
+        {whisky.distillery && <p class="region">{whisky.distillery}</p>}
 
-        <dl class="meta">
-          {whisky.abv && <><dt>ABV</dt><dd>{whisky.abv}%</dd></>}
-          {whisky.years && <><dt>Años</dt><dd>{whisky.years}</dd></>}
-          {whisky.country && <><dt>País</dt><dd>{whisky.country}</dd></>}
-          {whisky.region && <><dt>Región</dt><dd>{whisky.region}</dd></>}
-          {whisky.distillery && <><dt>Destilería</dt><dd>{whisky.distillery}</dd></>}
-          {whisky.terminado && <><dt>Estado</dt><dd class="terminado">Terminado</dd></>}
-        </dl>
+        <div class="hero-pills">
+          {whisky.abv && <span class="pill">{whisky.abv}% ABV</span>}
+          {whisky.years !== undefined && (
+            <span class="pill">{whisky.years > 0 ? `${whisky.years} años` : 'NAS'}</span>
+          )}
+          {whisky.terminado && <span class="pill pill-done">🫗 Terminado</span>}
+        </div>
 
         {whisky.buy_url && (
-          <div class="buy-box">
+          <div class="hero-buy">
             {whisky.buy_price && (
               <span class="buy-price">{formatPrice(whisky.buy_price, whisky.buy_currency)}</span>
             )}
             {whisky.buy_availability && (
-              <span class="buy-availability">{whisky.buy_availability}</span>
+              <span class={`buy-avail ${whisky.buy_availability?.toLowerCase().includes('stock') ? 'in-stock' : ''}`}>
+                {whisky.buy_availability}
+              </span>
             )}
             <a class="btn btn-buy" href={whisky.buy_url} target="_blank" rel="noopener">
-              Ver precio
+              Ver precio ↗
             </a>
           </div>
         )}
-
-        <div class="links">
-          {whisky.url && (
-            <a class="btn btn-ref" href={whisky.url} target="_blank" rel="noopener">
-              Más info
-            </a>
-          )}
-        </div>
       </div>
-    </article>
+    </div>
+  </section>
+
+  <main class="page">
+
+    <!-- ── META ──────────────────────────────────────────────── -->
+    <section class="meta-section">
+      <dl class="meta">
+        {whisky.abv        && <><dt>ABV</dt><dd>{whisky.abv}%</dd></>}
+        {whisky.years !== undefined && <><dt>Años</dt><dd>{whisky.years > 0 ? whisky.years : 'NAS'}</dd></>}
+        {whisky.country    && <><dt>País</dt><dd>{whisky.country}</dd></>}
+        {whisky.region     && <><dt>Región</dt><dd>{whisky.region}</dd></>}
+        {whisky.distillery && <><dt>Destilería</dt><dd>{whisky.distillery}</dd></>}
+        {whisky.origin     && <><dt>Origen</dt><dd>{whisky.origin}</dd></>}
+        {whisky.terminado  && <><dt>Estado</dt><dd class="terminado">Terminado</dd></>}
+      </dl>
+
+      {whisky.url && (
+        <a class="cta-card" href={whisky.url} target="_blank" rel="noopener">
+          <span class="cta-icon">🔗</span>
+          <span class="cta-text">
+            <span class="cta-title">Más información</span>
+            <span class="cta-desc">Ficha técnica y detalles del productor</span>
+          </span>
+          <span class="cta-arrow">↗</span>
+        </a>
+      )}
+    </section>
+
+    <!-- ── RECOMENDACIONES ───────────────────────────────────── -->
+    {related.length > 0 && (
+      <section class="related">
+        <h3 class="related-heading">
+          Más de la colección · {whisky.type || whisky.country}
+        </h3>
+        <div class="related-grid">
+          {related.map(w => (
+            <a href={`/whiskies/${whiskeySlug(w)}/`} class="related-card">
+              {w.cover_url
+                ? <img
+                    class="related-cover"
+                    src={w.cover_url}
+                    alt={`${w.brand} ${w.version}`}
+                    width="120" height="220"
+                    loading="lazy"
+                  />
+                : <div class="related-no-cover">🥃</div>
+              }
+              <div class="related-info">
+                <span class="related-brand">{w.brand}</span>
+                <span class="related-name">{w.version}</span>
+                {w.abv && <span class="related-meta">{w.abv}% ABV</span>}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
   </main>
 </Base>
 
 <style>
+  /* ── Header overlaid ─────────────────────────────────────── */
   .site-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
+    padding: 16px 32px;
+    background: linear-gradient(to bottom, rgba(10,10,10,.7) 0%, transparent 100%);
   }
   .site-logo {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--text);
+    color: #fff;
     text-decoration: none;
+    text-shadow: 0 1px 6px rgba(0,0,0,.6);
   }
   .site-back {
-    font-size: 0.8rem;
-    color: var(--text2);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,.72);
     text-decoration: none;
     transition: color .15s;
   }
-  .site-back:hover { color: var(--text); }
+  .site-back:hover { color: #fff; }
 
-  .page {
-    max-width: 820px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-    color: var(--text);
+  /* ── Hero ────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 420px;
+    background: var(--bg);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
   }
-
-  .spirit {
-    display: grid;
-    grid-template-columns: 200px 1fr;
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center 30%;
+    filter: blur(0px) saturate(1.2);
+    opacity: .45;
+  }
+  .hero-bg-cover {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(48px) saturate(1.8) brightness(.5);
+    transform: scale(1.12);
+    opacity: .28;
+  }
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to top,
+      #0a0a0a 0%,
+      rgba(10,10,10,.7) 50%,
+      rgba(10,10,10,.1) 100%
+    );
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    display: flex;
+    align-items: flex-end;
     gap: 36px;
-    align-items: start;
-  }
-
-  @media (max-width: 600px) {
-    .spirit { grid-template-columns: 1fr; }
-    .cover-wrap { max-width: 160px; }
-  }
-
-  .cover-wrap {
-    position: sticky;
-    top: 24px;
-  }
-
-  .cover {
+    padding: 90px 40px 40px;
     width: 100%;
-    height: auto;
-    border-radius: 6px;
-    display: block;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    max-width: 960px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
+  /* Botella */
+  .hero-bottle-wrap { flex-shrink: 0; }
+  .hero-bottle {
+    height: 220px;
+    width: auto;
+    max-width: 100px;
+    object-fit: contain;
+    object-position: center bottom;
+    filter: drop-shadow(0 12px 32px rgba(0,0,0,.8));
+    display: block;
+  }
+
+  /* Info */
+  .hero-info { flex: 1; min-width: 0; }
   .type {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--wh-acc2);
     text-transform: uppercase;
-    letter-spacing: .08em;
-    margin-bottom: 8px;
+    letter-spacing: .12em;
+    margin-bottom: 10px;
   }
-
-  h1.name {
+  .name {
     font-family: var(--font-display);
-    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-size: clamp(1.8rem, 4vw, 3rem);
     font-weight: 700;
-    line-height: 1.15;
-    margin-bottom: 24px;
+    line-height: 1.08;
+    color: #fff;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 10px rgba(0,0,0,.5);
   }
-  .version { color: var(--text2); font-weight: 400; }
+  .brand { display: block; }
+  .version { font-weight: 400; color: rgba(255,255,255,.65); font-size: .75em; }
+  .region {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,.5);
+    margin-bottom: 14px;
+  }
 
+  /* Pills */
+  .hero-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .pill {
+    font-size: .65rem;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    color: rgba(255,255,255,.75);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .pill-done {
+    background: rgba(26,74,122,.2);
+    border-color: rgba(41,128,185,.3);
+    color: var(--wh-acc2);
+  }
+
+  /* Buy box en hero */
+  .hero-buy {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(0,0,0,.35);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 10px 14px;
+    backdrop-filter: blur(8px);
+    max-width: 400px;
+  }
+  .buy-price {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--wh-acc2);
+  }
+  .buy-avail {
+    font-size: .72rem;
+    color: var(--text3);
+    flex: 1;
+  }
+  .in-stock { color: #1DB954; }
+  .btn {
+    padding: 7px 14px;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:hover { opacity: .85; transform: translateY(-1px); }
+  .btn-buy { background: var(--wh-acc2); color: #fff; }
+
+  /* ── Page body ───────────────────────────────────────────── */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  /* ── Meta ────────────────────────────────────────────────── */
+  .meta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 52px;
+  }
   .meta {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 6px 16px;
-    font-size: 0.85rem;
-    margin-bottom: 24px;
+    gap: 8px 20px;
+    font-size: 0.83rem;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
   }
   .meta dt { color: var(--text3); }
   .meta dd { color: var(--text); }
   .terminado { color: var(--wh-acc2); }
 
-  .buy-box {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 16px;
+  /* CTA card */
+  .cta-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .buy-price { font-size: 1.1rem; font-weight: 700; color: var(--wh-acc2); }
-  .buy-availability { font-size: 0.78rem; color: var(--text2); flex: 1; }
-
-  .links { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .btn {
-    padding: 7px 16px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    font-weight: 600;
+    gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
     text-decoration: none;
-    transition: opacity .15s;
-    display: inline-block;
+    transition: background .15s, border-color .15s;
   }
-  .btn:hover { opacity: .8; }
-  .btn-buy { background: var(--wh-acc2); color: #fff; }
-  .btn-ref { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+  .cta-card:hover {
+    background: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.18);
+  }
+  .cta-icon { font-size: 1rem; flex-shrink: 0; }
+  .cta-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .cta-title { font-size: .78rem; font-weight: 600; color: var(--text); }
+  .cta-desc  { font-size: .65rem; color: var(--text3); }
+  .cta-arrow {
+    font-size: .78rem;
+    color: var(--text3);
+    flex-shrink: 0;
+    transition: color .15s, transform .15s;
+  }
+  .cta-card:hover .cta-arrow { color: var(--text2); transform: translate(2px, -2px); }
+
+  /* ── Recomendaciones ─────────────────────────────────────── */
+  .related {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .related-heading {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .related-card {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .2s;
+  }
+  .related-card:hover { transform: translateY(-4px); }
+  .related-cover {
+    width: 100%;
+    aspect-ratio: 2/3;
+    object-fit: contain;
+    object-position: center bottom;
+    border-radius: 6px;
+    display: block;
+    filter: drop-shadow(0 6px 16px rgba(0,0,0,.6));
+    background: var(--bg3);
+    transition: filter .2s;
+  }
+  .related-card:hover .related-cover { filter: drop-shadow(0 10px 24px rgba(0,0,0,.8)); }
+  .related-no-cover {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background: var(--bg3);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  .related-info { display: flex; flex-direction: column; gap: 2px; }
+  .related-brand { font-size: .78rem; font-weight: 700; color: var(--text); }
+  .related-name  { font-size: .72rem; color: var(--text2); }
+  .related-meta  { font-size: .65rem; color: var(--text3); }
+
+  /* ── Mobile ──────────────────────────────────────────────── */
+  @media (max-width: 680px) {
+    .site-header { padding: 14px 20px; }
+    .hero { min-height: 360px; }
+    .hero-content {
+      padding: 72px 20px 28px;
+      gap: 20px;
+      align-items: flex-end;
+    }
+    .hero-bottle { height: 150px; }
+    .name { font-size: 1.6rem; }
+    .page { padding: 28px 20px 60px; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
 </style>
