@@ -1,8 +1,8 @@
 # Espíritus & Vinilos — En Las Nubes Trepao
 
-![Version](https://img.shields.io/badge/version-v2.3.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
+![Version](https://img.shields.io/badge/version-v2.5.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-Astro%20%2B%20React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
 
-Dashboard personal para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
+Dashboard personal + sitio estático SEO para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con Astro SSG + React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
 
 **Live:** [enlasnubestrepao.com](https://enlasnubestrepao.com)
 
@@ -36,52 +36,40 @@ Esta app es el archivo digital de esas colecciones físicas.
 ┌─────────────────────────────────────────────────────────────────┐
 │                          BROWSER                                │
 │                                                                 │
-│  React 19 (Vite) — enlasnubestrepao.com                        │
+│  ① Astro SSG — 166 páginas HTML estáticas (build time)         │
+│     /vinilos/[slug]/ · /rones/[slug]/ · /whiskies/[slug]/      │
+│     → Indexables por Google · OG tags · Sitemap automático     │
+│                                                                 │
+│  ② React 19 (island en /) — enlasnubestrepao.com               │
 │  ┌─────────────┐  ┌──────────────┐  ┌────────────────────────┐ │
 │  │   Header    │  │   KpiBar     │  │    FeaturedBanner      │ │
-│  │ (logo ENLT, │  │              │  │  (disco del mes)       │ │
-│  │  ES/EN, ⚙) │  │              │  │                        │ │
 │  └─────────────┘  └──────────────┘  └────────────────────────┘ │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │                     Dashboard                           │   │
-│  │   useQuery → cache + refetch automático                 │   │
-│  │   useMemo  → filtered list                              │   │
-│  │   requirePin → protege add/edit/delete                  │   │
+│  │  Dashboard · Modal · AdminForm · ShareView · StatsView  │   │
+│  │  CrateView · AtlasView · SessionesView · SocialDrawer   │   │
 │  └─────────────────────────────────────────────────────────┘   │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────┐  ┌──────────┐  │
-│  │  Modal   │  │ AdminForm │  │ SocialDrawer │  │Settings  │  │
-│  └──────────┘  └───────────┘  └──────────────┘  └──────────┘  │
-│  ┌──────────────────┐  ┌─────────────────────────────────────┐ │
-│  │   MiniPlayer     │  │         SessionesView               │ │
-│  │ (Spotify flotante│  │  (registro, sesiones, tracks,       │ │
-│  │  bottom-right)   │  │   espíritus, plantillas)            │ │
-│  └──────────────────┘  └─────────────────────────────────────┘ │
 │                                                                 │
-│  LangContext (i18n ES/EN, persiste en localStorage)            │
-│  axios → VITE_API_URL                                          │
+│  LangContext (i18n ES/EN) · axios → VITE_API_URL               │
 └────────────────────────┬────────────────────────────────────────┘
                          │ HTTP / JSON (CORS)
 ┌────────────────────────▼────────────────────────────────────────┐
-│                     FastAPI Backend                             │
-│                     (Render.com — free tier)                    │
-│                                                                 │
+│                     FastAPI Backend (Render.com free)           │
 │  /api/vinyls · /api/rums · /api/whiskies                        │
 │  /api/covers · /api/spotify · /api/config · /api/sessions       │
-│                                                                 │
 │  data_store.py → psycopg2 → Supabase PostgreSQL                 │
 └────────────────────────┬────────────────────────────────────────┘
                          │ psycopg2 / Session Pooler
 ┌────────────────────────▼────────────────────────────────────────┐
-│                  Supabase PostgreSQL                            │
-│                                                                 │
-│   vinyls · rums · whiskies · app_config · sessions · ...       │
+│  Supabase PostgreSQL                                            │
+│  vinyls · rums · whiskies · app_config · sessions · ...        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 **Deploy:**
-- Frontend: `cd frontend && npm run deploy` (= `npm run build && npx gh-pages -d dist` → push a rama `gh-pages`)
+- Frontend SSG: `cd frontend-astro && npm run deploy` (= `astro build && gh-pages -d dist` → rama `gh-pages`)
 - Backend: push a `main` → auto-deploy en Render.com
-- ⚠️ No commitear `frontend/dist/` a `main` — el deploy del frontend va exclusivamente a la rama `gh-pages`
+- ⚠️ No commitear `dist/` a `main` — el deploy va exclusivamente a la rama `gh-pages`
+- CI/CD: `.github/workflows/deploy.yml` configurado — requiere PAT con scope `workflow` para activarse
 
 ---
 
@@ -349,14 +337,22 @@ npm run dev
 
 ## Cómo deployar
 
-### Frontend → GitHub Pages
+### Frontend SSG → GitHub Pages
+
+```bash
+cd espiritus-vinilos/frontend-astro
+npm run deploy
+# = astro build && gh-pages -d dist
+# Genera 166 páginas HTML estáticas + sitemap y las publica en rama gh-pages
+# NO hacer git add dist/ en main — eso no actualiza producción
+```
+
+### Frontend React (desarrollo local)
 
 ```bash
 cd espiritus-vinilos/frontend
-npm run deploy
-# = npm run build && npx gh-pages -d dist
-# Publica el contenido de dist/ en la rama gh-pages (que es la que sirve el sitio)
-# NO hacer git add frontend/dist/ en main — eso no actualiza producción
+npm run dev
+# → http://localhost:5173
 ```
 
 ### Backend → Render
@@ -400,8 +396,12 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 11 | Stats redesign (grilla KPI equitativa), DynamicSelect + normalización de opciones, Auditor edit-flow, MiniPlayer flotante, idioma persistente en localStorage, CSV en Auditor |
 | 12 | **Voz editorial v2.1**: campo `notes` (liner notes), tracklist Discogs colapsable en modal, créditos manuales `credits JSONB`, editor fila-por-fila en AdminForm, endpoint `/api/covers/discogs-release` |
 | 12b | **Voz editorial v2.2**: importar créditos desde Discogs en AdminForm (merge inteligente), grid 2 columnas para créditos en modal, 3 capas de descubribilidad — badge `❝` en card, snippet hover en overlay, epígrafe editorial al tope del modal |
-| 13 | **Modal editorial v2.3**: fix persistencia `notes`/`credits` en DB (`_VINYL_COLS`), badge `❝` clickable, modal 2 columnas (datos + panel editorial) al detectar notas, fix workflow deploy → rama `gh-pages` |
+| 13 | **Modal editorial v2.3**: fix persistencia `notes`/`credits` en DB, badge `❝` clickable, modal 2 columnas (datos + panel editorial), fix workflow deploy → rama `gh-pages` |
+| 14 | **ARCH-01 v2.4**: Astro SSG — 166 páginas estáticas, slugify compartido, `getStaticPaths()`, `@astrojs/sitemap`, tema oscuro, pre-loader controlado, cards crawleables, CI/CD GitHub Actions, sitemap enviado a Google |
+| 15 | **UXUI-01 v2.5**: Modal UX overhaul — bottom sheet mobile, hero unificado con blur, portada vinyl hero, botella spirits prominente (195px), Spotify en footer sticky, Compartir unificado (?v=N vinilos / página estática spirits), mapa colapsable, admin footer sutil, campos 1col ≤560px, drag handle |
 
 ---
 
-*Proyecto construido con Claude Code · Abril 2026*
+> **Última actualización:** 2026-05-02 · v2.5.0
+
+*Proyecto construido con Claude Code · Abril–Mayo 2026*

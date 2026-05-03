@@ -20,6 +20,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
   const [tlData,       setTlData]       = useState(null)   // { tracklist, credits } o null
   const [tlLoading,    setTlLoading]    = useState(false)
   const [tlError,      setTlError]      = useState('')
+  const [mapOpen,      setMapOpen]      = useState(false)
 
   useEffect(() => {
     const handler = e => { if (e.key === 'Escape') onClose() }
@@ -83,12 +84,19 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
   }
 
   function handleShare() {
-    const url = `${window.location.origin}${window.location.pathname}?v=${index}`
-    navigator.clipboard.writeText(url).then(() => {
+    let shareUrl
+    if (coll === 'vinyl') {
+      shareUrl = `${window.location.origin}${window.location.pathname}?v=${index}`
+    } else {
+      const slug = coll === 'rum' ? rumSlug(item) : whiskeySlug(item)
+      const base = coll === 'rum' ? '/rones' : '/whiskies'
+      shareUrl = `${window.location.origin}${base}/${slug}/`
+    }
+    navigator.clipboard.writeText(shareUrl).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
-    window.open(url, '_blank', 'noopener')
+    window.open(shareUrl, '_blank', 'noopener')
   }
 
   function handleIgCopy() {
@@ -112,40 +120,51 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
     <div className={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
       <div className={`${styles.box} ${hasNotes ? styles.boxWide : ''}`}>
 
-        {/* ── Header ── */}
-        {coll === 'vinyl' ? (
-          <div className={`${styles.hdr} ${styles.vinyl}`}>
-            <div className={styles.icon}>
-              {item.cover_url
-                ? <img src={item.cover_url} alt={title} />
-                : <VinylIcon agrupador={item.agrupador} artista={item.artista} />
-              }
-            </div>
-            <div className={styles.hdrText}>
-              <h2>{title}</h2>
-              <p>{sub}</p>
-              <div className={styles.hdrPills}>
-                {item.agrupador && <span className={styles.hdrPill}>{item.agrupador}</span>}
-                {item.anio      && <span className={styles.hdrPillYear}>{item.anio}</span>}
-              </div>
-            </div>
-            <button className={styles.closeBtn} onClick={onClose}>✕</button>
-          </div>
-        ) : (
-          /* ── Spirit header — cinemático ── */
-          <div className={`${styles.spiritHdr} ${styles[coll]}`}>
-            <div className={styles.spiritHdrBg}>
+        {/* ── Header — hero para todos ── */}
+        <div className={`${styles.spiritHdr} ${styles[coll]}`}>
+          <div className={styles.spiritHdrBg}>
+            {coll === 'vinyl' ? (
+              item.cover_url
+                ? <img src={item.cover_url} alt="" className={`${styles.spiritHdrBgImg} ${styles.vinylHdrBgImg}`} />
+                : <div className={styles.vinylHdrFallback} />
+            ) : (
               <img
                 src={coll === 'rum' ? '/hero-1.png' : '/hero-2.png'}
                 alt=""
                 className={styles.spiritHdrBgImg}
               />
-              <div className={styles.spiritHdrBgOverlay} />
-            </div>
-            {item.cover_url && (
-              <img src={item.cover_url} alt={title} className={styles.spiritHdrBottle} />
             )}
-            <button className={styles.closeBtn} style={{ zIndex: 2 }} onClick={onClose}>✕</button>
+            <div className={styles.spiritHdrBgOverlay} />
+          </div>
+          {coll !== 'vinyl' && item.cover_url && (
+            <img src={item.cover_url} alt={title} className={styles.spiritHdrBottle} />
+          )}
+          {/* Fondo adicional con cover_url para spirits */}
+          {coll !== 'vinyl' && item.cover_url && (
+            <img src={item.cover_url} alt="" className={styles.spiritHdrBgCover} />
+          )}
+          <button className={styles.closeBtn} style={{ zIndex: 2 }} onClick={onClose}>✕</button>
+
+          {coll === 'vinyl' ? (
+            /* ── Vinyl hero: cover grande izquierda + texto derecha ── */
+            <div className={styles.vinylHdrContent}>
+              <div className={styles.vinylHdrCoverWrap}>
+                {item.cover_url
+                  ? <img src={item.cover_url} alt={title} className={styles.vinylHdrCoverImg} />
+                  : <VinylIcon agrupador={item.agrupador} artista={item.artista} />
+                }
+              </div>
+              <div className={styles.vinylHdrText}>
+                <div className={styles.hdrPills}>
+                  {item.agrupador && <span className={styles.hdrPill}>{item.agrupador}</span>}
+                  {item.anio      && <span className={styles.hdrPillYear}>{item.anio}</span>}
+                </div>
+                <h2 className={styles.spiritHdrTitle}>{title}</h2>
+                <p className={styles.spiritHdrSub}>{item.artista}</p>
+              </div>
+            </div>
+          ) : (
+            /* ── Spirit hero: texto bottom-left ── */
             <div className={styles.spiritHdrContent}>
               <div className={styles.hdrPills}>
                 {item.type    && <span className={styles.hdrPill}>{item.type}</span>}
@@ -163,8 +182,8 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
               <h2 className={styles.spiritHdrTitle}>{title}</h2>
               <p className={styles.spiritHdrSub}>{item.brand}{item.country ? ` · ${item.country}` : ''}</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className={`${styles.body} ${hasNotes ? styles.bodyWide : ''}`}>
 
@@ -188,12 +207,20 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             </div>
           ))}
 
-          {/* ── Mini-mapa de origen — solo rones y whiskies ── */}
+          {/* ── Mini-mapa de origen — colapsable ── */}
           {coll !== 'vinyl' && item.country && (
-            <div className={styles.mapRow}>
-              <Suspense fallback={<div className={styles.mapLoading} />}>
-                <CountryMiniMap country={item.country} coll={coll} />
-              </Suspense>
+            <div className={styles.mapSection}>
+              <button className={styles.mapToggle} onClick={() => setMapOpen(o => !o)}>
+                <span className={styles.mapToggleIcon}>{mapOpen ? '▲' : '▼'}</span>
+                {mapOpen ? 'Ocultar mapa' : `Ver en mapa · ${item.country}`}
+              </button>
+              {mapOpen && (
+                <div className={styles.mapRow}>
+                  <Suspense fallback={<div className={styles.mapLoading} />}>
+                    <CountryMiniMap country={item.country} coll={coll} />
+                  </Suspense>
+                </div>
+              )}
             </div>
           )}
 
@@ -339,7 +366,23 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             </div>
           )}
 
-          {/* ── Player Spotify ── */}
+        </div>{/* end dataCol */}
+
+        {/* ── Panel editorial derecho ── */}
+        {hasNotes && (
+          <div className={styles.notesPanel}>
+            <span className={styles.notesPanelLabel}>Notas editoriales</span>
+            <span className={styles.notesMark}>❝</span>
+            <p className={styles.notesText}>{item.notes}</p>
+          </div>
+        )}
+
+        </div>{/* end body */}
+
+        {/* ── Acciones — sticky footer ── */}
+        <div className={styles.actionsWrap}>
+
+          {/* Player Spotify — en el footer para que sea siempre visible */}
           {coll === 'vinyl' && showPlayer && spotifyId && (
             <div className={styles.spotifyWrap}>
               <iframe
@@ -357,88 +400,80 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
           )}
           {spotifyMsg && <p className={styles.spotifyMsg}>{spotifyMsg}</p>}
 
-          {/* ── Acciones ── */}
-          <div className={styles.actionsWrap}>
+          {/* Acción primaria — ancho completo */}
+          {coll === 'vinyl' && (
+            <button
+              className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify} ${styles.btnFull}`}
+              onClick={handleSpotify} disabled={fetchingSpot}
+            >
+              {fetchingSpot ? t('searching') : showPlayer ? t('closePlayer') : spotifyId ? t('listenSpotify') : t('searchSpotify')}
+            </button>
+          )}
+          {coll !== 'vinyl' && url && (
+            <a href={url} target="_blank" rel="noreferrer"
+              className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]} ${styles.btnFull}`}>
+              {t('viewSite')}
+            </a>
+          )}
 
-            {/* Acción primaria — ancho completo */}
+          {/* Compartir — botón único, ancho completo */}
+          {index >= 0 && (
+            <button
+              className={`${styles.btn} ${styles.btnShare} ${styles.btnFull}`}
+              onClick={handleShare}
+            >
+              {copied ? '✓ Enlace copiado' : '↗ Compartir'}
+            </button>
+          )}
+
+          {/* Referencias — links secundarios, menos énfasis */}
+          <div className={styles.refsRow}>
             {coll === 'vinyl' && (
-              <button
-                className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify} ${styles.btnFull}`}
-                onClick={handleSpotify} disabled={fetchingSpot}
-              >
-                {fetchingSpot ? t('searching') : showPlayer ? t('closePlayer') : spotifyId ? t('listenSpotify') : t('searchSpotify')}
-              </button>
+              <a
+                href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
+                target="_blank" rel="noreferrer"
+                className={styles.refLink}
+              >Discogs ↗</a>
+            )}
+            {coll === 'vinyl' && (
+              <a
+                href={`/vinilos/${vinylSlug(item)}/`}
+                target="_blank" rel="noreferrer"
+                className={styles.refLink}
+              >Página del álbum ↗</a>
             )}
             {coll !== 'vinyl' && url && (
-              <a href={url} target="_blank" rel="noreferrer"
-                className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]} ${styles.btnFull}`}>
-                {t('viewSite')}
+              <a href={url} target="_blank" rel="noreferrer" className={styles.refLink}>
+                {coll === 'rum' ? 'Más info ↗' : 'Más info ↗'}
               </a>
             )}
-
-            {/* Grid secundario — acciones de contenido */}
-            {coll === 'vinyl' && index >= 0 && (
-              <div className={styles.actionsGrid}>
-                <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={handleShare}>
-                  {copied ? t('copied') : t('share')}
-                </button>
-
-                <a
-                  href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}
-                  target="_blank" rel="noreferrer"
-                  className={`${styles.btn} ${styles.btnSecondary}`}
-                >🔗 {t('discogs')}</a>
-
-                <a
-                  href={`/vinilos/${vinylSlug(item)}/`}
-                  target="_blank" rel="noreferrer"
-                  className={`${styles.btn} ${styles.btnSecondary}`}
-                  style={{ gridColumn: '1 / -1' }}
-                >↗ Ver página del álbum</a>
-              </div>
+            {coll !== 'vinyl' && (
+              <a
+                href={coll === 'rum' ? `/rones/${rumSlug(item)}/` : `/whiskies/${whiskeySlug(item)}/`}
+                target="_blank" rel="noreferrer"
+                className={styles.refLink}
+              >Página del spirit ↗</a>
             )}
+          </div>
 
-            {coll !== 'vinyl' && index >= 0 && (
-              <div className={styles.actionsGrid}>
-                <a
-                  href={coll === 'rum' ? `/rones/${rumSlug(item)}/` : `/whiskies/${whiskeySlug(item)}/`}
-                  target="_blank" rel="noreferrer"
-                  className={`${styles.btn} ${styles.btnSecondary}`}
-                  style={{ gridColumn: '1 / -1' }}
-                >↗ Ver página</a>
-              </div>
-            )}
-
-            {/* Grid admin — separado visualmente */}
-            <div className={styles.actionsAdmin}>
-              {onSetFeatured && (
-                <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => onSetFeatured(item, index)}>
-                  {t('feature')}
-                </button>
-              )}
-              {onEdit && (
-                <button className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`} onClick={onEdit}>
-                  {t('edit')}
-                </button>
-              )}
-              <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={onClose}>
-                {t('close')}
+          {/* Grid admin — separado visualmente */}
+          <div className={styles.actionsAdmin}>
+            {onSetFeatured && (
+              <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={() => onSetFeatured(item, index)}>
+                {t('feature')}
               </button>
-            </div>
-
+            )}
+            {onEdit && (
+              <button className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]}`} onClick={onEdit}>
+                {t('edit')}
+              </button>
+            )}
+            <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={onClose}>
+              {t('close')}
+            </button>
           </div>
-        </div>{/* end dataCol */}
 
-        {/* ── Panel editorial derecho ── */}
-        {hasNotes && (
-          <div className={styles.notesPanel}>
-            <span className={styles.notesPanelLabel}>Notas editoriales</span>
-            <span className={styles.notesMark}>❝</span>
-            <p className={styles.notesText}>{item.notes}</p>
-          </div>
-        )}
-
-        </div>{/* end body */}
+        </div>
       </div>
     </div>
   )

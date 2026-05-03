@@ -394,12 +394,13 @@ export default function Dashboard({ coll, pinIsSet, auditEdit, onAuditEditClose 
                         <Card
                           key={i} item={item} coll={coll}
                           onClick={() => setSelected(item)}
-                          onSpotify={coll === 'vinyl' ? (e) => { e.stopPropagation(); setSpotifyItem({ item, index: findIndex(item) }) } : null}
+                          onSpotify={coll === 'vinyl' ? (e) => { e.preventDefault(); e.stopPropagation(); setSpotifyItem({ item, index: findIndex(item) }) } : null}
                           onShare={(e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             const origin = window.location.origin
                             const url = coll === 'vinyl'
-                              ? `${origin}/vinilos/${vinylSlug(item)}/`
+                              ? `${origin}/?v=${findIndex(item)}`
                               : coll === 'rum'
                               ? `${origin}/rones/${rumSlug(item)}/`
                               : `${origin}/whiskies/${whiskeySlug(item)}/`
@@ -407,18 +408,22 @@ export default function Dashboard({ coll, pinIsSet, auditEdit, onAuditEditClose 
                             window.open(url, '_blank', 'noopener')
                           }}
                           onIgStory={(coll === 'vinyl' && item.ig_url) ? (e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             setSocialDrawer({ type: 'instagram', url: item.ig_url })
                           } : null}
                           onTikTok={(coll === 'vinyl' && item.tiktok_url) ? (e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             setSocialDrawer({ type: 'tiktok', url: item.tiktok_url })
                           } : null}
                           onBuy={(coll !== 'vinyl' && item.buy_url) ? (e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             window.open(item.buy_url, '_blank', 'noopener')
                           } : null}
                           onDistillery={(coll !== 'vinyl' && item.url) ? (e) => {
+                            e.preventDefault()
                             e.stopPropagation()
                             window.open(item.url, '_blank', 'noopener')
                           } : null}
@@ -504,7 +509,7 @@ function Card({ item, coll, onClick, onSpotify, onShare, onIgStory, onTikTok, on
           <span
             className={styles.notesBadge}
             title="Ver notas editoriales"
-            onClick={(e) => { e.stopPropagation(); onClick && onClick() }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClick && onClick() }}
             role="button"
             aria-label="Ver notas editoriales"
           >❝</span>

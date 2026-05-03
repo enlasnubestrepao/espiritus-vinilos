@@ -17,15 +17,15 @@
   border-radius: 18px;
   width: 100%; max-width: 560px;
   max-height: 90vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   animation: slideUp .2s ease;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
 }
 @keyframes slideUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
+@keyframes slideUpSheet { from { transform:translateY(100%) } to { transform:translateY(0) } }
 
-/* ── Header ── */
+/* ── Header (legacy — kept for safety) ── */
 .hdr {
   padding: 20px 22px 18px;
   display: flex; gap: 16px; align-items: flex-start;
@@ -101,15 +101,17 @@
 }
 .closeBtn:hover { background: rgba(255,255,255,.22); color: #fff; }
 
-/* ── Spirit header — cinemático ── */
+/* ── Hero header — todos los tipos ── */
 .spiritHdr {
   position: relative;
   min-height: 210px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
 }
+.spiritHdr.vinyl  { background: linear-gradient(160deg, #1a0a0a 0%, #0a0a0a 100%); }
 .spiritHdr.rum    { background: linear-gradient(160deg, #3d1a00 0%, #1a0800 100%); }
 .spiritHdr.whisky { background: linear-gradient(160deg, #0a1f3a 0%, #040d1a 100%); }
 
@@ -124,20 +126,72 @@
   opacity: .52;
   filter: blur(0px) saturate(1.2);
 }
+/* Vinyl: cover como fondo con más blur */
+.vinylHdrBgImg {
+  object-position: center center;
+  opacity: .35;
+  filter: blur(20px) saturate(1.4) brightness(.8);
+  transform: scale(1.08);
+}
+.vinylHdrFallback {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #2a0808 0%, #0a0a0a 100%);
+}
+/* Vinyl hero — layout horizontal cover+texto */
+.vinylHdrContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+  padding: 20px 52px 22px 20px;
+}
+.vinylHdrCoverWrap {
+  flex-shrink: 0;
+  width: 148px;
+  height: 148px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.8);
+  border: 1px solid rgba(255,255,255,.1);
+}
+.vinylHdrCoverImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vinylHdrText {
+  flex: 1;
+  min-width: 0;
+}
 
-/* Botella flotante — thumbnail sobre el fondo editorial */
+/* Fondo extra con la propia botella — blur suave, capa encima del hero-1/2 */
+.spiritHdrBgCover {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  opacity: .18;
+  filter: blur(24px) saturate(1.6) brightness(.7);
+  transform: scale(1.1);
+  z-index: 0;
+}
+
+/* Botella flotante — más grande y prominente */
 .spiritHdrBottle {
   position: absolute;
-  top: 12px;
-  right: 52px;
-  height: 138px;
+  bottom: 0;
+  right: 24px;
+  height: 195px;
   width: auto;
-  max-width: 90px;
+  max-width: 110px;
   object-fit: contain;
   object-position: center bottom;
-  filter: drop-shadow(0 4px 16px rgba(0,0,0,.6));
+  filter: drop-shadow(0 6px 24px rgba(0,0,0,.7));
   z-index: 1;
-  opacity: .88;
+  opacity: .95;
 }
 .spiritHdrBgOverlay {
   position: absolute;
@@ -175,8 +229,13 @@
   grid-template-columns: 1fr 300px;
   grid-template-rows: auto;
   align-items: start;
-  padding: 0 !important; /* padding va en cada columna */
+  padding: 0 !important;
   gap: 0;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 /* columna izquierda — datos duros */
@@ -222,8 +281,15 @@
   margin: 10px 0 0;
 }
 
-/* ── Body ── */
-.body { padding: 16px 20px 20px; }
+/* ── Body — scrollable middle ── */
+.body {
+  padding: 16px 20px 20px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
 
 /* ── Grupos de campos ── */
 .group {
@@ -487,30 +553,68 @@
 }
 .spotifyCorrect:hover { color: #1DB954; }
 
-/* ── Acciones ── */
+/* ── Acciones — sticky footer ── */
 .actionsWrap {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 4px;
-  padding-top: 14px;
+  flex-shrink: 0;
+  padding: 12px 16px 16px;
   border-top: 1px solid var(--border);
+  background: var(--bg2);
 }
 
-/* Grid 2 columnas — Compartir + Discogs */
+/* Grid 2 columnas — legacy, puede quedar para admin */
 .actionsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 7px;
 }
 
-/* Row admin — separado por borde superior */
+/* Botón compartir — acción principal de social */
+.btnShare {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.btnShare:hover {
+  background: rgba(255,255,255,.18);
+  border-color: rgba(255,255,255,.35);
+}
+
+/* Referencias secundarias — texto plano, sin border */
+.refsRow {
+  display: flex;
+  gap: 4px 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2px 0;
+}
+.refLink {
+  font-size: .72rem;
+  color: var(--text3);
+  text-decoration: none;
+  transition: color .15s;
+  white-space: nowrap;
+}
+.refLink:hover { color: var(--text2); }
+
+/* Row admin — menos énfasis, separado visualmente */
 .actionsAdmin {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  opacity: .7;
+  transition: opacity .2s;
+}
+.actionsAdmin:hover { opacity: 1; }
+.actionsAdmin .btn {
+  font-size: .72rem;
+  padding: 6px 8px;
 }
 
 /* Botón ancho completo */
@@ -592,8 +696,27 @@
 }
 
 /* ── Mini-mapa ── */
-.mapRow {
+.mapSection {
   margin-bottom: 14px;
+}
+.mapToggle {
+  width: 100%;
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text3);
+  font-family: 'Inter', sans-serif;
+  font-size: .78rem; font-weight: 500;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  text-align: left;
+  margin-bottom: 6px;
+}
+.mapToggle:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.15); color: var(--text2); }
+.mapToggleIcon { font-size: .65rem; opacity: .5; }
+.mapRow {
   border-radius: 10px;
   overflow: hidden;
 }
@@ -656,12 +779,36 @@
   border-color: var(--text3);
 }
 
-/* ── Responsive mobile ── */
+/* ── Bottom sheet — mobile ── */
 @media (max-width: 767px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
   .box {
-    width: 96vw;
-    max-height: 92vh;
-    border-radius: 14px;
+    width: 100%;
+    max-width: 100%;
+    height: 85vh;
+    max-height: 85vh;
+    border-radius: 20px 20px 0 0;
+    animation: slideUpSheet .25s cubic-bezier(.32,.72,0,1);
+  }
+
+  /* Drag handle */
+  .box::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,.2);
+    border-radius: 2px;
+    margin: 10px auto -6px;
+    flex-shrink: 0;
+  }
+
+  .boxWide {
+    max-width: 100%;
   }
 
   .bodyWide {
@@ -682,19 +829,29 @@
   .icon { width: 60px; height: 60px; border-radius: 8px; }
   .hdrText h2 { font-size: .95rem; }
   .hdrText p  { font-size: .72rem; }
-  .spiritHdr { min-height: 170px; }
+
+  .spiritHdr { min-height: 195px; }
   .spiritHdrContent { padding: 14px 44px 16px 16px; }
   .spiritHdrTitle { font-size: 1.15rem; }
-  .spiritHdrBottle { height: 100px; right: 46px; }
+  .spiritHdrBottle { height: 150px; right: 16px; max-width: 80px; }
+  .vinylHdrContent { padding: 16px 44px 18px 16px; gap: 14px; }
+  .vinylHdrCoverWrap { width: 110px; height: 110px; }
 
   .body { padding: 12px 14px 16px; }
-
-  .row { flex-direction: column; gap: 6px; }
+  .actionsWrap { padding: 10px 14px 20px; }
 
   .actionsGrid  { grid-template-columns: repeat(2, 1fr); gap: 6px; }
   .actionsAdmin { grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .btn {
     font-size: .72rem;
     padding: 8px 8px;
+  }
+}
+
+/* ── 1 columna en mobile ── */
+@media (max-width: 560px) {
+  .row {
+    flex-direction: column;
+    gap: 6px;
   }
 }
