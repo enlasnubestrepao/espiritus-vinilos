@@ -379,7 +379,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 
 ## Historial de fases
 
-> **Última actualización:** 2026-05-03 · v2.6.0
+> **Última actualización:** 2026-05-03 · v2.6.1
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -400,9 +400,10 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 14 | **ARCH-01 v2.4**: Astro SSG — 166 páginas estáticas, slugify compartido, `getStaticPaths()`, `@astrojs/sitemap`, tema oscuro, pre-loader controlado, cards crawleables, CI/CD GitHub Actions, sitemap enviado a Google |
 | 15 | **UXUI-01 v2.5**: Modal UX overhaul — bottom sheet mobile, hero unificado con blur, portada vinyl hero, botella spirits prominente (195px), Spotify en footer sticky, Compartir unificado (?v=N vinilos / página estática spirits), mapa colapsable, admin footer sutil, campos 1col ≤560px, drag handle |
 | 16 | **UXUI-03+04 + CI-01 v2.6**: Modal 2 columnas siempre (izquierda exploración / derecha acción siempre visible), Spotify demovido a CTA card, CTAs con ícono+título+descripción. Páginas estáticas editorial redesign: hero full-bleed para los 3 tipos (vinilos/rones/whiskies), notas como pieza editorial central, Spotify embed dark inline, recomendaciones por género/tipo/país, buy box en el hero. CI fix: `--legacy-peer-deps` para `frontend/` en GitHub Actions. |
+| 17 | **v2.6.1 limpieza**: CSS muerto eliminado del modal (~100 líneas: `.hdr`, `.epigraph`, `.spotifyWrap`, `.actionsWrap`, `.btnSpotify`, `.btnIg`, `.enltEmbeds` y más), `.gitignore` expandido (`.env.local`, `frontend-astro/dist/`, `frontend/.claude/`), formateo de precios por moneda (COP: separador de miles colombiano, USD/EUR con decimales). |
 
 ---
 
-> **Última actualización:** 2026-05-03 · v2.6.0
+> **Última actualización:** 2026-05-03 · v2.6.1
 
 *Proyecto construido con Claude Code · Abril–Mayo 2026*

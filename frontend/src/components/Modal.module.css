@@ -25,45 +25,6 @@
 @keyframes slideUp { from { opacity:0; transform:translateY(16px) } to { opacity:1; transform:translateY(0) } }
 @keyframes slideUpSheet { from { transform:translateY(100%) } to { transform:translateY(0) } }
 
-/* ── Header (legacy — kept for safety) ── */
-.hdr {
-  padding: 20px 22px 18px;
-  display: flex; gap: 16px; align-items: flex-start;
-  position: relative;
-}
-.hdr.vinyl  { background: linear-gradient(135deg, #4a0e0e 0%, #2a0808 100%); }
-.hdr.rum    { background: linear-gradient(135deg, #3d1a00 0%, #1e0d00 100%); }
-.hdr.whisky { background: linear-gradient(135deg, #0a1f3a 0%, #050e1c 100%); }
-
-.icon {
-  width: 76px; height: 76px; flex-shrink: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,.12);
-  background: rgba(0,0,0,.4);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2rem;
-}
-.icon img { width: 100%; height: 100%; object-fit: cover; }
-
-.hdrText {
-  flex: 1;
-  padding-right: 32px;
-}
-.hdrText h2 {
-  font-family: var(--font-display);
-  font-size: clamp(1.3rem, 3vw, 1.7rem);
-  font-weight: 700;
-  color: #fff;
-  margin: 0 0 4px;
-  line-height: 1.2;
-  letter-spacing: -.01em;
-}
-.hdrText p {
-  font-size: .78rem;
-  color: rgba(255,255,255,.6);
-  margin: 0 0 8px;
-}
 
 .hdrPills {
   display: flex; gap: 6px; flex-wrap: wrap;
@@ -427,34 +388,6 @@
 }
 .tlCreditRole { color: var(--text3); font-size: .7rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* ── Epígrafe editorial ── */
-.epigraph {
-  position: relative;
-  padding: 16px 24px 14px 28px;
-  background: linear-gradient(135deg, rgba(192,57,43,.12) 0%, rgba(192,57,43,.04) 100%);
-  border-bottom: 1px solid rgba(192,57,43,.18);
-}
-.epigraphMark {
-  position: absolute;
-  top: 8px; left: 12px;
-  font-family: Georgia, serif;
-  font-size: 2rem;
-  color: var(--v-acc);
-  opacity: .5;
-  line-height: 1;
-  pointer-events: none;
-  user-select: none;
-}
-.epigraphText {
-  font-family: var(--font-display);
-  font-size: .95rem;
-  font-style: italic;
-  color: var(--text2);
-  line-height: 1.65;
-  white-space: pre-wrap;
-  margin: 0;
-}
-
 /* ── ENLT lo posteó ── */
 .enltSection {
   margin-bottom: 14px;
@@ -517,60 +450,6 @@
   box-shadow: 0 2px 10px rgba(225,48,108,.25);
 }
 
-/* keep old classes in case referenced elsewhere */
-.enltEmbeds { display: flex; flex-direction: column; }
-.enltEmbed  { position: relative; }
-.enltFrame  { display: block; width: 100%; background: #000; border: none; }
-.enltLink   {
-  display: block; text-align: right;
-  font-size: .65rem; color: var(--text3);
-  padding: 5px 12px; text-decoration: none;
-  border-top: 1px solid rgba(255,255,255,.06);
-  transition: color .15s;
-}
-.enltLink:hover { color: var(--text); }
-
-/* ── Player Spotify ── */
-.spotifyWrap {
-  margin-bottom: 14px;
-  border-radius: 10px; overflow: hidden;
-  border: 1px solid rgba(29,185,84,.2);
-  animation: fadeIn .2s ease;
-}
-.spotifyFrame { display: block; border-radius: 10px; }
-.spotifyMsg   { font-size: .72rem; color: var(--text3); margin: 0 0 10px; }
-.spotifyCorrect {
-  display: block;
-  width: 100%;
-  padding: 6px 0;
-  background: none;
-  border: none;
-  border-top: 1px solid rgba(29,185,84,.15);
-  color: var(--text3);
-  font-size: .7rem;
-  cursor: pointer;
-  text-align: center;
-  transition: color .15s;
-}
-.spotifyCorrect:hover { color: #1DB954; }
-
-/* ── Acciones — sticky footer ── */
-.actionsWrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
-  padding: 12px 16px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--bg2);
-}
-
-/* Grid 2 columnas — legacy, puede quedar para admin */
-.actionsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 7px;
-}
 
 /* Botón compartir — acción principal de social */
 .btnShare {
@@ -704,45 +583,6 @@
   border: 1px solid var(--border);
 }
 .btnSecondary:hover { border-color: rgba(255,255,255,.25); color: var(--text); }
-
-/* Spotify */
-.btnSpotify {
-  background: #1DB954; color: #000;
-  border: none; font-weight: 700;
-}
-.btnSpotify:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.btnSpotifyActive {
-  background: rgba(29,185,84,.12);
-  color: #1DB954;
-  border: 1px solid rgba(29,185,84,.4);
-  font-weight: 600;
-}
-.btnSpotifyActive:hover { background: rgba(29,185,84,.2); }
-
-/* Instagram — abre el post real de ENLT */
-.btnIg {
-  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: #fff; border: none; font-weight: 600;
-}
-.btnIg:hover { filter: brightness(1.08); transform: translateY(-1px); }
-
-/* Instagram — copiar texto para Stories (cuando no hay ig_url) */
-.btnIgCopy {
-  background: rgba(193,53,132,.12);
-  border: 1px solid rgba(193,53,132,.3);
-  color: #cc2366;
-  font-weight: 500;
-}
-.btnIgCopy:hover { background: rgba(193,53,132,.22); border-color: rgba(193,53,132,.55); }
-
-/* Estado "copiado" para el botón copy */
-.btnIgCopied {
-  background: rgba(29,185,84,.15);
-  border: 1px solid rgba(29,185,84,.35);
-  color: #1DB954;
-  font-weight: 600;
-  cursor: default;
-}
 
 /* ── Mini-mapa ── */
 .mapSection {
