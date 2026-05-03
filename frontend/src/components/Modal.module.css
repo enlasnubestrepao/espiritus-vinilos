@@ -15,7 +15,7 @@
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 18px;
-  width: 100%; max-width: 820px;
+  width: 100%; max-width: min(820px, calc(100vw - 40px));
   max-height: 90vh;
   overflow: hidden;
   display: flex;
@@ -222,6 +222,7 @@
 .dataCol {
   padding: 16px 20px 20px;
   min-width: 0;
+  min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;

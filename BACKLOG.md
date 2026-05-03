@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-05-02 · v2.5.0
+> **Última actualización:** 2026-05-03 · v2.6.0
 
 ---
 
@@ -9,8 +9,10 @@
 | ID | Feature | Prioridad | Esfuerzo | Estado |
 |---|---|---|---|---|
 | ARCH-01 | Migrar SPA a SSG (Astro) | 🔴 Crítica | Grande | ✅ Completado v2.4 |
-| QA-01 | Triage responsive end-to-end | 🔴 Alta | Medio | 🔶 Parcial — fixes aplicados en v2.5 |
+| QA-01 | Triage responsive end-to-end | 🔴 Alta | Medio | 🔶 Parcial — fixes aplicados en v2.5 y v2.6 |
 | UXUI-01 | Modal UX overhaul | 🔴 Alta | Medio | ✅ Completado v2.5 |
+| UXUI-03 | Modal 2 columnas siempre | 🔴 Alta | Medio | ✅ Completado v2.6 |
+| UXUI-04 | Páginas estáticas editorial redesign | 🔴 Alta | Medio | ✅ Completado v2.6 |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Pendiente decisión |
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Pendiente decisión |
 | EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Pendiente |
@@ -18,7 +20,9 @@
 | EDIT-05 | Profundidad progresiva | 🟡 Media | Grande | ✅ Completado — páginas indexables via ARCH-01 |
 | SEO-01 | Sitemap + indexación Google | 🔴 Alta | Pequeño | ✅ Completado v2.4 |
 | UX-SHARE | ShareView spirits (equivalente a ?v= para vinilos) | 🟡 Media | Medio | ⏳ Pendiente |
-| UX-SPOTIFY | Spotify en footer comprimido (mobile) | 🟡 Media | Pequeño | ⏳ Pendiente |
+| UX-SPOTIFY | Spotify en footer comprimido (mobile) | 🟡 Media | Pequeño | ✅ Resuelto — demovido a CTA card v2.6 |
+| DATA-01 | Fetch tracklist + créditos desde Discogs | 🟡 Media | Medio | ⏳ Pendiente |
+| CI-01 | GitHub Actions CI/CD estable | 🔴 Crítica | Pequeño | ✅ Completado v2.6 |
 
 ---
 
@@ -26,45 +30,77 @@
 
 **Status:** 🔶 Parcial
 **Priority:** 🔴 Alta
-**Effort:** Medio (1 sesión)
 
 **Fixes aplicados en v2.5 (2026-05-02):**
 - Bottom sheet mobile (85vh, slide desde abajo, border-radius top)
 - Drag handle visual en parte superior del sheet
-- Campos a 1 columna desde 560px (antes 480px — textos largos se truncaban)
-- Mapa colapsable (oculto por defecto — reducía navegación)
-- Admin footer con menor peso visual (opacity 0.7, botones más pequeños)
-- Hero de spirits: botella más grande (195px), cover_url como fondo con blur adicional
-- Hero de vinilos: portada cuadrada grande a la izquierda (148px), título/artista a la derecha
-- Spotify player movido al footer sticky (siempre visible sin scroll)
+- Campos a 1 columna desde 560px (antes 480px)
+- Mapa colapsable (oculto por defecto)
+- Admin footer con menor peso visual
+- Hero de spirits: botella más grande (195px), cover_url como fondo con blur
+- Hero de vinilos: portada cuadrada grande a la izquierda (148px)
+- Spotify player movido al footer sticky
 - Botón Compartir unificado en todos los modales
 
-**Issues conocidos pendientes:**
-- Footer del modal con Spotify player abierto en mobile (~200px) deja poco espacio al body — monitorear en 375px
-- Título largo de vinilo en hero mobile (110px cover + 44px padding) puede truncarse — monitorear
-- ShareView para spirits no existe (vinilos tienen ?v=N, spirits redirigen a página estática)
+**Fixes aplicados en v2.6 (2026-05-03):**
+- `min-height: 0` en `.dataCol` — scroll independiente correcto en grid
+- `max-width: min(820px, calc(100vw - 40px))` — modal no se pega al borde en tablets
+- Columna derecha siempre visible en desktop sin necesidad de scroll
 
-**Vistas aún sin QA mobile formal:** stats, crate, atlas, sesiones, admin form mobile, welcome modal.
+**Issues conocidos pendientes:**
+- ShareView para spirits no existe (vinilos tienen ?v=N, spirits redirigen a página estática)
+- Vistas aún sin QA mobile formal: stats, crate, atlas, sesiones, admin form, welcome modal
 
 ---
 
-## ARCH-01 — Migrar SPA a Static Site Generator (SSG)
+## UXUI-03 — Modal 2 columnas siempre
 
-**Status:** ✅ Completado — v2.4 (2026-04-30 / 2026-05-01)
-**Deploy:** GitHub Pages · rama `gh-pages` · manual via `npm run deploy`
+**Status:** ✅ Completado — v2.6 (2026-05-03)
 
 **Qué se implementó:**
-- Proyecto Astro en `frontend-astro/` con `client:only="react"` para islands React
-- `getStaticPaths()` en 3 rutas: `/vinilos/[slug]`, `/rones/[slug]`, `/whiskies/[slug]`
-- 166 páginas HTML estáticas generadas en build time (106 vinilos, 25 rones, 34 whiskies)
-- `@astrojs/sitemap` → `sitemap-index.xml` + `sitemap-0.xml` auto-generados
-- `robots.txt` actualizado apuntando al sitemap correcto
-- Cards de dashboard convertidas a `<a href>` — crawleables por Google
-- Tema oscuro aplicado a todas las páginas estáticas (`global.css`)
-- Pre-loader controlado por prop `showLoader` — solo en home, nunca en páginas estáticas
-- Sitemap enviado a Google Search Console ✅
-- GitHub Actions CI/CD configurado (`.github/workflows/deploy.yml`) — pendiente PAT con scope `workflow`
-- Slugify compartido entre Astro y React vía alias Vite `@frontend`
+- Layout siempre 2 columnas: izquierda exploración (campos, tracklist, notas), derecha acción
+- Panel derecho siempre visible: Compartir → CTAs → ENLT social → Admin al fondo
+- Eliminado footer sticky — las acciones no requieren scroll
+- `actionsPanel` con `actionsSpacer flex:1` que empuja admin al fondo
+- Mobile: colapsa a columna única, exploración primero, acciones debajo
+- Notas editoriales integradas al final de columna izquierda (no panel separado)
+- `box` siempre `max-width: min(820px, 100vw - 40px)`
+
+---
+
+## UXUI-04 — Páginas estáticas editorial redesign
+
+**Status:** ✅ Completado — v2.6 (2026-05-03)
+
+**Qué se implementó (los 3 tipos):**
+
+**Vinilos** (`/vinilos/[slug]/`):
+1. Hero full-bleed: cover como fondo borroso + cover grande (210px) + título/artista/botones superpuestos
+2. Notas editoriales como pieza central — primer párrafo en Fraunces grande, resto en serif de lectura
+3. Meta + Spotify embed dark side by side (2 columnas)
+4. Recomendaciones: hasta 4 vinilos del mismo género, grid 4-col (2-col mobile), hover lift
+
+**Rones** (`/rones/[slug]/`):
+1. Hero con `hero-1.png` + blur de la botella como segundo fondo
+2. Botella prominente (220px, drop-shadow), score ENLT debajo
+3. Pills: ABV, años, blend, terminado — en el hero
+4. Buy box en el hero: precio + disponibilidad + CTA
+5. CTA card "Más información" con descripción
+6. Recomendaciones por tipo o país
+
+**Whiskies** (`/whiskies/[slug]/`):
+- Mismo patrón que rones con `hero-2.png` y variables `--wh-acc`
+
+---
+
+## CI-01 — GitHub Actions CI/CD estable
+
+**Status:** ✅ Completado — v2.6 (2026-05-03)
+
+**Fixes aplicados:**
+- Agregado paso `npm ci --legacy-peer-deps` para `frontend/` antes del build de Astro
+- `react-simple-maps@3.0.0` no soporta React 19 — `--legacy-peer-deps` resuelve el conflicto
+- Vite aliases en `astro.config.mjs` apuntan a `../frontend/node_modules/` que ahora existe en CI
 
 ---
 
@@ -72,18 +108,15 @@
 
 **Status:** ✅ Completado — v2.5 (2026-05-02)
 
-**Qué se implementó:**
-1. Scroll interno con footer sticky — header fijo, body scrollable, acciones siempre visibles
-2. Hero unificado para todos los tipos (vinilos + spirits) — cinemático con blur y overlay
-3. Bottom sheet en mobile (≤767px) — 85vh, slide desde abajo, drag handle visual
-4. 1 columna de campos desde 560px
-5. Mapa de país colapsable (oculto por defecto, toggle "Ver en mapa · País")
-6. Admin footer con menor peso visual (separado por borde sutil, opacity reducida)
-7. Botella de spirit más grande y prominente (195px, bottom-anchored)
-8. Hero de vinyl: cover cuadrada 148px a la izquierda, título/artista a la derecha
-9. Spotify player en footer sticky (visible sin scroll al activar)
-10. Botón Compartir único y prominente — vinilos → ShareView (?v=N), spirits → página estática
-11. Botón 🔗 de card hover corregido → también usa ?v=N para vinilos
+Ver detalle completo en historial v2.5.
+
+---
+
+## ARCH-01 — Migrar SPA a Static Site Generator (SSG)
+
+**Status:** ✅ Completado — v2.4 (2026-04-30 / 2026-05-01)
+
+Ver detalle completo en historial v2.4.
 
 ---
 
@@ -93,7 +126,7 @@
 **Priority:** 🟡 Media
 **Effort:** Pequeño (1–2 horas)
 
-Cloudflare free tier frente a GitHub Pages — puede servir página cacheada ante falla del origen. Requiere migrar NS del dominio a Cloudflare.
+Cloudflare free tier frente a GitHub Pages.
 
 ---
 
@@ -103,47 +136,40 @@ Cloudflare free tier frente a GitHub Pages — puede servir página cacheada ant
 **Priority:** 🔴 Crítica para monetización
 **Effort:** Pequeño (1 snippet una vez elegida plataforma)
 
-100% de la audiencia vive en Instagram. Sin lista de emails no hay base de monetización ni resiliencia ante cambios de algoritmo.
+100% de la audiencia vive en Instagram. Sin lista de emails no hay base de monetización.
 
 **Opciones:**
-1. **Kit (ConvertKit) — recomendado.** Gratis hasta 1,000 suscriptores. Nativo para creadores. Newsletter pago integrado.
+1. **Kit (ConvertKit) — recomendado.** Gratis hasta 1,000 suscriptores.
 2. **Buttondown** — más simple, gratis hasta 100.
 3. **Substack — evitar.** Crea dependencia de plataforma.
-
-Copy sugerido: *"Si querés saber cuándo llega un disco nuevo, dejá tu correo acá."*
 
 ---
 
 ## TRACK B — Concepto editorial
-
-**Priority:** 🔴 Alta para posicionamiento a largo plazo
 
 ### EDIT-01 — Arquitectura por mood/concepto
 
 **Status:** ⏳ Pendiente decisión estratégica
 **Effort:** Grande
 
-Reemplazar los tabs por categoría por una arquitectura de descubrimiento basada en mood, ocasión o concepto curatorial.
-
----
-
 ### EDIT-02 — Feature de pairing vinilo + espíritu
 
-**Status:** ⏳ Pendiente
+**Status:** ⏳ Pendiente — requiere contenido curatorial del owner
 **Effort:** Grande
 
-El núcleo del concepto editorial: framework *Booze & Vinyl* digitalizado. Una vista o página que propone combinaciones concretas: este disco con este espíritu, por qué, qué notas comparten. Requiere contenido curatorial del owner.
+### DATA-01 — Fetch tracklist + créditos desde Discogs
 
----
+**Status:** ⏳ Pendiente
+**Effort:** Medio (backend + frontend)
 
-### EDIT-05 — Profundidad progresiva
+Poblar `tracks` y `credits` en DB via Discogs API. Precondición para mostrar créditos con iconos de instrumentos en páginas estáticas.
 
-**Status:** ✅ Completado (ARCH-01 completado)
+### UX-SHARE — ShareView spirits
 
-Dos capas de contenido por ítem implementadas:
-- **Capa 1:** tarjeta / modal (datos duros + hero visual)
-- **Capa 2:** página estática indexable por Google (166 páginas via Astro SSG)
-- **Capa 3 (vinilos):** notas editoriales + tracklist Discogs + créditos manuales
+**Status:** ⏳ Pendiente
+**Effort:** Medio
+
+Vinilos tienen `?v=N` — URL cinématica que abre el modal directamente. Spirits usan la página estática. Pendiente decidir si se implementa un equivalente para spirits.
 
 ---
 
@@ -154,5 +180,6 @@ Dos capas de contenido por ítem implementadas:
 | v2.3.0 | 2026-04-29 | Fix persistencia notes/credits en DB, badge ❝ clickable, modal 2col datos+notas |
 | v2.4.0 | 2026-04-30 | **ARCH-01**: Astro SSG, 166 páginas estáticas, sitemap, robots.txt, CI/CD config, cards crawleables, tema oscuro en páginas estáticas, pre-loader solo en home |
 | v2.5.0 | 2026-05-02 | **UXUI-01**: Modal UX overhaul completo — bottom sheet, hero unificado, portada vinyl hero, botella spirits prominente, Spotify en footer, Compartir unificado, mapa colapsable, admin footer sutil, campos 1col ≤560px |
+| v2.6.0 | 2026-05-03 | **UXUI-03+04 + CI-01**: Modal 2 columnas siempre (exploración/acción), Spotify demovido a CTA card, CTAs con descripción, páginas estáticas editorial redesign (hero, notas, recomendaciones, buy box en hero) para vinilos/rones/whiskies, CI fix legacy-peer-deps |
 
 *Actualizado manualmente en cada sesión de trabajo.*
