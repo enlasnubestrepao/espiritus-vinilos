@@ -1,5 +1,5 @@
 import { useEffect, useState, Suspense, lazy } from 'react'
-import { fetchSpotifyId, fetchDiscogsRelease } from '../services/api'
+import { fetchDiscogsRelease } from '../services/api'
 import { vinylSlug, rumSlug, whiskeySlug } from '../utils/slugify.js'
 import SocialDrawer from './SocialDrawer'
 import { useLang } from '../LangContext'
@@ -10,9 +10,6 @@ const CountryMiniMap = lazy(() => import('./CountryMiniMap'))
 export default function Modal({ item, coll, index, onClose, onEdit, onSetFeatured, onOpenSpotify }) {
   const { t } = useLang()
   const [spotifyId,    setSpotifyId]    = useState(item?.spotify_id || null)
-  const [showPlayer,   setShowPlayer]   = useState(false)
-  const [fetchingSpot, setFetchingSpot] = useState(false)
-  const [spotifyMsg,   setSpotifyMsg]   = useState('')
   const [copied,       setCopied]       = useState(false)
   const [socialDrawer, setSocialDrawer] = useState(null) // { type, url }
   const [igCopied,     setIgCopied]     = useState(false)
@@ -30,32 +27,10 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
 
   useEffect(() => {
     setSpotifyId(item?.spotify_id || null)
-    setShowPlayer(false)
-    setSpotifyMsg('')
     setTlOpen(false)
     setTlData(null)
     setTlError('')
   }, [item])
-
-  async function handleSpotify() {
-    if (spotifyId) { setShowPlayer(p => !p); return }
-    setFetchingSpot(true)
-    setSpotifyMsg(t('searchingSpotify'))
-    try {
-      const result = await fetchSpotifyId(index)
-      if (result.spotify_id) {
-        setSpotifyId(result.spotify_id)
-        setShowPlayer(true)
-        setSpotifyMsg('')
-      } else {
-        setSpotifyMsg(t('notFoundSpotify'))
-      }
-    } catch {
-      setSpotifyMsg(t('errorSpotify'))
-    } finally {
-      setFetchingSpot(false)
-    }
-  }
 
   async function handleTracklist() {
     if (tlOpen) { setTlOpen(false); return }
@@ -382,33 +357,6 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
         {/* ── Acciones — sticky footer ── */}
         <div className={styles.actionsWrap}>
 
-          {/* Player Spotify — en el footer para que sea siempre visible */}
-          {coll === 'vinyl' && showPlayer && spotifyId && (
-            <div className={styles.spotifyWrap}>
-              <iframe
-                src={spotifyEmbedUrl(spotifyId)}
-                width="100%" height="152" frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy" className={styles.spotifyFrame}
-              />
-              {onOpenSpotify && (
-                <button className={styles.spotifyCorrect} onClick={() => onOpenSpotify(item, index)}>
-                  {t('wrongAlbum')}
-                </button>
-              )}
-            </div>
-          )}
-          {spotifyMsg && <p className={styles.spotifyMsg}>{spotifyMsg}</p>}
-
-          {/* Acción primaria — ancho completo */}
-          {coll === 'vinyl' && (
-            <button
-              className={`${styles.btn} ${showPlayer ? styles.btnSpotifyActive : styles.btnSpotify} ${styles.btnFull}`}
-              onClick={handleSpotify} disabled={fetchingSpot}
-            >
-              {fetchingSpot ? t('searching') : showPlayer ? t('closePlayer') : spotifyId ? t('listenSpotify') : t('searchSpotify')}
-            </button>
-          )}
           {coll !== 'vinyl' && url && (
             <a href={url} target="_blank" rel="noreferrer"
               className={`${styles.btn} ${styles.btnPrimary} ${styles[coll]} ${styles.btnFull}`}>
@@ -428,6 +376,22 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
 
           {/* Referencias — CTAs con descripción */}
           <div className={styles.ctaLinks}>
+            {coll === 'vinyl' && (spotifyId || true) && (
+              <a
+                href={spotifyId
+                  ? `https://open.spotify.com/album/${spotifyId}`
+                  : `https://open.spotify.com/search/${encodeURIComponent(`${item.artista} ${item.album}`)}`}
+                target="_blank" rel="noreferrer"
+                className={`${styles.ctaCard} ${styles.ctaCardSpotify}`}
+              >
+                <span className={styles.ctaIcon}>▶</span>
+                <span className={styles.ctaText}>
+                  <span className={styles.ctaTitle}>Escuchar en Spotify</span>
+                  <span className={styles.ctaDesc}>Abrí el álbum completo en tu app</span>
+                </span>
+                <span className={styles.ctaArrow}>↗</span>
+              </a>
+            )}
             {coll === 'vinyl' && (
               <a
                 href={url || `https://www.discogs.com/search/?q=${encodeURIComponent(`${item.artista} ${item.album}`)}&type=master`}

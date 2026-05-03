@@ -606,6 +606,15 @@
   background: rgba(255,255,255,.08);
   border-color: rgba(255,255,255,.18);
 }
+.ctaCardSpotify {
+  border-color: rgba(29,185,84,.2);
+}
+.ctaCardSpotify:hover {
+  background: rgba(29,185,84,.08);
+  border-color: rgba(29,185,84,.4);
+}
+.ctaCardSpotify .ctaTitle { color: #1DB954; }
+.ctaCardSpotify .ctaArrow { color: rgba(29,185,84,.6); }
 .ctaIcon {
   font-size: 1rem;
   flex-shrink: 0;
