@@ -9,78 +9,124 @@ export async function getStaticPaths() {
   if (!res.ok) return []
   const vinyls = await res.json()
 
-  return vinyls.map((vinyl, index) => ({
+  return vinyls.map((vinyl) => ({
     params: { slug: vinylSlug(vinyl) },
-    props: { vinyl, index },
+    props: { vinyl, allVinyls: vinyls },
   }))
 }
 
-const { vinyl } = Astro.props
+const { vinyl, allVinyls } = Astro.props
+
+// Recommendations: same genre or agrupador, excluding current, max 4
+const related = allVinyls
+  .filter(v => !(v.artista === vinyl.artista && v.album === vinyl.album))
+  .filter(v => v.genero === vinyl.genero || v.agrupador === vinyl.agrupador)
+  .slice(0, 4)
+
+// Notes: split into paragraphs
+const noteParagraphs = vinyl.notes
+  ? vinyl.notes.split('\n\n').map((p: string) => p.trim()).filter(Boolean)
+  : []
 
 const title = `${vinyl.artista} — ${vinyl.album} | En Las Nubes Trepao`
-const description = [
-  vinyl.genero,
-  vinyl.anio,
-  vinyl.pais,
-  vinyl.sello,
-].filter(Boolean).join(' · ')
-
+const description = [vinyl.genero, vinyl.anio, vinyl.pais, vinyl.sello].filter(Boolean).join(' · ')
 const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
 ---
 
-<Base
-  title={title}
-  description={description || undefined}
-  ogImage={ogImage}
-  ogType="music.album"
->
-  <!-- Header mínimo con identidad del sitio -->
-  <header class="site-header">
-    <a href="/" class="site-logo">En Las Nubes Trepao</a>
-    <a href="/" class="site-back">← Volver al catálogo</a>
-  </header>
+<Base title={title} description={description} ogImage={ogImage} ogType="music.album">
 
-  <main class="page">
-    <article class="vinyl">
-      <div class="cover-wrap">
+  <!-- ── HERO ─────────────────────────────────────────────────── -->
+  <section class="hero">
+    <!-- Blurred cover as background -->
+    {vinyl.cover_url && (
+      <div
+        class="hero-bg"
+        style={`background-image: url('${vinyl.cover_url}')`}
+      ></div>
+    )}
+    <!-- Dark gradient overlay -->
+    <div class="hero-gradient"></div>
+
+    <!-- Header overlaid on hero -->
+    <header class="site-header">
+      <a href="/" class="site-logo">En Las Nubes Trepao</a>
+      <a href="/" class="site-back">← Volver al catálogo</a>
+    </header>
+
+    <!-- Hero content -->
+    <div class="hero-content">
+      <div class="hero-cover-wrap">
         {vinyl.cover_url
-          ? <img class="cover" src={vinyl.cover_url} alt={`${vinyl.album} — ${vinyl.artista}`} width="300" height="300" loading="eager" />
-          : <div class="cover-placeholder">🎵</div>
+          ? <img
+              class="hero-cover"
+              src={vinyl.cover_url}
+              alt={`${vinyl.album} — ${vinyl.artista}`}
+              width="220" height="220"
+              loading="eager"
+            />
+          : <div class="hero-cover-placeholder">🎵</div>
         }
       </div>
-
-      <div class="info">
+      <div class="hero-info">
         <p class="genre">{vinyl.genero}{vinyl.agrupador ? ` · ${vinyl.agrupador}` : ''}</p>
         <h1 class="album">{vinyl.album}</h1>
         <h2 class="artist">{vinyl.artista}</h2>
-
-        <dl class="meta">
-          {vinyl.anio    && <><dt>Año</dt><dd>{vinyl.anio}</dd></>}
-          {vinyl.pais    && <><dt>País</dt><dd>{vinyl.pais}</dd></>}
-          {vinyl.sello   && <><dt>Sello</dt><dd>{vinyl.sello}{vinyl.pais_sello ? ` (${vinyl.pais_sello})` : ''}</dd></>}
-          {vinyl.cat_num && <><dt>Catálogo</dt><dd>{vinyl.cat_num}</dd></>}
-          {vinyl.origen  && <><dt>Origen</dt><dd>{vinyl.origen}</dd></>}
-        </dl>
-
-        <div class="links">
+        <div class="hero-links">
           {vinyl.url && (
             <a class="btn btn-discogs" href={vinyl.url} target="_blank" rel="noopener">🔗 Discogs</a>
           )}
           {vinyl.spotify_id && (
-            <a class="btn btn-spotify" href={`https://open.spotify.com/album/${vinyl.spotify_id}`} target="_blank" rel="noopener">▶ Spotify</a>
+            <a
+              class="btn btn-spotify"
+              href={`https://open.spotify.com/album/${vinyl.spotify_id}`}
+              target="_blank"
+              rel="noopener"
+            >▶ Spotify</a>
           )}
         </div>
-
-        {vinyl.notes && (
-          <div class="notes">
-            <span class="notes-label">Notas editoriales</span>
-            <span class="notes-mark">❝</span>
-            <p class="notes-text">{vinyl.notes}</p>
-          </div>
-        )}
       </div>
-    </article>
+    </div>
+  </section>
 
+  <main class="page">
+
+    <!-- ── NOTAS EDITORIALES (centerpiece) ──────────────────── -->
+    {noteParagraphs.length > 0 && (
+      <section class="notes-section">
+        <span class="notes-label">Notas editoriales</span>
+        <div class="notes-body">
+          <span class="notes-mark">❝</span>
+          {noteParagraphs.map((para, i) => (
+            <p class={i === 0 ? 'notes-lead' : 'notes-p'}>{para}</p>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ── META + SPOTIFY EMBED ──────────────────────────────── -->
+    <div class="meta-spotify-wrap">
+      <dl class="meta">
+        {vinyl.anio    && <><dt>Año</dt><dd>{vinyl.anio}</dd></>}
+        {vinyl.pais    && <><dt>País</dt><dd>{vinyl.pais}</dd></>}
+        {vinyl.sello   && <><dt>Sello</dt><dd>{vinyl.sello}{vinyl.pais_sello ? ` (${vinyl.pais_sello})` : ''}</dd></>}
+        {vinyl.cat_num && <><dt>Catálogo</dt><dd>{vinyl.cat_num}</dd></>}
+        {vinyl.origen  && <><dt>Origen</dt><dd>{vinyl.origen}</dd></>}
+      </dl>
+      {vinyl.spotify_id && (
+        <div class="spotify-embed">
+          <iframe
+            src={`https://open.spotify.com/embed/album/${vinyl.spotify_id}?utm_source=generator&theme=0`}
+            width="100%"
+            height="152"
+            frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </div>
+      )}
+    </div>
+
+    <!-- ── TRACKLIST ─────────────────────────────────────────── -->
     {vinyl.tracks && vinyl.tracks.length > 0 && (
       <section class="tracklist">
         <h3>Tracklist</h3>
@@ -95,120 +141,146 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
         </ol>
       </section>
     )}
+
+    <!-- ── RECOMENDACIONES ───────────────────────────────────── -->
+    {related.length > 0 && (
+      <section class="related">
+        <h3 class="related-heading">Más de la colección · {vinyl.genero}</h3>
+        <div class="related-grid">
+          {related.map(v => (
+            <a href={`/vinilos/${vinylSlug(v)}/`} class="related-card">
+              {v.cover_url
+                ? <img
+                    class="related-cover"
+                    src={v.cover_url}
+                    alt={v.album}
+                    width="160" height="160"
+                    loading="lazy"
+                  />
+                : <div class="related-cover related-no-cover">🎵</div>
+              }
+              <div class="related-info">
+                <span class="related-album">{v.album}</span>
+                <span class="related-artist">{v.artista}</span>
+                {v.anio && <span class="related-year">{v.anio}</span>}
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
   </main>
 </Base>
 
 <style>
-  /* ── Header ────────────────────────────────────────────────────────── */
+  /* ── Header (overlaid on hero) ───────────────────────────── */
   .site-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
+    padding: 16px 32px;
+    background: linear-gradient(to bottom, rgba(10,10,10,.7) 0%, transparent 100%);
   }
   .site-logo {
     font-family: var(--font-display);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    color: var(--text);
+    color: #fff;
     text-decoration: none;
     letter-spacing: -.01em;
+    text-shadow: 0 1px 6px rgba(0,0,0,.6);
   }
   .site-back {
-    font-size: 0.8rem;
-    color: var(--text2);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,.72);
     text-decoration: none;
     transition: color .15s;
   }
-  .site-back:hover { color: var(--text); }
+  .site-back:hover { color: #fff; }
 
-  /* ── Layout ─────────────────────────────────────────────────────────── */
-  .page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
+  /* ── Hero ────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 400px;
+    background: var(--bg);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
   }
-
-  .vinyl {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 40px;
-    align-items: start;
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(44px) saturate(1.6);
+    transform: scale(1.14);
+    opacity: .36;
   }
-
-  @media (max-width: 680px) {
-    .vinyl { grid-template-columns: 1fr; }
-    .cover-wrap { max-width: 220px; margin: 0 auto; }
+  .hero-gradient {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to top,
+      #0a0a0a 0%,
+      rgba(10,10,10,.65) 55%,
+      rgba(10,10,10,.15) 100%
+    );
   }
-
-  /* ── Cover ───────────────────────────────────────────────────────────── */
-  .cover-wrap { position: sticky; top: 24px; }
-
-  .cover {
+  .hero-content {
+    position: relative; z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 32px;
+    padding: 90px 40px 40px;
     width: 100%;
-    height: auto;
+    max-width: 960px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .hero-cover-wrap { flex-shrink: 0; }
+  .hero-cover {
+    width: 210px;
+    height: 210px;
     border-radius: 8px;
     display: block;
-    box-shadow: 0 12px 40px rgba(0,0,0,.7);
+    box-shadow: 0 20px 56px rgba(0,0,0,.85);
+    object-fit: cover;
   }
-
-  .cover-placeholder {
-    width: 100%;
-    aspect-ratio: 1;
+  .hero-cover-placeholder {
+    width: 210px; height: 210px;
     background: var(--bg3);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 3rem;
-    color: var(--text3);
   }
-
-  /* ── Info ────────────────────────────────────────────────────────────── */
+  .hero-info { flex: 1; min-width: 0; }
   .genre {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--v-acc);
     text-transform: uppercase;
-    letter-spacing: .1em;
+    letter-spacing: .12em;
     margin-bottom: 10px;
   }
-
   .album {
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-size: clamp(1.7rem, 3.8vw, 2.8rem);
     font-weight: 700;
-    line-height: 1.1;
-    color: var(--text);
-    margin-bottom: 8px;
+    line-height: 1.08;
+    color: #fff;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,.5);
   }
-
   .artist {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 400;
-    color: var(--text2);
-    margin-bottom: 28px;
+    color: rgba(255,255,255,.68);
+    margin-bottom: 24px;
   }
-
-  /* ── Meta ────────────────────────────────────────────────────────────── */
-  .meta {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 7px 20px;
-    font-size: 0.83rem;
-    margin-bottom: 28px;
-    padding: 16px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-  }
-  .meta dt { color: var(--text3); }
-  .meta dd { color: var(--text); }
-
-  /* ── Links ───────────────────────────────────────────────────────────── */
-  .links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
-
+  .hero-links { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn {
     padding: 8px 18px;
     border-radius: 8px;
@@ -224,46 +296,91 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
   .btn-discogs { background: var(--v-acc); color: #fff; }
   .btn-spotify { background: #1db954; color: #000; }
 
-  /* ── Notas editoriales ───────────────────────────────────────────────── */
-  .notes {
-    border: 1px solid rgba(192,57,43,.25);
+  /* ── Page body ───────────────────────────────────────────── */
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 52px 32px 80px;
+  }
+
+  /* ── Notas editoriales ───────────────────────────────────── */
+  .notes-section {
+    margin-bottom: 52px;
     border-left: 3px solid var(--v-acc);
-    padding: 16px 20px;
-    background: linear-gradient(135deg, rgba(192,57,43,.08) 0%, rgba(0,0,0,0) 70%);
-    border-radius: 0 var(--r) var(--r) 0;
+    padding-left: 28px;
   }
   .notes-label {
     display: block;
-    font-size: 0.68rem;
+    font-size: 0.64rem;
     color: var(--v-acc);
     text-transform: uppercase;
-    letter-spacing: .12em;
-    margin-bottom: 8px;
+    letter-spacing: .15em;
+    margin-bottom: 16px;
   }
   .notes-mark {
     display: block;
-    font-size: 2.2rem;
-    color: rgba(192,57,43,.25);
-    line-height: 1;
-    margin-bottom: 8px;
+    font-size: 3.5rem;
+    color: rgba(192,57,43,.22);
+    line-height: .8;
+    margin-bottom: 16px;
+    font-family: Georgia, serif;
   }
-  .notes-text {
-    font-size: 0.9rem;
-    color: var(--text2);
+  .notes-lead {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text);
     line-height: 1.75;
-    white-space: pre-wrap;
+    margin-bottom: 1.1em;
+  }
+  .notes-p {
+    font-family: var(--font-display);
+    font-size: 0.98rem;
+    color: var(--text2);
+    line-height: 1.82;
+    margin-bottom: 1em;
   }
 
-  /* ── Tracklist ───────────────────────────────────────────────────────── */
+  /* ── Meta + Spotify ──────────────────────────────────────── */
+  .meta-spotify-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 52px;
+    align-items: start;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 20px;
+    font-size: 0.83rem;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    align-self: start;
+  }
+  .meta dt { color: var(--text3); }
+  .meta dd { color: var(--text); }
+  .spotify-embed {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .spotify-embed iframe {
+    display: block;
+    border-radius: 12px;
+  }
+
+  /* ── Tracklist ───────────────────────────────────────────── */
   .tracklist {
-    margin-top: 48px;
+    margin-bottom: 52px;
     border-top: 1px solid var(--border);
     padding-top: 28px;
   }
   .tracklist h3 {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: .12em;
+    letter-spacing: .13em;
     color: var(--text3);
     margin-bottom: 16px;
   }
@@ -278,8 +395,94 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
     font-size: 0.83rem;
     transition: background .1s;
   }
-  .tracklist li:hover { background: var(--bg2); margin: 0 -8px; padding: 8px; border-radius: 4px; }
+  .tracklist li:hover {
+    background: var(--bg2);
+    margin: 0 -8px;
+    padding: 8px;
+    border-radius: 4px;
+  }
   .track-pos { color: var(--text3); font-variant-numeric: tabular-nums; }
   .track-title { color: var(--text); }
   .track-dur { color: var(--text3); font-variant-numeric: tabular-nums; }
+
+  /* ── Recomendaciones ─────────────────────────────────────── */
+  .related {
+    border-top: 1px solid var(--border);
+    padding-top: 32px;
+  }
+  .related-heading {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--text3);
+    margin-bottom: 20px;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .related-card {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform .2s;
+    cursor: pointer;
+  }
+  .related-card:hover { transform: translateY(-4px); }
+  .related-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+    box-shadow: 0 6px 20px rgba(0,0,0,.55);
+    transition: box-shadow .2s;
+  }
+  .related-card:hover .related-cover {
+    box-shadow: 0 10px 30px rgba(0,0,0,.7);
+  }
+  .related-no-cover {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--bg3);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  .related-info { display: flex; flex-direction: column; gap: 3px; }
+  .related-album {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.3;
+  }
+  .related-artist { font-size: 0.7rem; color: var(--text2); }
+  .related-year   { font-size: 0.65rem; color: var(--text3); }
+
+  /* ── Mobile ──────────────────────────────────────────────── */
+  @media (max-width: 680px) {
+    .site-header { padding: 14px 20px; }
+    .hero { min-height: 340px; }
+    .hero-content {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 72px 20px 28px;
+      gap: 16px;
+    }
+    .hero-cover { width: 130px; height: 130px; }
+    .hero-cover-placeholder { width: 130px; height: 130px; }
+    .album { font-size: 1.55rem; }
+    .page { padding: 36px 20px 60px; }
+    .notes-section { padding-left: 18px; }
+    .meta-spotify-wrap { grid-template-columns: 1fr; }
+    .related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
 </style>
