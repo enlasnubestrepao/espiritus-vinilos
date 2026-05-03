@@ -12,7 +12,6 @@
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Requiere contenido curatorial |
 | EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Decisión estratégica pendiente |
 | QA-01 | QA mobile formal — vistas pendientes | 🔴 Alta | Medio | 🔶 Parcial — modal OK, faltan stats/crate/atlas/sesiones/admin/welcome |
-| UX-SHARE | ShareView para spirits (?s=N) | 🟡 Media | Medio | ⏳ Pendiente |
 | DATA-01 | Fetch tracklist + créditos desde Discogs | 🟡 Media | Medio | ⏳ Pendiente |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Requiere acceso DNS Porkbun |
 
@@ -60,12 +59,6 @@ Modal ✅ revisado y corregido en v2.5 y v2.6.
 ## DATA-01 — Fetch tracklist + créditos desde Discogs
 
 Poblar `tracks` y `credits` en DB via Discogs API. Precondición para mostrar créditos con iconos de instrumentos en páginas estáticas de vinilos.
-
----
-
-## UX-SHARE — ShareView para spirits
-
-Vinilos tienen `?v=N` — URL que abre el modal directamente. Spirits van a página estática. Pendiente evaluar si se implementa equivalente dinámico.
 
 ---
 
