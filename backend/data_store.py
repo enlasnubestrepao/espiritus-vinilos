@@ -19,7 +19,7 @@ DATABASE_URL = (os.environ.get("DATABASE_URL") or "").strip()
 _VINYL_COLS = ["artista","album","genero","agrupador","anio","pais",
                "sello","pais_sello","cat_num","origen","fuera",
                "discogs","cover_url","url","spotify_id",
-               "tiktok_url","ig_url","notes","credits"]
+               "tiktok_url","ig_url","notes","credits","tracks"]
 
 TABLES = {
     "vinilos":  "vinyls",   # vinyls.py usa "vinilos"
@@ -111,7 +111,7 @@ def write_collection(name: str, data: list) -> None:
                 placeholders = ",".join(["%s"] * len(cols))
                 col_names    = ",".join(cols)
                 sql  = f"INSERT INTO {table} ({col_names}) VALUES ({placeholders})"
-                _JSONB_COLS = {"credits"}
+                _JSONB_COLS = {"credits", "tracks"}
                 rows = [
                     tuple(
                         Json(row.get(c)) if c in _JSONB_COLS and row.get(c) is not None

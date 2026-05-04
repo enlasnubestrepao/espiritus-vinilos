@@ -295,6 +295,13 @@
     min-height: 100px;
   }
 
+  .collDesc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   .features {
     padding: 0.4rem 1.2rem 0.8rem;
   }

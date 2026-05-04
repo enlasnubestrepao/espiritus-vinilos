@@ -158,6 +158,131 @@ def get_discogs_release(
         return {"error": str(e), "tracklist": [], "credits": []}
 
 
+# ── POST /api/covers/save-discogs-release ─────────────────────────────────────
+# Fetchea tracklist + créditos de Discogs y los persiste en el vinilo
+# Body: { "index": 5 }  — usa el campo `url` del vinilo como Discogs release URL
+# Actualiza `tracks` siempre; actualiza `credits` solo si el vinilo no tiene créditos aún
+@router.post("/save-discogs-release")
+def save_discogs_release(
+    body: dict,
+    x_discogs_token: Optional[str] = Header(None),
+):
+    if not x_discogs_token:
+        return {"error": "no token", "updated": False}
+
+    index = body.get("index")
+    if index is None:
+        return {"error": "falta index", "updated": False}
+
+    data = read_collection("vinyls")
+    if not (0 <= index < len(data)):
+        return {"error": "index fuera de rango", "updated": False}
+
+    vinyl = data[index]
+    discogs_url = vinyl.get("url", "")
+    m = re.search(r"/release/(\d+)", discogs_url)
+    if not m:
+        return {"error": "el vinilo no tiene URL de release Discogs válida", "updated": False}
+
+    release_id = m.group(1)
+    api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
+
+    try:
+        req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            release = json.loads(resp.read())
+
+        tracklist = [
+            {
+                "position": t.get("position", ""),
+                "title":    t.get("title", ""),
+                "duration": t.get("duration", ""),
+                "type":     t.get("type_", "track"),
+            }
+            for t in release.get("tracklist", [])
+        ]
+        credits = [
+            {
+                "name": c.get("anv") or c.get("name", ""),
+                "role": c.get("role", ""),
+            }
+            for c in release.get("extraartists", [])
+            if c.get("role")
+        ]
+
+        data[index]["tracks"] = tracklist
+        if not vinyl.get("credits") and credits:
+            data[index]["credits"] = credits
+
+        write_collection("vinyls", data)
+        return {
+            "updated": True,
+            "tracks":  len(tracklist),
+            "credits": len(credits),
+        }
+    except Exception as e:
+        return {"error": str(e), "updated": False}
+
+
+# ── POST /api/covers/bulk-discogs-tracks ──────────────────────────────────────
+# Fetchea tracklist para todos los vinilos con URL de Discogs que no tienen tracks
+# Retorna { updated: N, skipped: N, errors: N }
+@router.post("/bulk-discogs-tracks")
+def bulk_fetch_discogs_tracks(
+    body: dict = {},
+    x_discogs_token: Optional[str] = Header(None),
+):
+    if not x_discogs_token:
+        return {"error": "no token", "updated": 0, "skipped": 0, "errors": 0}
+
+    force = body.get("force", False)  # si True, sobreescribe tracks existentes
+    data = read_collection("vinyls")
+    updated = skipped = errors = 0
+
+    for i, vinyl in enumerate(data):
+        if not force and vinyl.get("tracks"):
+            skipped += 1
+            continue
+        discogs_url = vinyl.get("url", "")
+        m = re.search(r"/release/(\d+)", discogs_url)
+        if not m:
+            skipped += 1
+            continue
+
+        release_id = m.group(1)
+        api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
+        try:
+            req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                release = json.loads(resp.read())
+
+            data[i]["tracks"] = [
+                {
+                    "position": t.get("position", ""),
+                    "title":    t.get("title", ""),
+                    "duration": t.get("duration", ""),
+                    "type":     t.get("type_", "track"),
+                }
+                for t in release.get("tracklist", [])
+            ]
+            if not vinyl.get("credits"):
+                credits = [
+                    {"name": c.get("anv") or c.get("name", ""), "role": c.get("role", "")}
+                    for c in release.get("extraartists", [])
+                    if c.get("role")
+                ]
+                if credits:
+                    data[i]["credits"] = credits
+            updated += 1
+        except Exception:
+            errors += 1
+
+    if updated:
+        write_collection("vinyls", data)
+
+    return {"updated": updated, "skipped": skipped, "errors": errors}
+
+
 # ── POST /api/covers/fetch-purchase ──────────────────────────────────────────
 # Scrapea precio, moneda y disponibilidad de la URL del producto
 # Body: { "url": "https://..." }

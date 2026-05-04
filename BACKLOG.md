@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-05-03 · v2.6.1
+> **Última actualización:** 2026-05-04 · v2.7.0
 
 ---
 
@@ -10,9 +10,7 @@
 |---|---|---|---|---|
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Requiere decisión de plataforma |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Requiere contenido curatorial |
-| EDIT-01 | Arquitectura por mood/concepto | 🔴 Alta | Grande | ⏳ Decisión estratégica pendiente |
-| QA-01 | QA mobile formal — vistas pendientes | 🔴 Alta | Medio | 🔶 Parcial — modal OK, faltan stats/crate/atlas/sesiones/admin/welcome |
-| DATA-01 | Fetch tracklist + créditos desde Discogs | 🟡 Media | Medio | ⏳ Pendiente |
+| QA-01 | QA mobile formal — vistas pendientes | 🟡 Media | Pequeño | 🔶 Parcial — sesiones post-login pendiente |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Requiere acceso DNS Porkbun |
 
 ---
@@ -40,25 +38,11 @@ Framework *Booze & Vinyl* digitalizado. Una vista que propone combinaciones conc
 
 ---
 
-## EDIT-01 — Arquitectura por mood/concepto
+## QA-01 — Vistas pendientes mobile
 
-**Priority:** 🔴 Alta para posicionamiento
+**Revisadas y corregidas en v2.7.0:** stats, crate, atlas, sesiones (form), admin form, welcome modal.
 
-Reemplazar tabs por categoría con arquitectura de descubrimiento basada en mood, ocasión o concepto curatorial.
-
----
-
-## QA-01 — Vistas sin QA mobile formal
-
-**Vistas pendientes a 375px:** stats, crate, atlas, sesiones, admin form, welcome modal.
-
-Modal ✅ revisado y corregido en v2.5 y v2.6.
-
----
-
-## DATA-01 — Fetch tracklist + créditos desde Discogs
-
-Poblar `tracks` y `credits` en DB via Discogs API. Precondición para mostrar créditos con iconos de instrumentos en páginas estáticas de vinilos.
+**Pendiente:** sesiones post-login (lista de sesiones, track picker, preview).
 
 ---
 
@@ -71,5 +55,6 @@ Poblar `tracks` y `credits` en DB via Discogs API. Precondición para mostrar cr
 | v2.5.0 | 2026-05-02 | **UXUI-01**: Modal UX overhaul — bottom sheet, hero unificado, vinyl/spirits hero, Spotify en footer, Compartir unificado, mapa colapsable, drag handle |
 | v2.6.0 | 2026-05-03 | **UXUI-03+04**: Modal 2 columnas siempre (exploración/acción), CTAs con descripción, páginas estáticas editorial redesign para los 3 tipos. **CI-01**: fix legacy-peer-deps |
 | v2.6.1 | 2026-05-03 | **Limpieza**: CSS muerto eliminado del modal (~100 líneas), .gitignore expandido, formateo de precios por moneda (COP/USD/EUR) |
+| v2.7.0 | 2026-05-04 | **QA-01**: fixes mobile welcome modal (line-clamp), admin form (purchase fields 2-col). **DATA-01**: columna `tracks` JSONB, endpoints save-discogs-release + bulk-discogs-tracks, créditos con íconos en páginas estáticas de vinilos |
 
 *Actualizado manualmente en cada sesión de trabajo.*

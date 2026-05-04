@@ -28,6 +28,23 @@ const noteParagraphs = vinyl.notes
   ? vinyl.notes.split('\n\n').map((p: string) => p.trim()).filter(Boolean)
   : []
 
+function creditIcon(role: string): string {
+  const r = role.toLowerCase()
+  if (/vocal|singer|lead vocal|voice|chorus|choir/.test(r))      return '🎤'
+  if (/guitar|bajo|bass(?! drum)|cuatro|tres|banjo/.test(r))     return '🎸'
+  if (/piano|keyboard|organ|wurlitzer|rhodes|clavinet/.test(r))  return '🎹'
+  if (/drum|percussion|timbal|conga|bongo|timbale/.test(r))      return '🥁'
+  if (/trumpet|trompeta|trombone|trombón|horn|tuba/.test(r))     return '🎺'
+  if (/saxophone|saxo|flute|flauta|clarinet|oboe/.test(r))       return '🎷'
+  if (/violin|viola|cello|string|cuerdas/.test(r))               return '🎻'
+  if (/arranger|arreglo|arrange/.test(r))                        return '🎼'
+  if (/producer|producid|executive producer/.test(r))            return '🎛'
+  if (/engineer|ingenier|mixed|mastered|mezcla/.test(r))         return '🎚'
+  if (/written|wrote|composed|compositor|author|letra/.test(r))  return '✍️'
+  if (/photo|fotograf|design|art direction|artwork/.test(r))     return '🎨'
+  return '🎵'
+}
+
 const title = `${vinyl.artista} — ${vinyl.album} | En Las Nubes Trepao`
 const description = [vinyl.genero, vinyl.anio, vinyl.pais, vinyl.sello].filter(Boolean).join(' · ')
 const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
@@ -139,6 +156,22 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
             </li>
           ))}
         </ol>
+      </section>
+    )}
+
+    <!-- ── CRÉDITOS ─────────────────────────────────────────── -->
+    {vinyl.credits && vinyl.credits.length > 0 && (
+      <section class="credits">
+        <h3>Créditos</h3>
+        <ul class="credits-list">
+          {vinyl.credits.map((c) => (
+            <li class="credit-item">
+              <span class="credit-icon">{creditIcon(c.role)}</span>
+              <span class="credit-name">{c.name}</span>
+              <span class="credit-role">{c.role}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     )}
 
@@ -404,6 +437,33 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
   .track-pos { color: var(--text3); font-variant-numeric: tabular-nums; }
   .track-title { color: var(--text); }
   .track-dur { color: var(--text3); font-variant-numeric: tabular-nums; }
+
+  /* ── Créditos ───────────────────────────────────────────── */
+  .credits {
+    margin-bottom: 52px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+  .credits h3 {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: .13em;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+  .credits-list { list-style: none; }
+  .credit-item {
+    display: grid;
+    grid-template-columns: 1.8rem 1fr auto;
+    gap: 8px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .credit-icon { font-size: 0.9rem; line-height: 1; }
+  .credit-name { color: var(--text); font-weight: 500; }
+  .credit-role { color: var(--text3); font-size: 0.72rem; text-align: right; }
 
   /* ── Recomendaciones ─────────────────────────────────────── */
   .related {

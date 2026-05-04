@@ -323,6 +323,10 @@
     grid-template-columns: 1fr;
   }
 
+  .purchaseFields {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .actions {
     flex-wrap: wrap;
   }
