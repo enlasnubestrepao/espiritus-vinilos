@@ -4,6 +4,7 @@ import urllib.request
 import urllib.parse
 import json
 import re
+import time
 from data_store import read_collection, write_collection
 
 router = APIRouter()
@@ -225,8 +226,10 @@ def save_discogs_release(
 
 
 # ── POST /api/covers/bulk-discogs-tracks ──────────────────────────────────────
-# Fetchea tracklist para todos los vinilos con URL de Discogs que no tienen tracks
-# Retorna { updated: N, skipped: N, errors: N }
+# Fetchea tracklist para vinilos con URL de Discogs que no tienen tracks.
+# Procesa en lotes para evitar timeout en Render.
+# Body: { "limit": 20, "offset": 0, "force": false }
+# Retorna { updated, skipped, errors, next_offset, done }
 @router.post("/bulk-discogs-tracks")
 def bulk_fetch_discogs_tracks(
     body: Optional[dict] = None,
@@ -235,25 +238,37 @@ def bulk_fetch_discogs_tracks(
     if not x_discogs_token:
         return {"error": "no token", "updated": 0, "skipped": 0, "errors": 0}
 
-    force = (body or {}).get("force", False)  # si True, sobreescribe tracks existentes
-    data = read_collection("vinyls")
+    params  = body or {}
+    force   = params.get("force", False)
+    limit   = min(int(params.get("limit", 15)), 30)   # máx 30 por lote
+    offset  = int(params.get("offset", 0))
+
+    data    = read_collection("vinyls")
     updated = skipped = errors = 0
+    processed = 0
 
     for i, vinyl in enumerate(data):
+        if processed >= limit:
+            break
+        if i < offset:
+            continue
+
         if not force and vinyl.get("tracks"):
             skipped += 1
+            offset += 1
             continue
         discogs_url = vinyl.get("url", "")
         m = re.search(r"/release/(\d+)", discogs_url)
         if not m:
             skipped += 1
+            offset += 1
             continue
 
         release_id = m.group(1)
         api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
         try:
             req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
-            with urllib.request.urlopen(req, timeout=10) as resp:
+            with urllib.request.urlopen(req, timeout=8) as resp:
                 release = json.loads(resp.read())
 
             data[i]["tracks"] = [
@@ -277,10 +292,22 @@ def bulk_fetch_discogs_tracks(
         except Exception:
             errors += 1
 
+        processed += 1
+        offset += 1
+        time.sleep(1.1)   # Discogs: ~60 req/min para usuarios autenticados
+
     if updated:
         write_collection("vinyls", data)
 
-    return {"updated": updated, "skipped": skipped, "errors": errors}
+    done = offset >= len(data)
+    return {
+        "updated":     updated,
+        "skipped":     skipped,
+        "errors":      errors,
+        "next_offset": offset if not done else None,
+        "done":        done,
+        "total":       len(data),
+    }
 
 
 # ── POST /api/covers/fetch-purchase ──────────────────────────────────────────
