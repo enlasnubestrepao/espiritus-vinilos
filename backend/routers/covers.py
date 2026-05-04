@@ -229,13 +229,13 @@ def save_discogs_release(
 # Retorna { updated: N, skipped: N, errors: N }
 @router.post("/bulk-discogs-tracks")
 def bulk_fetch_discogs_tracks(
-    body: dict = {},
+    body: Optional[dict] = None,
     x_discogs_token: Optional[str] = Header(None),
 ):
     if not x_discogs_token:
         return {"error": "no token", "updated": 0, "skipped": 0, "errors": 0}
 
-    force = body.get("force", False)  # si True, sobreescribe tracks existentes
+    force = (body or {}).get("force", False)  # si True, sobreescribe tracks existentes
     data = read_collection("vinyls")
     updated = skipped = errors = 0
 
