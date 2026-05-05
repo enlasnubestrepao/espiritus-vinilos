@@ -400,7 +400,7 @@ export default function Dashboard({ coll, pinIsSet, auditEdit, onAuditEditClose 
                             e.stopPropagation()
                             const origin = window.location.origin
                             const url = coll === 'vinyl'
-                              ? `${origin}/?v=${findIndex(item)}`
+                              ? `${origin}/vinilos/${vinylSlug(item)}/`
                               : coll === 'rum'
                               ? `${origin}/rones/${rumSlug(item)}/`
                               : `${origin}/whiskies/${whiskeySlug(item)}/`
