@@ -1,6 +1,6 @@
 # Espíritus & Vinilos — En Las Nubes Trepao
 
-![Version](https://img.shields.io/badge/version-v2.5.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-Astro%20%2B%20React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
+![Version](https://img.shields.io/badge/version-v2.7.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-Astro%20%2B%20React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
 
 Dashboard personal + sitio estático SEO para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con Astro SSG + React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
 
@@ -130,7 +130,7 @@ frontend/
 │   │   ├── SearchBar.jsx       # Búsqueda full-text en memoria
 │   │   ├── FeaturedBanner.jsx  # Vinilo del mes — dispara MiniPlayer vía evento
 │   │   ├── MiniPlayer.jsx      # Player Spotify flotante (bottom-right), playlist ENLT
-│   │   ├── Modal.jsx           # Detalle de ítem (solo lectura)
+│   │   ├── Modal.jsx           # Detalle de ítem — 2 columnas (datos + acciones)
 │   │   ├── AdminForm.jsx       # Alta/edición/borrado + Discogs + DynamicSelect
 │   │   ├── SpotifyModal.jsx    # Player Spotify con corrección manual de ID
 │   │   ├── SocialDrawer.jsx    # Drawer para embeds TikTok/Instagram
@@ -166,7 +166,7 @@ backend/
 │   ├── vinyls.py        # GET/POST/PUT/DELETE /api/vinyls/
 │   ├── rums.py          # GET/POST/PUT/DELETE /api/rums/
 │   ├── whiskies.py      # GET/POST/PUT/DELETE /api/whiskies/
-│   ├── covers.py        # Portadas Discogs + og:image scraping
+│   ├── covers.py        # Portadas Discogs + tracklist/créditos + og:image scraping
 │   ├── spotify.py       # Búsqueda y guardado de Spotify ID
 │   ├── config.py        # PIN admin (bcrypt) + settings en app_config
 │   └── sessions.py      # Sesiones digitales: registro, CRUD, tracks, espíritus
@@ -184,8 +184,9 @@ id SERIAL PRIMARY KEY, artista TEXT, album TEXT, genero TEXT, agrupador TEXT,
 anio INTEGER, pais TEXT, pais_sello TEXT, cat_num TEXT, sello TEXT, origen TEXT,
 fuera BOOLEAN, discogs BOOLEAN, url TEXT, cover_url TEXT, spotify_id TEXT,
 ig_url TEXT, tiktok_url TEXT,
-notes TEXT,          -- liner notes editoriales (Fase 12)
-credits JSONB        -- créditos manuales [{name, role}] (Fase 12)
+notes TEXT,          -- liner notes editoriales
+credits JSONB,       -- créditos [{name, role}]
+tracks JSONB         -- tracklist Discogs [{position, title, duration, type}]
 ```
 
 **rums / whiskies**
@@ -226,14 +227,16 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 
 *(mismo patrón para `/api/rums/` y `/api/whiskies/`)*
 
-### Portadas
+### Portadas y contenido Discogs
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `POST` | `/api/covers/fetch` | Raspar og:image y guardar en licor |
-| `POST` | `/api/covers/fetch-discogs` | Buscar en Discogs y guardar en vinilo |
+| `POST` | `/api/covers/fetch-discogs` | Buscar portada en Discogs y guardar |
 | `POST` | `/api/covers/bulk-discogs` | Portadas Discogs para todos los vinilos sin cover_url |
-| `GET` | `/api/covers/discogs-release?url=` | Tracklist + créditos de un release de Discogs |
+| `GET` | `/api/covers/discogs-release?url=` | Tracklist + créditos de un release (sin guardar) |
+| `POST` | `/api/covers/save-discogs-release` | Fetchea y persiste tracklist+créditos en un vinilo por índice |
+| `POST` | `/api/covers/bulk-discogs-tracks` | Pobla tracks para todos los vinilos con URL Discogs (paginado, `limit`+`offset`) |
 
 ### Spotify
 
@@ -265,19 +268,23 @@ El PIN no vive en `localStorage` — vive como hash bcrypt en `app_config` de Su
 ### MiniPlayer Spotify flotante
 `MiniPlayer` vive en `App.jsx` — persiste mientras el usuario navega entre colecciones. Por defecto muestra la playlist ENLT. Al hacer click en "Escuchar" desde el FeaturedBanner, cambia al álbum del disco destacado vía evento global `enlt-play`. Se puede colapsar a un botón redondo de 42px.
 
+### Modal 2 columnas siempre visible
+El modal de detalle usa CSS Grid `1fr 260px`. La columna izquierda (exploración: datos, mapa, tracklist, notas) scrollea independientemente. La columna derecha (acciones: Compartir, CTAs Discogs/Spotify/web, ENLT social, Admin) es siempre visible. En mobile colapsa a 1 columna.
+
+### Páginas estáticas editoriales (Astro SSG)
+Cada vinilo, ron y whisky tiene su propia página estática con:
+- Hero full-bleed (portada/botella + fondo borroso saturado)
+- Notas editoriales como pieza central (Fraunces italic)
+- Tracklist Discogs (si disponible)
+- Créditos con íconos por rol (🎤🎸🎹🥁🎺🎷🎻🎼🎛🎚✍️🎨)
+- Spotify embed dark inline
+- Recomendaciones por género/tipo/país (4 cards)
+
 ### Auditor de completitud
 Tab en SettingsPanel (⚙). Muestra una tabla de todos los vinilos con semáforo de campos completos. Click en una fila cierra el panel y abre AdminForm para ese vinilo — al cerrar AdminForm vuelve al Auditor. Incluye botón de export CSV.
 
 ### AdminForm con DynamicSelect
 Todos los campos de opciones usan `DynamicSelect`: dropdown estándar + botón "+" para agregar opciones nuevas que se persisten en `localStorage`. Los valores de país/origen se normalizan automáticamente (UK, USA, Europa, Japón, etc.) para eliminar duplicados.
-
-### Voz editorial (Fases 12–13)
-Tres capas de contenido por vinilo:
-1. **Notas editoriales** (`notes`): textarea en AdminForm, persistidas en DB. Badge `❝` en card (clickable — abre modal), snippet en hover overlay, panel editorial en modal.
-2. **Tracklist Discogs**: sección colapsable en Modal — fetchea tracklist + créditos (extraartists) en tiempo real desde la API de Discogs. Requiere token y URL de release.
-3. **Créditos manuales** (`credits JSONB`): editor de filas nombre+rol en AdminForm, visible en el colapsable del Modal en grid 2 columnas.
-
-**Modal 2 columnas (v2.3):** cuando un vinilo tiene notas, el modal se expande a 900px con layout de 2 columnas — izquierda: datos duros + tracklist + acciones; derecha: panel editorial con Fraunces italic sobre fondo rojo tenue.
 
 ### Sesiones digitales
 Módulo completo: registro de usuario con email + token, creación de sesiones (tipo de noche, personas, nota), picker de tracks desde playlists Spotify, picker de espíritus de la colección. Hasta 5 sesiones activas por usuario.
@@ -297,7 +304,6 @@ Botones TikTok e Instagram en cards y modales abren un drawer lateral (desktop) 
 | Variable | Descripción |
 |----------|------------|
 | `DATABASE_URL` | Connection string Supabase Session Pooler (IPv4) |
-| `DISCOGS_TOKEN` | Token personal Discogs API |
 | `SPOTIFY_CLIENT_ID` | Client ID app Spotify |
 | `SPOTIFY_CLIENT_SECRET` | Secret app Spotify |
 
@@ -318,7 +324,7 @@ cd espiritus-vinilos/backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-# Variables en .env: DATABASE_URL, DISCOGS_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
+# Variables en .env: DATABASE_URL, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 uvicorn main:app --reload
 # → http://localhost:8000/docs
 ```
@@ -347,14 +353,6 @@ npm run deploy
 # NO hacer git add dist/ en main — eso no actualiza producción
 ```
 
-### Frontend React (desarrollo local)
-
-```bash
-cd espiritus-vinilos/frontend
-npm run dev
-# → http://localhost:5173
-```
-
 ### Backend → Render
 
 Push a `main` → Render detecta cambios en `/backend` y hace redeploy automático.
@@ -379,7 +377,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 
 ## Historial de fases
 
-> **Última actualización:** 2026-05-03 · v2.6.1
+> **Última actualización:** 2026-05-04 · v2.7.0
 
 | Fase | Qué se construyó |
 |------|-----------------|
@@ -400,10 +398,11 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 14 | **ARCH-01 v2.4**: Astro SSG — 166 páginas estáticas, slugify compartido, `getStaticPaths()`, `@astrojs/sitemap`, tema oscuro, pre-loader controlado, cards crawleables, CI/CD GitHub Actions, sitemap enviado a Google |
 | 15 | **UXUI-01 v2.5**: Modal UX overhaul — bottom sheet mobile, hero unificado con blur, portada vinyl hero, botella spirits prominente (195px), Spotify en footer sticky, Compartir unificado (?v=N vinilos / página estática spirits), mapa colapsable, admin footer sutil, campos 1col ≤560px, drag handle |
 | 16 | **UXUI-03+04 + CI-01 v2.6**: Modal 2 columnas siempre (izquierda exploración / derecha acción siempre visible), Spotify demovido a CTA card, CTAs con ícono+título+descripción. Páginas estáticas editorial redesign: hero full-bleed para los 3 tipos (vinilos/rones/whiskies), notas como pieza editorial central, Spotify embed dark inline, recomendaciones por género/tipo/país, buy box en el hero. CI fix: `--legacy-peer-deps` para `frontend/` en GitHub Actions. |
-| 17 | **v2.6.1 limpieza**: CSS muerto eliminado del modal (~100 líneas: `.hdr`, `.epigraph`, `.spotifyWrap`, `.actionsWrap`, `.btnSpotify`, `.btnIg`, `.enltEmbeds` y más), `.gitignore` expandido (`.env.local`, `frontend-astro/dist/`, `frontend/.claude/`), formateo de precios por moneda (COP: separador de miles colombiano, USD/EUR con decimales). |
+| 17 | **v2.6.1 limpieza**: CSS muerto eliminado del modal (~100 líneas), `.gitignore` expandido, formateo de precios por moneda (COP/USD/EUR). |
+| 18 | **DATA-01 + QA-01 v2.7.0** *(2026-05-04)*: Columna `tracks JSONB` en Supabase. Endpoints `save-discogs-release` (individual) y `bulk-discogs-tracks` (paginado con `limit`+`offset`, rate limiting 1.1s entre llamadas). Créditos con íconos por rol en páginas estáticas de vinilos. QA mobile 375px completado — fixes en WelcomeModal (line-clamp en cards) y AdminForm (purchaseFields 2col en mobile). 95/106 vinilos con tracklist poblado vía bulk. |
 
 ---
 
-> **Última actualización:** 2026-05-03 · v2.6.1
+> **Última actualización:** 2026-05-04 · v2.7.0
 
 *Proyecto construido con Claude Code · Abril–Mayo 2026*

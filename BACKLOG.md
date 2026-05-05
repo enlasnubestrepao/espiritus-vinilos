@@ -6,12 +6,13 @@
 
 ## Pendientes activos
 
-| ID | Feature | Prioridad | Esfuerzo | Estado |
-|---|---|---|---|---|
-| PROD-01 | Email capture / lista propia | 🔴 Crítica | Pequeño | ⏳ Requiere decisión de plataforma |
-| EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Grande | ⏳ Requiere contenido curatorial |
-| QA-01 | QA mobile formal — vistas pendientes | 🟡 Media | Pequeño | 🔶 Parcial — sesiones post-login pendiente |
-| UXUI-02 | Cloudflare fallback hosting | 🟡 Media | Pequeño | ⏳ Requiere acceso DNS Porkbun |
+| ID | Feature | Prioridad | Estado |
+|---|---|---|---|
+| PROD-01 | Email capture / lista propia | 🔴 Crítica | ⏳ Requiere decisión de plataforma |
+| EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | ⏳ Requiere contenido curatorial |
+| QA-01 | Sesiones post-login — lista, track picker, preview | 🟡 Media | 🔶 Parcial |
+| DATA-01 | Completar bulk tracks (offsets 85 y 100, 11 vinilos) | 🟡 Media | 🔶 Parcial (95/106) |
+| UXUI-02 | Cloudflare fallback hosting | 🟡 Media | ⏳ Requiere acceso DNS Porkbun |
 
 ---
 
@@ -38,23 +39,29 @@ Framework *Booze & Vinyl* digitalizado. Una vista que propone combinaciones conc
 
 ---
 
-## QA-01 — Vistas pendientes mobile
+## QA-01 — Sesiones post-login
 
-**Revisadas y corregidas en v2.7.0:** stats, crate, atlas, sesiones (form), admin form, welcome modal.
+**Revisadas y corregidas en v2.7.0:** stats, crate, atlas, sesiones (form registro), admin form, welcome modal.
 
-**Pendiente:** sesiones post-login (lista de sesiones, track picker, preview).
+**Pendiente:** flujo post-login — lista de sesiones activas, track picker, preview de sesión, picker de espíritus.
 
 ---
 
-## Historial de versiones completadas
+## DATA-01 — Completar bulk tracks
+
+95/106 vinilos tienen tracklist. Los offsets 85-89 y 100-105 (11 vinilos) fallaron con 500 en el bulk.
+
+**Para completar:** `POST /api/covers/bulk-discogs-tracks` con `{"limit": 3, "offset": 85}` y luego `{"offset": 100}`. Token Discogs en ⚙️ Configuración.
+
+---
+
+## Historial cerrado
 
 | Versión | Fecha | Qué se hizo |
 |---|---|---|
 | v2.3.0 | 2026-04-29 | Fix persistencia notes/credits en DB, badge ❝ clickable, modal 2col datos+notas |
 | v2.4.0 | 2026-04-30 | **ARCH-01**: Astro SSG, 166 páginas estáticas, sitemap, robots.txt, CI/CD, cards crawleables |
 | v2.5.0 | 2026-05-02 | **UXUI-01**: Modal UX overhaul — bottom sheet, hero unificado, vinyl/spirits hero, Spotify en footer, Compartir unificado, mapa colapsable, drag handle |
-| v2.6.0 | 2026-05-03 | **UXUI-03+04**: Modal 2 columnas siempre (exploración/acción), CTAs con descripción, páginas estáticas editorial redesign para los 3 tipos. **CI-01**: fix legacy-peer-deps |
-| v2.6.1 | 2026-05-03 | **Limpieza**: CSS muerto eliminado del modal (~100 líneas), .gitignore expandido, formateo de precios por moneda (COP/USD/EUR) |
-| v2.7.0 | 2026-05-04 | **QA-01**: fixes mobile welcome modal (line-clamp), admin form (purchase fields 2-col). **DATA-01**: columna `tracks` JSONB, endpoints save-discogs-release + bulk-discogs-tracks, créditos con íconos en páginas estáticas de vinilos |
-
-*Actualizado manualmente en cada sesión de trabajo.*
+| v2.6.0 | 2026-05-03 | **UXUI-03+04**: Modal 2 columnas siempre (exploración/acción), CTAs con descripción, páginas estáticas editorial redesign. **CI-01**: fix legacy-peer-deps |
+| v2.6.1 | 2026-05-03 | **Limpieza**: CSS muerto (~100 líneas), .gitignore expandido, formateo precios COP/USD/EUR |
+| v2.7.0 | 2026-05-04 | **DATA-01**: tracks JSONB en Supabase, save-discogs-release, bulk-discogs-tracks paginado, créditos con íconos en páginas estáticas. **QA-01**: fixes mobile WelcomeModal + AdminForm |
