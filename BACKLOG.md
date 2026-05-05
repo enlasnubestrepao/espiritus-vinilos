@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-05-05 · v2.7.1
+> **Última actualización:** 2026-05-05 · v2.7.2
 
 ---
 
@@ -10,9 +10,9 @@
 |---|---|---|---|
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | ⏳ Requiere decisión de plataforma |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | ⏳ Requiere contenido curatorial |
-| DATA-01 | Completar bulk tracks (11 vinilos sin tracklist) | 🟡 Media | 🔶 Parcial (95/106) |
+| DATA-01 | 2 vinilos sin tracklist (sin URL Discogs) | 🟡 Media | 🔶 104/106 — agregar URL en admin y correr endpoint |
+| UX-SESIONES | Búsqueda en vinyl picker dentro de sesiones | 🟡 Media | 💡 Sugerido |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | ⏳ Requiere acceso DNS Porkbun |
-| UX-SESIONES | Vinyl picker en sesiones — agregar búsqueda/filtro | 🟡 Media | 💡 Sugerido (106 álbumes sin filtro = scroll largo en mobile) |
 
 ---
 
@@ -39,17 +39,23 @@ Framework *Booze & Vinyl* digitalizado. Una vista que propone combinaciones conc
 
 ---
 
-## DATA-01 — Completar bulk tracks
+## DATA-01 — 2 vinilos sin tracklist
 
-95/106 vinilos tienen tracklist. Los offsets 85-89 y 100-105 (11 vinilos) fallaron con 500 en el bulk.
-
-**Para completar:** `POST /api/covers/bulk-discogs-tracks` con `{"limit": 3, "offset": 85}` y luego `{"offset": 100}`. Token Discogs en ⚙️ Configuración.
+Edith Piaff (Disque D'Or Vol. 2) y Varios Artistas (El sonido joven de America / Motown) no tienen URL de Discogs. Pasos para cerrar:
+1. Agregar URL de Discogs en admin para cada uno
+2. Correr `POST /api/covers/save-discogs-release` con `{"index": 86}` y `{"index": 102}`
 
 ---
 
 ## UX-SESIONES — Búsqueda en vinyl picker
 
-El picker de vinilos dentro de una sesión lista los 106 álbumes sin filtro. En mobile implica scroll largo para encontrar un disco. Agregar un input de búsqueda local (filtra por artista/álbum en cliente, sin llamada al backend).
+El picker de vinilos dentro de una sesión lista los 106 álbumes sin filtro. En mobile implica scroll largo. Solución: input de búsqueda local (filtra artista/álbum en cliente, sin llamada al backend).
+
+---
+
+## UXUI-02 — Cloudflare fallback hosting
+
+Requiere acceso a DNS en Porkbun para configurar Cloudflare Pages como fallback de GitHub Pages.
 
 ---
 
@@ -63,4 +69,5 @@ El picker de vinilos dentro de una sesión lista los 106 álbumes sin filtro. En
 | v2.6.0 | 2026-05-03 | **UXUI-03+04**: Modal 2 columnas siempre (exploración/acción), CTAs con descripción, páginas estáticas editorial redesign. **CI-01**: fix legacy-peer-deps |
 | v2.6.1 | 2026-05-03 | **Limpieza**: CSS muerto (~100 líneas), .gitignore expandido, formateo precios COP/USD/EUR |
 | v2.7.0 | 2026-05-04 | **DATA-01**: tracks JSONB en Supabase, save-discogs-release, bulk-discogs-tracks paginado, créditos con íconos en páginas estáticas. **QA-01**: fixes mobile WelcomeModal + AdminForm |
-| v2.7.1 | 2026-05-05 | **QA-01 cerrado**: auditoría CSS sesiones post-login, fix spiritCountry overflow + detailTitle ellipsis en mobile |
+| v2.7.1 | 2026-05-05 | **QA-01 cerrado**: auditoría CSS sesiones post-login, fix spiritCountry overflow + detailTitle ellipsis |
+| v2.7.2 | 2026-05-05 | **DATA-01 casi cerrado**: soporte URLs /master/ en endpoints Discogs, 104/106 vinilos con tracklist poblado |
