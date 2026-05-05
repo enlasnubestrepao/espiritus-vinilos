@@ -118,12 +118,15 @@ def get_discogs_release(
     if not x_discogs_token:
         return {"error": "no token", "tracklist": [], "credits": []}
 
-    m = re.search(r"/release/(\d+)", url)
-    if not m:
+    m_release = re.search(r"/release/(\d+)", url)
+    m_master  = re.search(r"/master/(\d+)", url)
+    if m_release:
+        api_url = f"https://api.discogs.com/releases/{m_release.group(1)}?token={x_discogs_token}"
+    elif m_master:
+        api_url = f"https://api.discogs.com/masters/{m_master.group(1)}?token={x_discogs_token}"
+    else:
         return {"error": "URL de release inválida", "tracklist": [], "credits": []}
-
-    release_id = m.group(1)
-    api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
+    release_id = (m_release or m_master).group(1)
 
     try:
         req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
@@ -181,12 +184,14 @@ def save_discogs_release(
 
     vinyl = data[index]
     discogs_url = vinyl.get("url", "")
-    m = re.search(r"/release/(\d+)", discogs_url)
-    if not m:
-        return {"error": "el vinilo no tiene URL de release Discogs válida", "updated": False}
-
-    release_id = m.group(1)
-    api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
+    m_release = re.search(r"/release/(\d+)", discogs_url)
+    m_master  = re.search(r"/master/(\d+)", discogs_url)
+    if m_release:
+        api_url = f"https://api.discogs.com/releases/{m_release.group(1)}?token={x_discogs_token}"
+    elif m_master:
+        api_url = f"https://api.discogs.com/masters/{m_master.group(1)}?token={x_discogs_token}"
+    else:
+        return {"error": "el vinilo no tiene URL de release/master Discogs válida", "updated": False}
 
     try:
         req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
@@ -258,14 +263,16 @@ def bulk_fetch_discogs_tracks(
             offset += 1
             continue
         discogs_url = vinyl.get("url", "")
-        m = re.search(r"/release/(\d+)", discogs_url)
-        if not m:
+        m_rel = re.search(r"/release/(\d+)", discogs_url)
+        m_mas = re.search(r"/master/(\d+)", discogs_url)
+        if m_rel:
+            api_url = f"https://api.discogs.com/releases/{m_rel.group(1)}?token={x_discogs_token}"
+        elif m_mas:
+            api_url = f"https://api.discogs.com/masters/{m_mas.group(1)}?token={x_discogs_token}"
+        else:
             skipped += 1
             offset += 1
             continue
-
-        release_id = m.group(1)
-        api_url = f"https://api.discogs.com/releases/{release_id}?token={x_discogs_token}"
         try:
             req = urllib.request.Request(api_url, headers={"User-Agent": "EspiritusVinilos/1.0"})
             with urllib.request.urlopen(req, timeout=8) as resp:
