@@ -1,6 +1,6 @@
 # Espíritus & Vinilos — En Las Nubes Trepao
 
-![Version](https://img.shields.io/badge/version-v2.7.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-Astro%20%2B%20React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
+![Version](https://img.shields.io/badge/version-v3.0.0-7c3aed?style=flat-square) ![Stack](https://img.shields.io/badge/stack-Astro%20%2B%20React%20%2B%20FastAPI-4a90e2?style=flat-square) ![Hosting](https://img.shields.io/badge/hosting-GitHub%20Pages-222?style=flat-square&logo=github)
 
 Dashboard personal + sitio estático SEO para gestionar y compartir colecciones de vinilos, rones y whiskies. Construido con Astro SSG + React en el frontend y FastAPI en el backend, desplegado en GitHub Pages + Render.com.
 
@@ -400,9 +400,12 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 16 | **UXUI-03+04 + CI-01 v2.6**: Modal 2 columnas siempre (izquierda exploración / derecha acción siempre visible), Spotify demovido a CTA card, CTAs con ícono+título+descripción. Páginas estáticas editorial redesign: hero full-bleed para los 3 tipos (vinilos/rones/whiskies), notas como pieza editorial central, Spotify embed dark inline, recomendaciones por género/tipo/país, buy box en el hero. CI fix: `--legacy-peer-deps` para `frontend/` en GitHub Actions. |
 | 17 | **v2.6.1 limpieza**: CSS muerto eliminado del modal (~100 líneas), `.gitignore` expandido, formateo de precios por moneda (COP/USD/EUR). |
 | 18 | **DATA-01 + QA-01 v2.7.0** *(2026-05-04)*: Columna `tracks JSONB` en Supabase. Endpoints `save-discogs-release` (individual) y `bulk-discogs-tracks` (paginado con `limit`+`offset`, rate limiting 1.1s entre llamadas). Créditos con íconos por rol en páginas estáticas de vinilos. QA mobile 375px completado — fixes en WelcomeModal (line-clamp en cards) y AdminForm (purchaseFields 2col en mobile). 95/106 vinilos con tracklist poblado vía bulk. |
+| 19 | **QA-01 + DATA-01 v2.7.1–2.7.2** *(2026-05-05)*: Auditoría CSS SessionesView post-login — fix `spiritCountry` overflow + `detailTitle` ellipsis. Soporte URLs `/master/` en endpoints Discogs. 104/106 vinilos con tracklist. |
+| 20 | **UX v2.7.3** *(2026-05-05)*: Búsqueda local en vinyl picker dentro de sesiones (filtra artista/álbum sin backend). Botón Spotify removido del hero en páginas estáticas — el embed ya provee enlace nativo. |
+| 21 | **v3.0.0** *(2026-05-05)*: **Email capture** Kit (form `345b76391f`) en las 106 páginas de vinilo. **og:image dinámico** — fallback `hero-1.png`, `og:image:alt` por vinilo, dimensiones hardcodeadas removidas. **GA4** (`G-5VM13PG031`) en 166 páginas. **Fix compartir** — botón Compartir en modal y hover del grid ahora genera URL estática `/vinilos/[slug]/` (WhatsApp preview muestra tapa del disco). **Deploy unificado** `deploy.sh` + CI/CD actualizados — React + Astro mergeados en un único gh-pages, elimina sobreescritura entre builds. |
 
 ---
 
-> **Última actualización:** 2026-05-04 · v2.7.0
+> **Última actualización:** 2026-05-05 · v3.0.0
 
 *Proyecto construido con Claude Code · Abril–Mayo 2026*

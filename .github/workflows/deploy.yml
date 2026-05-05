@@ -1,12 +1,12 @@
-name: Deploy Astro to GitHub Pages
+name: Deploy — React + Astro unificado a GitHub Pages
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:   # permite lanzar el deploy manualmente desde GitHub UI
+  workflow_dispatch:
 
 permissions:
-  contents: write      # gh-pages necesita escribir en el repo
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -21,26 +21,44 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend-astro/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Install frontend dependencies (Vite aliases)
+      - name: Install React dependencies
         working-directory: frontend
         run: npm ci --legacy-peer-deps
 
-      - name: Install dependencies
+      - name: Install Astro dependencies
         working-directory: frontend-astro
         run: npm ci
 
-      - name: Build
+      - name: Build React
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build Astro
         working-directory: frontend-astro
         env:
           VITE_API_URL: https://espiritus-vinilos.onrender.com
-        run: npm run build
+        run: npx astro build
+
+      - name: Merge Astro → React dist
+        run: |
+          # Páginas estáticas
+          cp -r frontend-astro/dist/vinilos   frontend/dist/vinilos
+          cp -r frontend-astro/dist/rones     frontend/dist/rones
+          cp -r frontend-astro/dist/whiskies  frontend/dist/whiskies
+          # Assets (hashes distintos, no colisionan)
+          cp -r frontend-astro/dist/assets/.  frontend/dist/assets/
+          # Sitemaps y robots.txt de Astro (más completos)
+          cp frontend-astro/dist/sitemap-index.xml frontend/dist/sitemap-index.xml
+          cp frontend-astro/dist/sitemap-0.xml     frontend/dist/sitemap-0.xml
+          cp frontend-astro/dist/robots.txt        frontend/dist/robots.txt
+          cp frontend-astro/dist/favicon.ico       frontend/dist/favicon.ico 2>/dev/null || true
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: frontend-astro/dist
+          publish_dir: frontend/dist
           publish_branch: gh-pages
           cname: enlasnubestrepao.com
