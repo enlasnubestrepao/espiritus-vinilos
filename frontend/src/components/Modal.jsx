@@ -56,7 +56,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
   function handleShare() {
     let shareUrl
     if (coll === 'vinyl') {
-      shareUrl = `${window.location.origin}${window.location.pathname}?v=${index}`
+      shareUrl = `${window.location.origin}/vinilos/${vinylSlug(item)}/`
     } else {
       const slug = coll === 'rum' ? rumSlug(item) : whiskeySlug(item)
       const base = coll === 'rum' ? '/rones' : '/whiskies'
