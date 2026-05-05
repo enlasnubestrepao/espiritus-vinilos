@@ -171,7 +171,7 @@ const ogImageAlt = `Tapa del disco ${vinyl.album} de ${vinyl.artista}`
     <!-- ── EMAIL CAPTURE ────────────────────────────────────── -->
     <section class="email-capture">
       <p class="email-capture-copy">Si querés saber cuándo llega un disco nuevo, dejá tu correo acá.</p>
-      <script async data-uid="9103586ac9" src="https://en-las-nubes-trepao.kit.com/9103586ac9/index.js"></script>
+      <script async data-uid="345b76391f" src="https://en-las-nubes-trepao.kit.com/345b76391f/index.js"></script>
     </section>
 
     <!-- ── RECOMENDACIONES ───────────────────────────────────── -->
@@ -531,6 +531,9 @@ const ogImageAlt = `Tapa del disco ${vinyl.album} de ${vinyl.artista}`
     padding-top: 40px;
     margin-bottom: 52px;
     text-align: center;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .email-capture-copy {
     font-size: 0.88rem;
@@ -538,6 +541,11 @@ const ogImageAlt = `Tapa del disco ${vinyl.album} de ${vinyl.artista}`
     margin-bottom: 20px;
     font-family: var(--font-display);
     font-style: italic;
+  }
+  /* Contener el iframe/widget de Kit */
+  .email-capture > script + * ,
+  .email-capture [data-uid] {
+    max-width: 100% !important;
   }
 
   /* ── Mobile ──────────────────────────────────────────────── */
