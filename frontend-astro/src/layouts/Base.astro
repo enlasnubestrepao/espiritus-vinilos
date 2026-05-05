@@ -3,6 +3,7 @@ export interface Props {
   title?: string
   description?: string
   ogImage?: string
+  ogImageAlt?: string
   ogType?: string
   showLoader?: boolean
 }
@@ -10,7 +11,8 @@ export interface Props {
 const {
   title = 'En Las Nubes Trepao — Espíritus Vinilos',
   description = 'Curaduría de vinilos, rones y whiskies. Música no mainstream, cultura análoga y recomendaciones de algunos viajes realizados en las nubes.',
-  ogImage = 'https://enlasnubestrepao.com/og-image.jpg',
+  ogImage = 'https://enlasnubestrepao.com/hero-1.png',
+  ogImageAlt = 'En Las Nubes Trepao — Espíritus & Vinilos',
   ogType = 'website',
   showLoader = false,
 } = Astro.props
@@ -39,8 +41,7 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content="es_419" />
 
     <!-- Twitter Card -->
@@ -48,6 +49,7 @@ const {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     {showLoader && (
       <style>

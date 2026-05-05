@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-05-05 · v2.7.2
+> **Última actualización:** 2026-05-05 · v2.7.3
 
 ---
 
@@ -9,9 +9,11 @@
 | ID | Feature | Prioridad | Estado |
 |---|---|---|---|
 | PROD-01 | Email capture / lista propia | 🔴 Crítica | ⏳ Requiere decisión de plataforma |
+| SEO-01 | og:image en páginas estáticas | 🔴 Alta | 🔶 Infraestructura ok, falta fallback + fixes |
+| ANALYTICS-01 | Analytics (Plausible o GA4) | 🟡 Media | 💡 Pendiente |
+| UX-NEW | Badge "nuevo" / sección recién llegado | 🟡 Media | 💡 Pendiente |
+| QA-ASTRO | QA mobile páginas Astro en teléfono real | 🟡 Media | 💡 Pendiente |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | ⏳ Requiere contenido curatorial |
-| DATA-01 | 2 vinilos sin tracklist (sin URL Discogs) | 🟡 Media | 🔶 104/106 — agregar URL en admin y correr endpoint |
-| UX-SESIONES | Búsqueda en vinyl picker dentro de sesiones | 🟡 Media | 💡 Sugerido |
 | UXUI-02 | Cloudflare fallback hosting | 🟡 Media | ⏳ Requiere acceso DNS Porkbun |
 
 ---
@@ -39,17 +41,30 @@ Framework *Booze & Vinyl* digitalizado. Una vista que propone combinaciones conc
 
 ---
 
-## DATA-01 — 2 vinilos sin tracklist
+## SEO-01 — og:image en páginas estáticas
 
-Edith Piaff (Disque D'Or Vol. 2) y Varios Artistas (El sonido joven de America / Motown) no tienen URL de Discogs. Pasos para cerrar:
-1. Agregar URL de Discogs en admin para cada uno
-2. Correr `POST /api/covers/save-discogs-release` con `{"index": 86}` y `{"index": 102}`
+La infraestructura está en su lugar (`Base.astro` tiene los meta tags, `[slug].astro` pasa `cover_url`). Tres fixes pendientes:
+1. **Fallback roto**: `og-image.jpg` referenciado en código pero no existe en `public/` → usar `hero-1.png` o crear imagen dedicada
+2. **Dimensiones hardcodeadas**: `og:image:width/height` declara 1200×630 pero las covers de Discogs son cuadradas → remover o hacer condicional
+3. **Falta `og:image:alt`** para accesibilidad
 
 ---
 
-## UX-SESIONES — Búsqueda en vinyl picker
+## ANALYTICS-01 — Analytics
 
-El picker de vinilos dentro de una sesión lista los 106 álbumes sin filtro. En mobile implica scroll largo. Solución: input de búsqueda local (filtra artista/álbum en cliente, sin llamada al backend).
+Sin tracking, el lanzamiento v3.0 es a ciegas. Plausible (privacidad-first, gratis tier) o GA4. Requiere cuenta y script en `Base.astro`.
+
+---
+
+## UX-NEW — Badge "nuevo" / recién llegado
+
+Sin señal de "nuevo contenido" no hay motivo para que un seguidor vuelva. Opciones: badge en card de vinilos recientes, sección "Últimos en llegar" en home.
+
+---
+
+## QA-ASTRO — QA mobile páginas Astro
+
+Las 166 páginas estáticas (tracklist, créditos, hero) no fueron auditadas en teléfono real a 375px. Revisar manualmente 3-5 páginas representativas.
 
 ---
 
@@ -71,3 +86,4 @@ Requiere acceso a DNS en Porkbun para configurar Cloudflare Pages como fallback 
 | v2.7.0 | 2026-05-04 | **DATA-01**: tracks JSONB en Supabase, save-discogs-release, bulk-discogs-tracks paginado, créditos con íconos en páginas estáticas. **QA-01**: fixes mobile WelcomeModal + AdminForm |
 | v2.7.1 | 2026-05-05 | **QA-01 cerrado**: auditoría CSS sesiones post-login, fix spiritCountry overflow + detailTitle ellipsis |
 | v2.7.2 | 2026-05-05 | **DATA-01 casi cerrado**: soporte URLs /master/ en endpoints Discogs, 104/106 vinilos con tracklist poblado |
+| v2.7.3 | 2026-05-05 | **UX-SESIONES**: búsqueda local en vinyl picker (filtra por artista/álbum). **UX**: remover botón Spotify del hero en páginas estáticas de vinilos |

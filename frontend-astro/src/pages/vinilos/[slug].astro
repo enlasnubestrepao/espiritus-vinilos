@@ -47,10 +47,11 @@ function creditIcon(role: string): string {
 
 const title = `${vinyl.artista} — ${vinyl.album} | En Las Nubes Trepao`
 const description = [vinyl.genero, vinyl.anio, vinyl.pais, vinyl.sello].filter(Boolean).join(' · ')
-const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
+const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/hero-1.png'
+const ogImageAlt = `Tapa del disco ${vinyl.album} de ${vinyl.artista}`
 ---
 
-<Base title={title} description={description} ogImage={ogImage} ogType="music.album">
+<Base title={title} description={description} ogImage={ogImage} ogImageAlt={ogImageAlt} ogType="music.album">
 
   <!-- ── HERO ─────────────────────────────────────────────────── -->
   <section class="hero">
@@ -166,6 +167,12 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
         </ul>
       </section>
     )}
+
+    <!-- ── EMAIL CAPTURE ────────────────────────────────────── -->
+    <section class="email-capture">
+      <p class="email-capture-copy">Si querés saber cuándo llega un disco nuevo, dejá tu correo acá.</p>
+      <script async data-uid="3640c56a9a" src="https://en-las-nubes-trepao.kit.com/3640c56a9a/index.js"></script>
+    </section>
 
     <!-- ── RECOMENDACIONES ───────────────────────────────────── -->
     {related.length > 0 && (
@@ -517,6 +524,21 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
   }
   .related-artist { font-size: 0.7rem; color: var(--text2); }
   .related-year   { font-size: 0.65rem; color: var(--text3); }
+
+  /* ── Email capture ──────────────────────────────────────── */
+  .email-capture {
+    border-top: 1px solid var(--border);
+    padding-top: 40px;
+    margin-bottom: 52px;
+    text-align: center;
+  }
+  .email-capture-copy {
+    font-size: 0.88rem;
+    color: var(--text2);
+    margin-bottom: 20px;
+    font-family: var(--font-display);
+    font-style: italic;
+  }
 
   /* ── Mobile ──────────────────────────────────────────────── */
   @media (max-width: 680px) {
