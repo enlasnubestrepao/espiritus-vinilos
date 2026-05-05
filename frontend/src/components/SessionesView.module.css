@@ -745,4 +745,14 @@
   .sessionGrid { grid-template-columns: 1fr; }
   .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tab { font-size: .75rem; padding: 8px 12px; }
+
+  /* Ocultar país en picker de espíritus — espacio insuficiente a 375px */
+  .spiritPickerRow .spiritCountry { display: none; }
+
+  /* Proteger nombre de sesión de overflow */
+  .detailTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
