@@ -92,14 +92,6 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
           {vinyl.url && (
             <a class="btn btn-discogs" href={vinyl.url} target="_blank" rel="noopener">🔗 Discogs</a>
           )}
-          {vinyl.spotify_id && (
-            <a
-              class="btn btn-spotify"
-              href={`https://open.spotify.com/album/${vinyl.spotify_id}`}
-              target="_blank"
-              rel="noopener"
-            >▶ Spotify</a>
-          )}
         </div>
       </div>
     </div>
@@ -327,7 +319,6 @@ const ogImage = vinyl.cover_url || 'https://enlasnubestrepao.com/og-image.jpg'
   }
   .btn:hover { opacity: .85; transform: translateY(-1px); }
   .btn-discogs { background: var(--v-acc); color: #fff; }
-  .btn-spotify { background: #1db954; color: #000; }
 
   /* ── Page body ───────────────────────────────────────────── */
   .page {
