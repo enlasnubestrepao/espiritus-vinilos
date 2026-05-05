@@ -4,4 +4,7 @@ Allow: /
 # Bloquear rutas de API del backend (no sirven contenido público)
 Disallow: /api/
 
-Sitemap: https://enlasnubestrepao.com/sitemap-index.xml
+# Crawl-delay recomendado para bots menores
+Crawl-delay: 10
+
+Sitemap: https://enlasnubestrepao.com/sitemap.xml
