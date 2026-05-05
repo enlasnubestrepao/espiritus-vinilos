@@ -508,6 +508,24 @@
 .addBtn:hover:not(:disabled) { border-color: var(--se-acc2); color: var(--se-acc2); }
 .addBtn:disabled { opacity: .35; cursor: not-allowed; }
 
+/* ── Vinyl search ── */
+.vinylSearch {
+  width: 100%;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: .85rem;
+  padding: 9px 14px;
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+.vinylSearch:focus { border-color: var(--se-acc2); }
+.vinylSearch::placeholder { color: var(--text3); }
+
 /* ── Vinyl picker ── */
 .vinylPicker {
   display: flex;

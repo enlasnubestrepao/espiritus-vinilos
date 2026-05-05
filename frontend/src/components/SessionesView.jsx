@@ -100,6 +100,7 @@ export default function SessionesView() {
 
   // ── track picker ──
   const [vinyls,        setVinyls]        = useState([])
+  const [vinylSearch,   setVinylSearch]   = useState('')
   const [selectedVinyl, setSelectedVinyl] = useState(null)
   const [vinylTracks,   setVinylTracks]   = useState([])
   const [loadingVT,     setLoadingVT]     = useState(false)
@@ -324,6 +325,12 @@ export default function SessionesView() {
   const pctUsed    = Math.min((totalMs / maxMs) * 100, 100)
   const addedIds   = new Set(sessionTracks.map(track => track.spotify_track_id))
   const tpl        = templates.find(tmpl => tmpl.id === (activeSession?.template_id))
+  const filteredVinyls = vinylSearch.trim()
+    ? vinyls.filter(v =>
+        v.album?.toLowerCase().includes(vinylSearch.toLowerCase()) ||
+        v.artista?.toLowerCase().includes(vinylSearch.toLowerCase())
+      )
+    : vinyls
 
   // ── RENDERS ───────────────────────────────────────────────────────────────
 
@@ -599,8 +606,18 @@ export default function SessionesView() {
               {vinyls.length === 0 ? (
                 <p className={styles.dim}>{t('loadingVinyls')} <LoadingDots /></p>
               ) : (
+                <>
+                  <input
+                    type="text"
+                    className={styles.vinylSearch}
+                    placeholder="Buscar artista o álbum…"
+                    value={vinylSearch}
+                    onChange={e => setVinylSearch(e.target.value)}
+                  />
                 <div className={styles.vinylPicker}>
-                  {vinyls.map(v => (
+                  {filteredVinyls.length === 0 ? (
+                    <p className={styles.dim} style={{ padding: '12px 0' }}>Sin resultados</p>
+                  ) : filteredVinyls.map(v => (
                     <div key={v.id} className={styles.vinylPickerItem}>
                       <button
                         className={`${styles.vinylBtn} ${selectedVinyl?.id === v.id ? styles.vinylBtnActive : ''}`}
@@ -655,6 +672,7 @@ export default function SessionesView() {
                     </div>
                   ))}
                 </div>
+                </>
               )}
             </div>
           </div>
