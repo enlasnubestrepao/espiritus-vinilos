@@ -1,53 +1,48 @@
 #!/usr/bin/env bash
-# deploy.sh — build frontend y publica en gh-pages automáticamente
+# deploy.sh — build unificado React + Astro → un solo deploy en gh-pages
+# Uso: ./deploy.sh
 set -e
 
 export PATH="$HOME/.nvm/versions/node/v24.14.1/bin:$PATH"
-REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+REACT_DIR="$ROOT/frontend"
+ASTRO_DIR="$ROOT/frontend-astro"
+API_URL="https://espiritus-vinilos.onrender.com"
 
-echo "🔨 Buildando frontend..."
-cd "$REPO_ROOT/frontend"
+echo "▶ [1/4] Despertando backend..."
+curl -s "$API_URL/api/vinyls/" | head -c 50 > /dev/null
+echo " OK"
+
+echo "▶ [2/4] Build React..."
+cd "$REACT_DIR"
 npm run build
 
-# Copiar archivos a /tmp antes de cambiar de rama
-echo "📦 Copiando artefactos..."
-BUILD_DIR="$REPO_ROOT/frontend/dist"
-TMP_DIR=$(mktemp -d)
-cp -r "$BUILD_DIR/." "$TMP_DIR/"
+echo "▶ [3/4] Build Astro..."
+cd "$ASTRO_DIR"
+VITE_API_URL="$API_URL" npx astro build 2>&1 | grep -E "(built|error|warn|Complete|pages)" || true
 
-echo "🌿 Cambiando a gh-pages..."
-cd "$REPO_ROOT"
-git stash --include-untracked --quiet 2>/dev/null || true
-git checkout gh-pages
+echo "▶ [4/4] Mergeando Astro → React dist..."
 
-# Limpiar assets viejos y copiar nuevos
-rm -f assets/index-*.js assets/index-*.css
-cp "$TMP_DIR/assets/"* assets/
-cp "$TMP_DIR/index.html" index.html
-cp "$TMP_DIR/favicon.svg"    favicon.svg    2>/dev/null || true
-cp "$TMP_DIR/icons.svg"      icons.svg      2>/dev/null || true
-# Copiar todos los archivos raíz del public (logos, CNAME, etc.)
-for f in "$TMP_DIR"/*.jpeg "$TMP_DIR"/*.jpg "$TMP_DIR"/*.png "$TMP_DIR"/*.webp; do
-  [ -f "$f" ] && cp "$f" "$(basename "$f")" 2>/dev/null || true
-done
+# Páginas estáticas de Astro
+rm -rf "$REACT_DIR/dist/vinilos" "$REACT_DIR/dist/rones" "$REACT_DIR/dist/whiskies"
+cp -r "$ASTRO_DIR/dist/vinilos"   "$REACT_DIR/dist/vinilos"
+cp -r "$ASTRO_DIR/dist/rones"     "$REACT_DIR/dist/rones"
+cp -r "$ASTRO_DIR/dist/whiskies"  "$REACT_DIR/dist/whiskies"
 
-# Limpiar tmp
-rm -rf "$TMP_DIR"
+# Assets de Astro (hashes distintos — no colisionan con los de React)
+cp -r "$ASTRO_DIR/dist/assets/."  "$REACT_DIR/dist/assets/"
 
-echo "🚀 Commiteando y pusheando a gh-pages..."
-git add -A
-if git diff --cached --quiet; then
-  echo "ℹ️  Sin cambios nuevos — pusheando igualmente..."
-else
-  git commit -m "Deploy: $(date '+%Y-%m-%d %H:%M')" \
-    -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-fi
-git push origin gh-pages
+# Sitemaps de Astro (más completos — incluyen las páginas estáticas)
+cp "$ASTRO_DIR/dist/sitemap-index.xml" "$REACT_DIR/dist/sitemap-index.xml"
+cp "$ASTRO_DIR/dist/sitemap-0.xml"     "$REACT_DIR/dist/sitemap-0.xml"
+cp "$ASTRO_DIR/dist/robots.txt"        "$REACT_DIR/dist/robots.txt"
 
-echo "✅ Volviendo a main..."
-git checkout main
-git stash pop --quiet 2>/dev/null || true
+# favicon.ico (solo Astro lo tiene)
+cp "$ASTRO_DIR/dist/favicon.ico" "$REACT_DIR/dist/favicon.ico" 2>/dev/null || true
+
+echo "▶ Deployando a gh-pages..."
+cd "$REACT_DIR"
+npx gh-pages -d dist
 
 echo ""
-echo "✅ Deploy completo — espera ~2 min y recarga la app"
-echo "🌐 https://enlasnubestrepao.github.io/espiritus-vinilos/"
+echo "✓ Deploy completo — https://enlasnubestrepao.com"
