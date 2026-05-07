@@ -7,6 +7,7 @@
   padding: 20px;
   backdrop-filter: blur(6px);
   animation: fadeIn .15s ease;
+  touch-action: none;
 }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
 
@@ -682,6 +683,7 @@
     max-height: 85vh;
     border-radius: 20px 20px 0 0;
     animation: slideUpSheet .25s cubic-bezier(.32,.72,0,1);
+    touch-action: pan-y;
   }
 
   /* Drag handle */
@@ -701,6 +703,8 @@
     grid-template-columns: 1fr;
     overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   .dataCol {
