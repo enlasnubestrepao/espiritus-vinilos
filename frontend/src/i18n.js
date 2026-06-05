@@ -37,6 +37,7 @@ const T = {
   origin:               { es: 'Origen',                        en: 'Origin' },
   lent:                 { es: 'Prestado',                      en: 'Lent out' },
   discogs:              { es: 'Discogs',                       en: 'Discogs' },
+  yes:                  { es: 'Sí',                            en: 'Yes' },
   enltPosted:           { es: 'En Las Nubes Trepao lo posteó', en: 'Posted by En Las Nubes Trepao' },
   viewTikTok:           { es: 'Ver en TikTok',                 en: 'View on TikTok' },
   viewInstagram:        { es: 'Ver en Instagram',              en: 'View on Instagram' },

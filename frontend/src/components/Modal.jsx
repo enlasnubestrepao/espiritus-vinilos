@@ -473,8 +473,8 @@ function getVinylGroups(item, t) {
       rows: [
         [
           [t('origin'), item.origen],
-          [t('lent'), item.fuera ? '📤 Sí' : null],
-          [t('discogs'), item.discogs ? '🔗 Sí' : null],
+          [t('lent'), item.fuera ? `📤 ${t('yes')}` : null],
+          [t('discogs'), item.discogs ? `🔗 ${t('yes')}` : null],
         ]
       ]
     }
@@ -496,7 +496,7 @@ function getSpiritsGroups(item, coll, t) {
     {
       label: t('collection'),
       rows: [
-        [[t('finished'), item.terminado ? '🫗 Sí' : null]],
+        [[t('finished'), item.terminado ? `🫗 ${t('yes')}` : null]],
       ]
     }
   ]
@@ -513,7 +513,7 @@ function getSpiritsGroups(item, coll, t) {
     {
       label: t('collection'),
       rows: [
-        [[t('finished'), item.terminado ? '🫗 Sí' : null]],
+        [[t('finished'), item.terminado ? `🫗 ${t('yes')}` : null]],
       ]
     }
   ]
