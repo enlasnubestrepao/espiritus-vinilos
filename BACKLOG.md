@@ -29,6 +29,14 @@ Sin señal de "nuevo contenido" no hay motivo para que un seguidor vuelva. Opcio
 
 ---
 
+## Decisiones de arquitectura
+
+| Decisión | Contexto | Alternativa descartada |
+|---|---|---|
+| Páginas Astro siempre en español | Son HTML estático (SSG) — no tienen acceso al LangContext de React ni al localStorage. El toggle ES/EN solo funciona en la SPA (`/`). El público objetivo es hispanohablante y las páginas son primariamente para SEO/compartir. | Generar `/es/` y `/en/` por cada slug duplicaría 166→332 páginas y el mantenimiento de templates, por beneficio mínimo. |
+
+---
+
 ## UXUI-02 — Cloudflare fallback hosting
 
 Requiere acceso a DNS en Porkbun para configurar Cloudflare Pages como fallback de GitHub Pages.
