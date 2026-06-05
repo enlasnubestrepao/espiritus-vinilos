@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-05-20 · v3.1.0
+> **Última actualización:** 2026-06-05 · v3.2.0
 
 ---
 
@@ -10,7 +10,8 @@
 |---|---|---|---|
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Núcleo del concepto editorial "Booze & Vinyl" — diferenciador único del proyecto. Sin esto la colección y las sesiones son módulos separados sin conexión curatorial. |
 | UX-NEW | Badge "nuevo" / sección recién llegado | 🟡 Media | Sin señal de contenido nuevo no hay razón para que un seguidor vuelva. Impacta retención directamente. Bloquea: decidir campo de fecha (`created_at` o fecha de compra). |
-| ~~QA-ASTRO~~ | ~~QA páginas Astro~~ | ✅ Cerrado | 2026-05-20 — 5 páginas auditadas en desktop, sin regresiones de layout. |
+| ~~QA-ASTRO~~ | ~~QA páginas Astro~~ | ✅ Cerrado | 2026-05-20 — 5 páginas auditadas en desktop, sin regresiones. |
+| ~~I18N-01~~ | ~~Toggle idioma modal~~ | ✅ Cerrado | 2026-06-05 — CTAs, secciones y valores booleanos del modal ahora responden al toggle ES/EN. |
 | UXUI-02 | Cloudflare fallback hosting | 🟢 Baja | GitHub Pages tiene historial de outages breves. Cloudflare Pages como fallback daría resiliencia. Bloquea: acceso DNS en Porkbun. |
 
 ---
@@ -58,3 +59,4 @@ Requiere acceso a DNS en Porkbun para configurar Cloudflare Pages como fallback 
 | v2.7.3 | 2026-05-05 | **UX-SESIONES**: búsqueda local en vinyl picker. **UX**: remover botón Spotify del hero en páginas estáticas |
 | v3.0.0 | 2026-05-05 | **PROD-01**: email capture Kit en 106 páginas. **SEO-01**: og:image dinámico + alt por vinilo. **ANALYTICS-01**: GA4. **FIX**: deploy.sh unificado React+Astro, compartir vinilo usa URL estática |
 | v3.1.0 | 2026-05-20 | **ADMIN-01**: panel admin Sesiones en SettingsPanel (tab protegido por PIN) — KPIs + tabla clientes + tabla sesiones, endpoint `/api/sessions/admin/overview` con auth bcrypt. **QA-iOS**: modal bottom sheet — scroll interno funcional, single-tap para abrir (eliminado double-tap logic). **AUTH**: SSH key configurada para deploys automáticos. **QA-ASTRO**: 5 páginas estáticas auditadas (vinilos/rones/whiskies) — sin regresiones. |
+| v3.2.0 | 2026-06-05 | **I18N-01**: toggle ES/EN completo en el modal — CTAs del panel de acción (Compartir, Spotify, Discogs, Página del álbum/spirit), secciones de datos (Music/Disco físico/Colección/Producción), valores booleanos (Sí→Yes, Terminado→Finished). 13 claves nuevas en i18n.js. **ARCH**: páginas Astro documentadas como siempre-español por diseño (SSG). |
