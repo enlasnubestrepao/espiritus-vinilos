@@ -281,7 +281,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
             {/* Notas editoriales — al final de la columna izquierda */}
             {hasNotes && (
               <div className={styles.notesInline}>
-                <span className={styles.notesPanelLabel}>Notas editoriales</span>
+                <span className={styles.notesPanelLabel}>{t('editorialNotes')}</span>
                 <span className={styles.notesMark}>❝</span>
                 <p className={styles.notesText}>{item.notes}</p>
               </div>
@@ -298,7 +298,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 className={`${styles.btn} ${styles.btnShare} ${styles.btnFull}`}
                 onClick={handleShare}
               >
-                {copied ? '✓ Enlace copiado' : '↗ Compartir'}
+                {copied ? t('ctaShareCopied') : t('ctaShare')}
               </button>
             )}
 
@@ -314,8 +314,8 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 >
                   <span className={styles.ctaIcon}>▶</span>
                   <span className={styles.ctaText}>
-                    <span className={styles.ctaTitle}>Escuchar en Spotify</span>
-                    <span className={styles.ctaDesc}>Abrí el álbum completo en tu app</span>
+                    <span className={styles.ctaTitle}>{t('ctaSpotifyTitle')}</span>
+                    <span className={styles.ctaDesc}>{t('ctaSpotifyDesc')}</span>
                   </span>
                   <span className={styles.ctaArrow}>↗</span>
                 </a>
@@ -329,7 +329,7 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                   <span className={styles.ctaIcon}>🔗</span>
                   <span className={styles.ctaText}>
                     <span className={styles.ctaTitle}>Discogs</span>
-                    <span className={styles.ctaDesc}>Ficha técnica, prensajes y comunidad</span>
+                    <span className={styles.ctaDesc}>{t('ctaDiscogsDesc')}</span>
                   </span>
                   <span className={styles.ctaArrow}>↗</span>
                 </a>
@@ -342,8 +342,8 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 >
                   <span className={styles.ctaIcon}>📄</span>
                   <span className={styles.ctaText}>
-                    <span className={styles.ctaTitle}>Página del álbum</span>
-                    <span className={styles.ctaDesc}>Notas editoriales y recomendaciones</span>
+                    <span className={styles.ctaTitle}>{t('ctaAlbumPageTitle')}</span>
+                    <span className={styles.ctaDesc}>{t('ctaAlbumPageDesc')}</span>
                   </span>
                   <span className={styles.ctaArrow}>↗</span>
                 </a>
@@ -352,8 +352,8 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 <a href={url} target="_blank" rel="noreferrer" className={styles.ctaCard}>
                   <span className={styles.ctaIcon}>🔗</span>
                   <span className={styles.ctaText}>
-                    <span className={styles.ctaTitle}>Más información</span>
-                    <span className={styles.ctaDesc}>Ficha técnica y detalles del producto</span>
+                    <span className={styles.ctaTitle}>{t('ctaMoreInfoTitle')}</span>
+                    <span className={styles.ctaDesc}>{t('ctaMoreInfoDesc')}</span>
                   </span>
                   <span className={styles.ctaArrow}>↗</span>
                 </a>
@@ -366,8 +366,8 @@ export default function Modal({ item, coll, index, onClose, onEdit, onSetFeature
                 >
                   <span className={styles.ctaIcon}>📄</span>
                   <span className={styles.ctaText}>
-                    <span className={styles.ctaTitle}>Página del spirit</span>
-                    <span className={styles.ctaDesc}>Notas editoriales y maridajes</span>
+                    <span className={styles.ctaTitle}>{t('ctaSpiritPageTitle')}</span>
+                    <span className={styles.ctaDesc}>{t('ctaSpiritPageDesc')}</span>
                   </span>
                   <span className={styles.ctaArrow}>↗</span>
                 </a>
