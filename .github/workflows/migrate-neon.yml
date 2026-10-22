@@ -49,8 +49,18 @@ jobs:
       - name: Migrar
         working-directory: backend
         run: |
-          pg_dump --version
-          python3 db/migrate_to_neon.py
+          set -o pipefail
+          pg_dump --version | tee migrate.log
+          python3 -u db/migrate_to_neon.py 2>&1 | tee -a migrate.log
+
+      # Resumen visible como anotación del job (legible desde la API sin descargar logs)
+      - name: Resumen
+        if: always()
+        working-directory: backend
+        run: |
+          [ -f migrate.log ] || exit 0
+          msg=$(tail -n 60 migrate.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | awk '{printf "%s%%0A", $0}')
+          echo "::notice title=Resultado migración::$msg"
 
       # Solo la estructura (sin datos personales) para versionarla en el repo
       - name: Publicar schema.sql
