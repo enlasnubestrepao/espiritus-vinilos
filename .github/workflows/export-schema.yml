@@ -1,0 +1,40 @@
+name: Exportar schema.sql desde Neon
+
+# Exporta la estructura (sin datos) de Neon a backend/db/schema.sql y la commitea en la rama.
+on:
+  push:
+    branches: [claude/migracion-neon]
+    paths: [.github/workflows/export-schema.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    env:
+      NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar cliente PostgreSQL 18
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-18
+
+      - name: Exportar estructura
+        run: |
+          /usr/lib/postgresql/18/bin/pg_dump --dbname "$NEON_DATABASE_URL" --schema=public \
+            --schema-only --no-owner --no-privileges --quote-all-identifiers \
+            | grep -v '^\\\(restrict\|unrestrict\) ' > backend/db/schema.sql
+          wc -l backend/db/schema.sql
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backend/db/schema.sql
+          git diff --cached --quiet || git commit -m "db: schema.sql exportado desde Neon"
+          git push
