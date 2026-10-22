@@ -63,10 +63,9 @@ jobs:
       # Resumen visible como anotación del job (legible desde la API sin descargar logs)
       - name: Resumen
         if: always()
-        working-directory: backend
         run: |
-          [ -f migrate.log ] || exit 0
-          msg=$(tail -n 60 migrate.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | awk '{printf "%s%%0A", $0}')
+          [ -f backend/migrate.log ] || exit 0
+          msg=$(tail -n 60 backend/migrate.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | awk '{printf "%s%%0A", $0}')
           echo "::notice title=Resultado migración::$msg"
 
       # Solo la estructura (sin datos personales) para versionarla en el repo
