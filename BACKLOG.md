@@ -1,6 +1,6 @@
 # Backlog — En Las Nubes Trepao
 
-> **Última actualización:** 2026-06-05 · v3.2.0
+> **Última actualización:** 2026-10-22 · v3.3.0
 
 ---
 
@@ -8,7 +8,6 @@
 
 | ID | Feature | Prioridad | Por qué |
 |---|---|---|---|
-| DB-NEON | Migrar base de datos a Neon | 🔴 Alta | Reemplaza Supabase. Código listo: `backend/db/migrate_to_neon.py` + guía `docs/MIGRACION-NEON.md`. Falta: crear proyecto Neon, correr migración, cambiar `DATABASE_URL` en Render, apagar Supabase. |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Núcleo del concepto editorial "Booze & Vinyl" — diferenciador único del proyecto. Sin esto la colección y las sesiones son módulos separados sin conexión curatorial. |
 | UX-NEW | Badge "nuevo" / sección recién llegado | 🟡 Media | Sin señal de contenido nuevo no hay razón para que un seguidor vuelva. Impacta retención directamente. Bloquea: decidir campo de fecha (`created_at` o fecha de compra). |
 | ~~QA-ASTRO~~ | ~~QA páginas Astro~~ | ✅ Cerrado | 2026-05-20 — 5 páginas auditadas en desktop, sin regresiones. |
@@ -54,10 +53,11 @@ Requiere acceso a DNS en Porkbun para configurar Cloudflare Pages como fallback 
 | v2.5.0 | 2026-05-02 | **UXUI-01**: Modal UX overhaul — bottom sheet, hero unificado, vinyl/spirits hero, Spotify en footer, Compartir unificado, mapa colapsable, drag handle |
 | v2.6.0 | 2026-05-03 | **UXUI-03+04**: Modal 2 columnas siempre (exploración/acción), CTAs con descripción, páginas estáticas editorial redesign. **CI-01**: fix legacy-peer-deps |
 | v2.6.1 | 2026-05-03 | **Limpieza**: CSS muerto (~100 líneas), .gitignore expandido, formateo precios COP/USD/EUR |
-| v2.7.0 | 2026-05-04 | **DATA-01**: tracks JSONB en Supabase, save-discogs-release, bulk-discogs-tracks paginado, créditos con íconos en páginas estáticas. **QA-01**: fixes mobile WelcomeModal + AdminForm |
+| v2.7.0 | 2026-05-04 | **DATA-01**: tracks JSONB en PostgreSQL, save-discogs-release, bulk-discogs-tracks paginado, créditos con íconos en páginas estáticas. **QA-01**: fixes mobile WelcomeModal + AdminForm |
 | v2.7.1 | 2026-05-05 | **QA-01 cerrado**: auditoría CSS sesiones post-login, fix spiritCountry overflow + detailTitle ellipsis |
 | v2.7.2 | 2026-05-05 | **DATA-01 casi cerrado**: soporte URLs /master/ en endpoints Discogs, 104/106 vinilos con tracklist poblado |
 | v2.7.3 | 2026-05-05 | **UX-SESIONES**: búsqueda local en vinyl picker. **UX**: remover botón Spotify del hero en páginas estáticas |
 | v3.0.0 | 2026-05-05 | **PROD-01**: email capture Kit en 106 páginas. **SEO-01**: og:image dinámico + alt por vinilo. **ANALYTICS-01**: GA4. **FIX**: deploy.sh unificado React+Astro, compartir vinilo usa URL estática |
 | v3.1.0 | 2026-05-20 | **ADMIN-01**: panel admin Sesiones en SettingsPanel (tab protegido por PIN) — KPIs + tabla clientes + tabla sesiones, endpoint `/api/sessions/admin/overview` con auth bcrypt. **QA-iOS**: modal bottom sheet — scroll interno funcional, single-tap para abrir (eliminado double-tap logic). **AUTH**: SSH key configurada para deploys automáticos. **QA-ASTRO**: 5 páginas estáticas auditadas (vinilos/rones/whiskies) — sin regresiones. |
 | v3.2.0 | 2026-06-05 | **I18N-01**: toggle ES/EN completo en el modal — CTAs del panel de acción (Compartir, Spotify, Discogs, Página del álbum/spirit), secciones de datos (Music/Disco físico/Colección/Producción), valores booleanos (Sí→Yes, Terminado→Finished). 13 claves nuevas en i18n.js. **ARCH**: páginas Astro documentadas como siempre-español por diseño (SSG). |
+| v3.3.0 | 2026-10-22 | **DB-NEON**: base de datos en Neon PostgreSQL (serverless, plan free). Estructura versionada en `backend/db/schema.sql`. Guía en `docs/BASE-DE-DATOS.md`. |
