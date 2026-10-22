@@ -3,7 +3,7 @@ sessions.py — Endpoints para el feature Sesiones de Espíritu y Vinilo
 
 Identidad: email + token UUID almacenado en localStorage del cliente.
 Cada request autenticado incluye el header X-Client-Token.
-RLS en Supabase valida que el token corresponda al cliente correcto.
+get_client_by_token() valida el token y cada query filtra por client_id.
 """
 import os
 import uuid
@@ -25,12 +25,6 @@ MAX_SPIRITS        = 3
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
-
-def set_rls(conn, token: str):
-    """Configura el token en la sesión de PG para que RLS funcione."""
-    with conn.cursor() as cur:
-        cur.execute("SELECT set_config('app.client_token', %s, true)", (token,))
-
 
 def get_client_by_token(conn, token: str) -> dict:
     with conn.cursor(cursor_factory=__import__('psycopg2.extras', fromlist=['RealDictCursor']).RealDictCursor) as cur:
@@ -168,7 +162,6 @@ def list_sessions(x_client_token: Optional[str] = Header(None)):
     token = require_token(x_client_token)
     with get_conn() as conn:
         client = get_client_by_token(conn, token)
-        set_rls(conn, token)
         with conn.cursor(cursor_factory=__import__('psycopg2.extras', fromlist=['RealDictCursor']).RealDictCursor) as cur:
             cur.execute("""
                 SELECT s.*, t.name_es as template_name, t.accent_color, t.tagline_es

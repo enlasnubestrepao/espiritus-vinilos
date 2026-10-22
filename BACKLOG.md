@@ -8,6 +8,7 @@
 
 | ID | Feature | Prioridad | Por qué |
 |---|---|---|---|
+| DB-NEON | Migrar base de datos a Neon | 🔴 Alta | Reemplaza Supabase. Código listo: `backend/db/migrate_to_neon.py` + guía `docs/MIGRACION-NEON.md`. Falta: crear proyecto Neon, correr migración, cambiar `DATABASE_URL` en Render, apagar Supabase. |
 | EDIT-02 | Pairing vinilo + espíritu | 🔴 Alta | Núcleo del concepto editorial "Booze & Vinyl" — diferenciador único del proyecto. Sin esto la colección y las sesiones son módulos separados sin conexión curatorial. |
 | UX-NEW | Badge "nuevo" / sección recién llegado | 🟡 Media | Sin señal de contenido nuevo no hay razón para que un seguidor vuelva. Impacta retención directamente. Bloquea: decidir campo de fecha (`created_at` o fecha de compra). |
 | ~~QA-ASTRO~~ | ~~QA páginas Astro~~ | ✅ Cerrado | 2026-05-20 — 5 páginas auditadas en desktop, sin regresiones. |

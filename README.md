@@ -56,11 +56,11 @@ Esta app es el archivo digital de esas colecciones físicas.
 │                     FastAPI Backend (Render.com free)           │
 │  /api/vinyls · /api/rums · /api/whiskies                        │
 │  /api/covers · /api/spotify · /api/config · /api/sessions       │
-│  data_store.py → psycopg2 → Supabase PostgreSQL                 │
+│  data_store.py → psycopg2 → Neon PostgreSQL                     │
 └────────────────────────┬────────────────────────────────────────┘
-                         │ psycopg2 / Session Pooler
+                         │ psycopg2 / pooled connection (SSL)
 ┌────────────────────────▼────────────────────────────────────────┐
-│  Supabase PostgreSQL                                            │
+│  Neon PostgreSQL (serverless)                                   │
 │  vinyls · rums · whiskies · app_config · sessions · ...        │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -95,9 +95,9 @@ Esta app es el archivo digital de esas colecciones físicas.
 |---|---|
 | **FastAPI** | Framework Python para APIs REST. Valida tipos automáticamente y genera documentación interactiva en `/docs` |
 | **Routers FastAPI** | Cada archivo en `routers/` agrupa los endpoints de un dominio. Se registran en `main.py` con `include_router` |
-| **data_store.py** | Capa de acceso a Supabase: conexión con psycopg2, helpers de CRUD, y funciones `get/set/delete_config` para `app_config` |
-| **Supabase PostgreSQL** | Base de datos persistente. Render Free Tier tiene filesystem efímero, por eso la BD vive fuera del contenedor |
-| **psycopg2** | Driver Python para PostgreSQL. Se conecta vía Session Pooler de Supabase (IPv4, compatible con Render Free) |
+| **data_store.py** | Capa de acceso a PostgreSQL: conexión con psycopg2, helpers de CRUD, y funciones `get/set/delete_config` para `app_config` |
+| **Neon PostgreSQL** | Base de datos persistente (Postgres serverless, plan free). Render Free Tier tiene filesystem efímero, por eso la BD vive fuera del contenedor |
+| **psycopg2** | Driver Python para PostgreSQL. Se conecta al endpoint *pooled* de Neon con `sslmode=require` |
 | **passlib[bcrypt]** | Cifrado del PIN admin. El hash se guarda en `app_config`. `verify()` compara sin exponer el PIN real |
 | **CORSMiddleware** | Permite que el browser llame al backend desde un dominio distinto (GitHub Pages → Render) |
 
@@ -161,8 +161,11 @@ frontend/
 ```
 backend/
 ├── main.py              # FastAPI app, CORS, registro de routers
-├── data_store.py        # Conexión Supabase + helpers CRUD + get/set/delete_config
+├── data_store.py        # Conexión PostgreSQL + helpers CRUD + get/set/delete_config
 ├── requirements.txt
+├── db/
+│   ├── schema.sql       # Estructura de la BD (generada por migrate_to_neon.py)
+│   └── migrate_to_neon.py  # Copia estructura + datos a Neon y verifica conteos
 ├── routers/
 │   ├── vinyls.py        # GET/POST/PUT/DELETE /api/vinyls/
 │   ├── rums.py          # GET/POST/PUT/DELETE /api/rums/
@@ -175,7 +178,7 @@ backend/
 
 ---
 
-## Base de datos (Supabase)
+## Base de datos (Neon)
 
 ### Tablas principales
 
@@ -209,9 +212,12 @@ note TEXT, created_at TIMESTAMPTZ, ...
 ```
 
 ### Conexión
-Siempre usar el **Session Pooler** de Supabase (no la URL Direct).
-Render Free Tier solo soporta IPv4.
-Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.com:5432/postgres`
+Usar la connection string **pooled** de Neon (host con `-pooler`) e incluir `sslmode=require`.
+Formato: `postgresql://neondb_owner:[PASSWORD]@ep-xxxx-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require`
+
+El plan free de Neon suspende el cómputo tras ~5 min sin uso; la primera consulta lo despierta en menos de un segundo. Los datos nunca se pausan ni se borran.
+
+Guía de setup y migración: [`docs/MIGRACION-NEON.md`](docs/MIGRACION-NEON.md).
 
 ---
 
@@ -261,7 +267,7 @@ Formato: `postgresql://postgres.REF:[PASSWORD]@aws-0-us-east-1.pooler.supabase.c
 ## Funcionalidades clave
 
 ### PIN cifrado en backend
-El PIN no vive en `localStorage` — vive como hash bcrypt en `app_config` de Supabase. Toda verificación pasa por el backend.
+El PIN no vive en `localStorage` — vive como hash bcrypt en la tabla `app_config`. Toda verificación pasa por el backend.
 
 ### Internacionalización ES/EN
 `LangContext` provee `useLang()` a todos los componentes. `i18n.js` tiene 200+ claves. La preferencia persiste en `localStorage` entre sesiones.
@@ -304,7 +310,7 @@ Botones TikTok e Instagram en cards y modales abren un drawer lateral (desktop) 
 
 | Variable | Descripción |
 |----------|------------|
-| `DATABASE_URL` | Connection string Supabase Session Pooler (IPv4) |
+| `DATABASE_URL` | Connection string pooled de Neon (`...-pooler...neon.tech/neondb?sslmode=require`) |
 | `SPOTIFY_CLIENT_ID` | Client ID app Spotify |
 | `SPOTIFY_CLIENT_SECRET` | Secret app Spotify |
 

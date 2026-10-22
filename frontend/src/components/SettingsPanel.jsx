@@ -352,7 +352,7 @@ export default function SettingsPanel({ onClose, onPinChange, initialTab = 'conf
                 </div>
                 <div className={styles.docsCard}>
                   <div className={styles.docsCardTitle}>{t('docsBackend')}</div>
-                  <div className={styles.docsCardText}>FastAPI · Render.com · Supabase PostgreSQL</div>
+                  <div className={styles.docsCardText}>FastAPI · Render.com · Neon PostgreSQL</div>
                 </div>
                 <div className={styles.docsCard}>
                   <div className={styles.docsCardTitle}>{t('docsIntegrations')}</div>

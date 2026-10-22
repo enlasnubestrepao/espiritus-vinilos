@@ -17,3 +17,6 @@ frontend/.claude/
 
 # macOS
 .DS_Store
+
+# Dumps de migración de BD (contienen datos personales)
+backend/db/dumps/
