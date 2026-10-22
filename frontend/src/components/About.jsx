@@ -167,7 +167,7 @@ FastAPI Backend — Render.com
        │
   data_store.py  (psycopg2 + helpers get/set/delete_config)
        │
-  Supabase PostgreSQL
+  Neon PostgreSQL
   └─ vinyls · rums · whiskies · app_config`
 
 const STACK = [
@@ -179,9 +179,9 @@ const STACK = [
   ['useMemo',               'Recalcula lista filtrada/ordenada solo cuando cambian filtros, búsqueda u orden'],
   ['useState / useEffect',  'Estado local de componentes; efectos para suscripciones (eventos, API calls al montar)'],
   ['FastAPI',               'Framework Python para APIs REST. Cada router agrupa endpoints de una colección o dominio'],
-  ['data_store.py',         'Capa de acceso a Supabase: get_conn(), helpers CRUD, get/set/delete_config para app_config'],
+  ['data_store.py',         'Capa de acceso a PostgreSQL: get_conn(), helpers CRUD, get/set/delete_config para app_config'],
   ['passlib[bcrypt]',       'Cifrado del PIN admin. hash() al guardar, verify() al autenticar — nunca texto plano'],
-  ['Supabase PostgreSQL',   'Base de datos persistente en Render Free Tier (filesystem efímero). Session Pooler IPv4'],
+  ['Neon PostgreSQL',       'Base de datos persistente fuera de Render Free Tier (filesystem efímero). Postgres serverless con conexión pooled + SSL'],
   ['app_config table',      'Tabla key/value para configuración del sistema. Actualmente: admin_pin (bcrypt hash)'],
   ['CORSMiddleware',        'Permite llamadas cross-origin desde GitHub Pages (distinto dominio) al backend en Render'],
   ['Discogs API',           'Búsqueda de portadas y metadata de discos. Token personal en variable de entorno'],
@@ -237,8 +237,8 @@ const ENDPOINTS = [
 
 const DECISIONS = [
   {
-    title: 'Supabase en lugar de archivos JSON',
-    desc: 'Render Free Tier tiene filesystem efímero: los archivos se pierden en cada redeploy. Supabase PostgreSQL ofrece persistencia real sin costo adicional con hasta 500 MB free.'
+    title: 'Neon PostgreSQL en lugar de archivos JSON',
+    desc: 'Render Free Tier tiene filesystem efímero: los archivos se pierden en cada redeploy. Neon ofrece PostgreSQL serverless gratis que no se pausa por inactividad (solo duerme el cómputo y despierta en la primera consulta).'
   },
   {
     title: 'PIN bcrypt en backend (no localStorage)',

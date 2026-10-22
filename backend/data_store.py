@@ -1,7 +1,7 @@
 """
 data_store.py — Capa de acceso a datos
 Antes: leía/escribía archivos JSON
-Ahora: lee/escribe en Supabase PostgreSQL via psycopg2
+Ahora: lee/escribe en Neon PostgreSQL via psycopg2
 
 Analogía SQL: este módulo ES la capa de acceso a datos —
 como un package PL/SQL que abstrae los SELECTs e INSERTs
