@@ -26,6 +26,13 @@ jobs:
             echo "::error::Faltan los secrets SOURCE_DATABASE_URL y/o NEON_DATABASE_URL"
             exit 1
           fi
+          for v in SOURCE_DATABASE_URL NEON_DATABASE_URL; do
+            case "${!v}" in
+              postgres://*|postgresql://*) echo "$v: formato OK" ;;
+              *) echo "::error title=$v inválido::El secret $v debe empezar con postgresql:// (se pegó otro texto)"; bad=1 ;;
+            esac
+          done
+          [ -z "$bad" ]
 
       - name: Checkout
         uses: actions/checkout@v4
