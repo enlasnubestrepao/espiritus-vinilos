@@ -164,8 +164,7 @@ backend/
 ├── data_store.py        # Conexión PostgreSQL + helpers CRUD + get/set/delete_config
 ├── requirements.txt
 ├── db/
-│   ├── schema.sql       # Estructura de la BD (generada por migrate_to_neon.py)
-│   └── migrate_to_neon.py  # Copia estructura + datos a Neon y verifica conteos
+│   └── schema.sql       # Estructura de la BD (pg_dump --schema-only desde Neon)
 ├── routers/
 │   ├── vinyls.py        # GET/POST/PUT/DELETE /api/vinyls/
 │   ├── rums.py          # GET/POST/PUT/DELETE /api/rums/
@@ -217,7 +216,7 @@ Formato: `postgresql://neondb_owner:[PASSWORD]@ep-xxxx-pooler.us-east-1.aws.neon
 
 El plan free de Neon suspende el cómputo tras ~5 min sin uso; la primera consulta lo despierta en menos de un segundo. Los datos nunca se pausan ni se borran.
 
-Guía de setup y migración: [`docs/MIGRACION-NEON.md`](docs/MIGRACION-NEON.md).
+Guía de setup: [`docs/BASE-DE-DATOS.md`](docs/BASE-DE-DATOS.md).
 
 ---
 
@@ -394,7 +393,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 4 | Portadas Discogs, og:image scraping, bulk cover fetch |
 | 5 | Deploy GitHub Pages + Render, README |
 | 6 | SpotifyModal, FeaturedBanner, ShareView, StatsView, PinModal, WelcomeModal, responsive mobile |
-| 7 | Migración Supabase, PIN bcrypt, i18n ES/EN, SocialDrawer, SettingsPanel, dominio custom, OG tags + SEO |
+| 7 | Migración a PostgreSQL, PIN bcrypt, i18n ES/EN, SocialDrawer, SettingsPanel, dominio custom, OG tags + SEO |
 | 8 | Hero fotográfico, tipografía Fraunces, cards editorial, scroll-progress, modal licores, breadcrumb |
 | 9 | Sesiones digitales: schema, 13 endpoints FastAPI, SessionesView completa, plantillas, tracks, espíritus |
 | 10 | Atlas con bandera + nota por país, WelcomeModal editorial, Sesiones como 5ª feature |
@@ -406,7 +405,7 @@ Free tier: cold start de ~30s tras 15 min de inactividad.
 | 15 | **UXUI-01 v2.5**: Modal UX overhaul — bottom sheet mobile, hero unificado con blur, portada vinyl hero, botella spirits prominente (195px), Spotify en footer sticky, Compartir unificado (?v=N vinilos / página estática spirits), mapa colapsable, admin footer sutil, campos 1col ≤560px, drag handle |
 | 16 | **UXUI-03+04 + CI-01 v2.6**: Modal 2 columnas siempre (izquierda exploración / derecha acción siempre visible), Spotify demovido a CTA card, CTAs con ícono+título+descripción. Páginas estáticas editorial redesign: hero full-bleed para los 3 tipos (vinilos/rones/whiskies), notas como pieza editorial central, Spotify embed dark inline, recomendaciones por género/tipo/país, buy box en el hero. CI fix: `--legacy-peer-deps` para `frontend/` en GitHub Actions. |
 | 17 | **v2.6.1 limpieza**: CSS muerto eliminado del modal (~100 líneas), `.gitignore` expandido, formateo de precios por moneda (COP/USD/EUR). |
-| 18 | **DATA-01 + QA-01 v2.7.0** *(2026-05-04)*: Columna `tracks JSONB` en Supabase. Endpoints `save-discogs-release` (individual) y `bulk-discogs-tracks` (paginado con `limit`+`offset`, rate limiting 1.1s entre llamadas). Créditos con íconos por rol en páginas estáticas de vinilos. QA mobile 375px completado — fixes en WelcomeModal (line-clamp en cards) y AdminForm (purchaseFields 2col en mobile). 95/106 vinilos con tracklist poblado vía bulk. |
+| 18 | **DATA-01 + QA-01 v2.7.0** *(2026-05-04)*: Columna `tracks JSONB` en PostgreSQL. Endpoints `save-discogs-release` (individual) y `bulk-discogs-tracks` (paginado con `limit`+`offset`, rate limiting 1.1s entre llamadas). Créditos con íconos por rol en páginas estáticas de vinilos. QA mobile 375px completado — fixes en WelcomeModal (line-clamp en cards) y AdminForm (purchaseFields 2col en mobile). 95/106 vinilos con tracklist poblado vía bulk. |
 | 19 | **QA-01 + DATA-01 v2.7.1–2.7.2** *(2026-05-05)*: Auditoría CSS SessionesView post-login — fix `spiritCountry` overflow + `detailTitle` ellipsis. Soporte URLs `/master/` en endpoints Discogs. 104/106 vinilos con tracklist. |
 | 20 | **UX v2.7.3** *(2026-05-05)*: Búsqueda local en vinyl picker dentro de sesiones (filtra artista/álbum sin backend). Botón Spotify removido del hero en páginas estáticas — el embed ya provee enlace nativo. |
 | 21 | **v3.0.0** *(2026-05-05)*: **Email capture** Kit (form `345b76391f`) en las 106 páginas de vinilo. **og:image dinámico** — fallback `hero-1.png`, `og:image:alt` por vinilo, dimensiones hardcodeadas removidas. **GA4** (`G-5VM13PG031`) en 166 páginas. **Fix compartir** — botón Compartir en modal y hover del grid ahora genera URL estática `/vinilos/[slug]/` (WhatsApp preview muestra tapa del disco). **Deploy unificado** `deploy.sh` + CI/CD actualizados — React + Astro mergeados en un único gh-pages, elimina sobreescritura entre builds. |
