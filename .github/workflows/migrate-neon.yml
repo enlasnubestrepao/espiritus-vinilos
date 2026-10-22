@@ -29,7 +29,16 @@ jobs:
           for v in SOURCE_DATABASE_URL NEON_DATABASE_URL; do
             case "${!v}" in
               postgres://*|postgresql://*) echo "$v: formato OK" ;;
-              *) echo "::error title=$v inválido::El secret $v debe empezar con postgresql:// (se pegó otro texto)"; bad=1 ;;
+              *)
+                val="${!v}"
+                hint="largo=${#val}"
+                case "$val" in [[:space:]]*) hint="$hint, empieza con espacio/salto de línea" ;; esac
+                case "$val" in \"*|\'*) hint="$hint, empieza con comillas" ;; esac
+                case "$val" in *=postgres*) hint="$hint, parece incluir 'NOMBRE=' antes de la URL" ;; esac
+                case "$val" in *postgres://*|*postgresql://*) hint="$hint, la URL está dentro pero con texto antes" ;; *) hint="$hint, no contiene ninguna URL postgresql://" ;; esac
+                case "$val" in *supabase*) hint="$hint, menciona supabase" ;; esac
+                echo "::error title=$v inválido::El secret $v debe empezar con postgresql:// — diagnóstico: $hint"
+                bad=1 ;;
             esac
           done
           [ -z "$bad" ]
