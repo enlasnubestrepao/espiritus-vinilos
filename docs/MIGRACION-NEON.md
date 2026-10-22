@@ -16,7 +16,7 @@ Duración estimada: 20–30 min. La app sigue funcionando contra la base vieja h
    - **Region:** `AWS US West 2 (Oregon)`. Es la región por defecto de Render, así backend y BD quedan cerca (menos latencia).
    - **Database name:** dejar `neondb`.
 3. Al crearlo, Neon muestra el panel **Connect**:
-   - Branch `main`, database `neondb`, role `neondb_owner`.
+   - Branch `production` (o `main`, según cómo lo nombre Neon), database `neondb`, role `neondb_owner`.
    - Dejar activado **Connection pooling**.
    - Copiar la connection string. Se ve así:
      ```
@@ -31,7 +31,14 @@ Duración estimada: 20–30 min. La app sigue funcionando contra la base vieja h
 
 ## 2. Migrar estructura y contenido
 
-Se hace **una vez** desde tu computador con `backend/db/migrate_to_neon.py`.
+Se hace **una vez** con `backend/db/migrate_to_neon.py`.
+
+> **Cómo se hizo en la práctica (2026-10-22):** se corrió en GitHub Actions, sin instalar nada en el Mac, con un workflow temporal en la rama `claude/migracion-neon` y dos secrets del repo (`SOURCE_DATABASE_URL`, `NEON_DATABASE_URL`). Puntos clave:
+> - La URL de Supabase tiene que ser la del **Session pooler** (`postgres.REF@aws-0-...pooler.supabase.com:5432`). La *Direct connection* (`db.REF.supabase.co`) es solo IPv6 y los runners de GitHub no la alcanzan.
+> - Los secrets se pegan como URL completa, empezando con `postgresql://`.
+> - Resultado: 9 tablas, conteos idénticos (vinyls 106, rums 25, whiskies 34, sesiones y config).
+>
+> Para hacerlo localmente, sigue estos pasos:
 
 ### Requisitos (macOS)
 
