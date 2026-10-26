@@ -19,7 +19,9 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
+          # >= 22.23.4: parche de seguridad Node.js (oct 2026, TLS hostname + eMudhra)
           node-version: 22
+          check-latest: true
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
