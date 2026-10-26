@@ -3,7 +3,12 @@
 # Uso: ./deploy.sh
 set -e
 
-export PATH="$HOME/.nvm/versions/node/v24.14.1/bin:$PATH"
+# Node 24 vía nvm (>= 24.22.1: parche de seguridad oct 2026 — TLS hostname + eMudhra)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" && nvm use 24 >/dev/null
+node -e 'const [a,b,c]=process.versions.node.split(".").map(Number);
+  const ok=(a===22&&(b>23||b===23&&c>=4))||(a===24&&(b>22||b===22&&c>=1))||(a===26&&(b>12||b===12&&c>=1))||a>26;
+  if(!ok){console.error("Node "+process.version+" sin parche de seguridad. Actualizá: nvm install 24");process.exit(1)}'
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 REACT_DIR="$ROOT/frontend"
 ASTRO_DIR="$ROOT/frontend-astro"
